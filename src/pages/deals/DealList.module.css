@@ -1,0 +1,211 @@
+.container {
+    padding: var(--space-6);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+}
+
+.header h1 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-1);
+}
+
+.header p {
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.toolbar {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.searchInput {
+    flex: 1;
+    max-width: 400px;
+}
+
+.filters {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.select {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: white;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.select:hover {
+    border-color: var(--color-border-focus);
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--color-border-focus);
+}
+
+.loading,
+.error {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--color-text-secondary);
+}
+
+.error {
+    color: var(--color-danger-600);
+}
+
+.empty {
+    text-align: center;
+    padding: var(--space-10);
+}
+
+.empty h3 {
+    margin-bottom: var(--space-2);
+}
+
+.empty p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+}
+
+.tableContainer {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: var(--color-bg-secondary);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.table th {
+    padding: var(--space-4);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: var(--color-bg-secondary);
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table td {
+    padding: var(--space-4);
+    font-size: var(--font-size-sm);
+}
+
+.dealNumber {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary-600);
+    font-family: monospace;
+}
+
+.dealTitle {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+}
+
+.lead {
+    line-height: 1.4;
+}
+
+.leadPhone {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+}
+
+.value {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+.probability {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.probabilityBar {
+    flex: 1;
+    height: 6px;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    min-width: 60px;
+}
+
+.probabilityFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-600));
+    border-radius: var(--radius-full);
+    transition: width var(--transition-base);
+}
+
+.probability span {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    min-width: 35px;
+}
+
+.agent {
+    color: var(--color-text-secondary);
+}
+
+.date {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+}
+
+.viewLink {
+    color: var(--color-primary-600);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.viewLink:hover {
+    color: var(--color-primary-700);
+    text-decoration: underline;
+}

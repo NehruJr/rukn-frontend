@@ -1,0 +1,250 @@
+.container {
+    padding: var(--space-6);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+}
+
+.header h1 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-1);
+}
+
+.header p {
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-6);
+    height: calc(100vh - 200px);
+}
+
+.calendarSection {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    padding: var(--space-6);
+}
+
+.calendarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+}
+
+.calendar Header h2 {
+    margin: 0;
+    font-size: var(--font-size-xl);
+}
+
+.navButton {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.navButton:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-primary-500);
+}
+
+.calendar {
+    width: 100%;
+}
+
+.weekHeader {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.weekDay {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    padding: var(--space-2);
+}
+
+.daysGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-2);
+}
+
+.emptyDay {
+    background: transparent;
+}
+
+.day {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    min-height: 100px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: 2px solid transparent;
+}
+
+.day:hover {
+    background: var(--color-bg-tertiary);
+    border-color: var(--color-primary-300);
+}
+
+.day.selected {
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-500);
+}
+
+.day.today {
+    border-color: var(--color-primary-400);
+}
+
+.dayNumber {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-2);
+}
+
+.dayTasks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.taskDot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+}
+
+.moreIndicator {
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+}
+
+.sidebar {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidebarHeader {
+    margin-bottom: var(--space-5);
+}
+
+.sidebarHeader h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-2);
+}
+
+.taskCount {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.taskList {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--space-6);
+}
+
+.emptyState p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-3);
+}
+
+.taskCard {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all var(--transition-fast);
+}
+
+.taskCard:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary-300);
+    transform: translateY(-2px);
+}
+
+.taskHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+}
+
+.priorityBadge {
+    padding: 4px var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+}
+
+.taskTime {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.taskTitle {
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-2);
+}
+
+.taskDescription {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-3);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.taskFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-xs);
+}
+
+.taskType {
+    color: var(--color-text-tertiary);
+}
+
+.taskAssignee {
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+}

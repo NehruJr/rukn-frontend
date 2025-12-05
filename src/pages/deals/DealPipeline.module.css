@@ -1,0 +1,212 @@
+.container {
+    padding: var(--space-6);
+    height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+}
+
+.header h1 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-1);
+}
+
+.header p {
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.listViewLink {
+    color: var(--color-primary-600);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+}
+
+.listViewLink:hover {
+    text-decoration: underline;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.statCard {
+    background: white;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+.statLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.statValue {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+}
+
+.loading {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--color-text-secondary);
+}
+
+.pipeline {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    flex: 1;
+    padding-bottom: var(--space-4);
+}
+
+.column {
+    flex: 0 0 340px;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg-primary));
+    border-radius: var(--radius-xl);
+    max-height: 100%;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base);
+}
+
+.column:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.columnHeader {
+    padding: var(--space-4);
+    border-top: 3px solid;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+}
+
+.columnHeader h3 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+}
+
+.count {
+    background: var(--color-bg-tertiary);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+
+.columnContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-height: 200px;
+}
+
+.emptyColumn {
+    text-align: center;
+    padding: var(--space-6);
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-sm);
+}
+
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    cursor: grab;
+    transition: all var(--transition-base);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+    border-color: var(--color-primary-400);
+    transform: translateY(-3px) scale(1.01);
+}
+
+.card:active {
+    cursor: grabbing;
+}
+
+.dragging {
+    opacity: 0.8;
+    box-shadow: var(--shadow-lg);
+    transform: rotate(3deg);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+}
+
+.dealNumber {
+    font-family: monospace;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.probability {
+    background: var(--color-primary-50);
+    color: var(--color-primary-600);
+    padding: 4px var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+}
+
+.title {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.value {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary-600);
+    margin-bottom: var(--space-3);
+}
+
+.lead {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.agent {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-1);
+}
+
+.date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}

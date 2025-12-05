@@ -14,6 +14,7 @@ import PropertyList from './pages/properties/PropertyList';
 import PropertyDetail from './pages/properties/PropertyDetail';
 import AddEditProperty from './pages/properties/AddEditProperty';
 import DealList from './pages/deals/DealList';
+import DealPipeline from './pages/deals/DealPipeline';
 import Calendar from './pages/calendar/Calendar';
 import UserManagement from './pages/team/UserManagement';
 import Reports from './pages/reports/Reports';
@@ -77,6 +78,7 @@ function App() {
 
                 {/* Deals */}
                 <Route path="deals" element={<DealList />} />
+                <Route path="deals/pipeline" element={<DealPipeline />} />
 
                 {/* Calendar */}
                 <Route path="calendar" element={<Calendar />} />

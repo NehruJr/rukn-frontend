@@ -83,3 +83,17 @@ export const DEAL_STAGES = [
   { value: 'completed', label: 'Completed' },
   { value: 'cancelled', label: 'Cancelled' }
 ];
+
+export const DEAL_STATUSES = [
+  { value: 'active', label: 'Active', color: '#10B981' },
+  { value: 'won', label: 'Won', color: '#059669' },
+  { value: 'lost', label: 'Lost', color: '#6B7280' }
+];
+
+export const TASK_STATUSES = [
+  { value: 'pending', label: 'Pending', color: '#F59E0B' },
+  { value: 'in_progress', label: 'In Progress', color: '#3B82F6' },
+  { value: 'completed', label: 'Completed', color: '#10B981' },
+  { value: 'cancelled', label: 'Cancelled', color: '#6B7280' }
+];
+
