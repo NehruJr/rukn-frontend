@@ -1,0 +1,221 @@
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-6);
+}
+
+.header h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-2);
+}
+
+.header p {
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.toolbar {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.searchInput {
+    flex: 1;
+    min-width: 300px;
+}
+
+.filters {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+.select {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.tableContainer {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background-color: var(--color-bg-secondary);
+}
+
+.table th {
+    padding: var(--space-4);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-sm);
+}
+
+.table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background-color: var(--color-bg-secondary);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.leadName {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-xs);
+    flex-shrink: 0;
+}
+
+.name {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+}
+
+.note {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.contact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.phone {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+}
+
+.source {
+    text-transform: capitalize;
+    color: var(--color-text-secondary);
+}
+
+.badge {
+    display: inline-flex;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: capitalize;
+}
+
+.agent {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+}
+
+.unassigned {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    font-style: italic;
+}
+
+.date {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.viewLink {
+    color: var(--color-primary-600);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.viewLink:hover {
+    color: var(--color-primary-700);
+    text-decoration: underline;
+}
+
+.loading,
+.error,
+.empty {
+    text-align: center;
+    padding: var(--space-10);
+}
+
+.empty h3 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-2);
+}
+
+.empty p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+}
+
+.error {
+    color: var(--color-danger-600);
+}
+
+@media (max-width: 1200px) {
+    .table {
+        font-size: var(--font-size-xs);
+    }
+
+    .table th,
+    .table td {
+        padding: var(--space-3);
+    }
+}

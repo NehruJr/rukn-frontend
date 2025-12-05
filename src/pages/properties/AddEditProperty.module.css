@@ -1,0 +1,248 @@
+.container {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+.backButton:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+.form {
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 2rem;
+}
+
+.section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.formGroup label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.amenitiesGroup {
+    margin-top: 1.5rem;
+}
+
+.amenitiesGroup label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+.amenitiesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #4b5563;
+}
+
+.checkboxLabel input {
+    width: 1rem;
+    height: 1rem;
+}
+
+.imageUpload {
+    margin-bottom: 1.5rem;
+}
+
+.fileInput {
+    display: none;
+}
+
+.uploadButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #f3f4f6;
+    border: 1px dashed #9ca3af;
+    border-radius: 8px;
+    color: #4b5563;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.uploadButton:hover {
+    background-color: #e5e7eb;
+    border-color: #6b7280;
+}
+
+.imagePreview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.previewItem {
+    position: relative;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.previewItem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.removeButton {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.removeButton:hover {
+    background-color: #ef4444;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.cancelButton {
+    padding: 0.75rem 1.5rem;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.cancelButton:hover {
+    background-color: #f3f4f6;
+}
+
+.saveButton {
+    padding: 0.75rem 1.5rem;
+    background-color: #3b82f6;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.saveButton:hover {
+    background-color: #2563eb;
+}
+
+.saveButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.loading {
+    text-align: center;
+    padding: 4rem;
+    color: #6b7280;
+}
