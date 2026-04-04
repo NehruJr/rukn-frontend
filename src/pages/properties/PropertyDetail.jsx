@@ -2,19 +2,23 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
 import { useAuthStore } from '@/store/authStore';
+import { useUIStore } from '@/store/uiStore';
+import AssignAgentsModal from '@/components/AssignAgentsModal';
 import {
     MapPin, Bed, Bath, Maximize, Edit2, Trash2, ArrowLeft,
-    Calendar, User, Mail, Phone, CheckCircle, Share2
+    Calendar, User, Mail, Phone, CheckCircle, Share2, UserPlus
 } from 'lucide-react';
 import styles from './PropertyDetail.module.css';
 
 const PropertyDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user, hasPermission } = useAuthStore();
+    const { user, hasPermission, hasRole } = useAuthStore();
+    const { addToast } = useUIStore();
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
+    const [assignModalOpen, setAssignModalOpen] = useState(false);
 
     useEffect(() => {
         fetchProperty();
@@ -24,13 +28,34 @@ const PropertyDetail = () => {
         try {
             setLoading(true);
             const response = await propertyService.getPropertyById(id);
-            setProperty(response.data);
+            setProperty(response?.data ?? response);
         } catch (err) {
             console.error('Error fetching property:', err);
             alert('Failed to load property details');
             navigate('/properties');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const canAssignAgents = hasRole('admin', 'manager', 'team_leader');
+
+    const handleAssignConfirm = async (propertyId, agentIds) => {
+        const res = await propertyService.assignAgents(propertyId, agentIds);
+        setProperty(res?.data ?? res);
+        addToast({ type: 'success', message: 'Agents assigned successfully' });
+    };
+
+    const handleShare = async () => {
+        try {
+            const res = await propertyService.getShareLink(id);
+            const path = res?.data?.shareUrl ?? `/share/${res?.data?.shareToken}`;
+            const url = path.startsWith('http') ? path : `${window.location.origin}${path}`;
+            await navigator.clipboard.writeText(url);
+            addToast({ type: 'success', message: 'Link copied!' });
+        } catch (err) {
+            console.error('Error generating share link:', err);
+            addToast({ type: 'error', message: err?.response?.data?.message || 'Failed to generate share link' });
         }
     };
 
@@ -82,12 +107,25 @@ const PropertyDetail = () => {
                     <div className={styles.price}>
                         {new Intl.NumberFormat('en-US', {
                             style: 'currency',
-                            currency: property.currency || 'USD',
+                            currency: property.currency || 'EGP',
                             maximumFractionDigits: 0
                         }).format(property.price)}
                     </div>
                     <div className={styles.actionButtons}>
-                        <button className={styles.iconButton} title="Share">
+                        {canAssignAgents && (
+                            <button
+                                onClick={() => setAssignModalOpen(true)}
+                                className={styles.iconButton}
+                                title="Assign Agents"
+                            >
+                                <UserPlus size={20} />
+                            </button>
+                        )}
+                        <button
+                            onClick={handleShare}
+                            className={styles.iconButton}
+                            title="Share"
+                        >
                             <Share2 size={20} />
                         </button>
                         {canEdit && (
@@ -186,6 +224,23 @@ const PropertyDetail = () => {
                 </div>
 
                 <div className={styles.sidebar}>
+                    {canAssignAgents && (property.assignedAgents?.length > 0) && (
+                        <div className={styles.detailsCard}>
+                            <h3>Assigned Agents</h3>
+                            <ul className={styles.assignedList}>
+                                {property.assignedAgents.map((agent) => (
+                                    <li key={agent._id} className={styles.assignedItem}>
+                                        <span className={styles.assignedName}>
+                                            {agent.firstName} {agent.lastName}
+                                        </span>
+                                        {agent.email && (
+                                            <span className={styles.assignedEmail}>{agent.email}</span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                     <div className={styles.agentCard}>
                         <h3>Listing Agent</h3>
                         <div className={styles.agentInfo}>
@@ -237,6 +292,14 @@ const PropertyDetail = () => {
                     </div>
                 </div>
             </div>
+
+            <AssignAgentsModal
+                isOpen={assignModalOpen}
+                onClose={() => setAssignModalOpen(false)}
+                propertyId={id}
+                assignedAgentIds={(property.assignedAgents || []).map(a => a._id || a)}
+                onConfirm={handleAssignConfirm}
+            />
         </div>
     );
 };

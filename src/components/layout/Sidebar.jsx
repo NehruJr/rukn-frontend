@@ -3,12 +3,12 @@ import { useUIStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
 import {
     Home, Users, Building2, FileText, Calendar,
-    BarChart3, Settings, Menu, X
+    BarChart3, Settings, Menu, X, Sun, Moon
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 const Sidebar = () => {
-    const { sidebarOpen, toggleSidebar } = useUIStore();
+    const { sidebarOpen, toggleSidebar, theme, toggleTheme } = useUIStore();
     const { user, hasPermission } = useAuthStore();
 
     const navItems = [
@@ -61,6 +61,15 @@ const Sidebar = () => {
             </nav>
 
             <div className={styles.footer}>
+                <button
+                    className={styles.themeToggle}
+                    onClick={toggleTheme}
+                    title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                >
+                    {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                    {sidebarOpen && <span>{theme === 'light' ? 'Dark' : 'Light'} Mode</span>}
+                </button>
+
                 <div className={styles.user}>
                     <div className={styles.avatar}>
                         {user?.firstName?.[0]}{user?.lastName?.[0]}

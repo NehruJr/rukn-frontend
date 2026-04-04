@@ -1,32 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Building2, Users, Bell, Settings as SettingsIcon, Save } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { useUIStore } from '@/store/uiStore';
+import { getSettings, updateSettings } from '@/services/settingsService';
 import styles from './Settings.module.css';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState('agency');
     const queryClient = useQueryClient();
+    const addToast = useUIStore((s) => s.addToast);
 
     const { data: settingsData, isLoading } = useQuery({
         queryKey: ['settings'],
-        queryFn: async () => {
-            const response = await axios.get(`${API_URL}/settings`);
-            return response.data;
-        }
+        queryFn: getSettings
     });
 
     const updateSettingsMutation = useMutation({
-        mutationFn: async (updatedSettings) => {
-            const response = await axios.put(`${API_URL}/settings`, updatedSettings);
-            return response.data;
-        },
-        onSuccess: () => {
+        mutationFn: updateSettings,
+        onSuccess: (response) => {
+            // Update cache immediately so currency and other fields show correctly after save
+            if (response?.data) {
+                queryClient.setQueryData(['settings'], response);
+            }
             queryClient.invalidateQueries(['settings']);
+            addToast({ type: 'success', message: 'Settings saved successfully' });
+        },
+        onError: (err) => {
+            addToast({
+                type: 'error',
+                message: err.response?.data?.message || err.message || 'Failed to save settings'
+            });
         }
     });
 
@@ -66,7 +71,11 @@ const Settings = () => {
                     {isLoading && <div className={styles.loading}>Loading settings...</div>}
 
                     {!isLoading && activeTab === 'agency' && (
-                        <AgencySettings settings={settings} onUpdate={(data) => updateSettingsMutation.mutate(data)} />
+                        <AgencySettings
+                            settings={settings}
+                            onUpdate={(data) => updateSettingsMutation.mutate(data)}
+                            isSaving={updateSettingsMutation.isPending}
+                        />
                     )}
 
                     {!isLoading && activeTab === 'users' && (
@@ -74,11 +83,19 @@ const Settings = () => {
                     )}
 
                     {!isLoading && activeTab === 'notifications' && (
-                        <NotificationSettings settings={settings} onUpdate={(data) => updateSettingsMutation.mutate(data)} />
+                        <NotificationSettings
+                            settings={settings}
+                            onUpdate={(data) => updateSettingsMutation.mutate(data)}
+                            isSaving={updateSettingsMutation.isPending}
+                        />
                     )}
 
                     {!isLoading && activeTab === 'system' && (
-                        <SystemSettings settings={settings} onUpdate={(data) => updateSettingsMutation.mutate(data)} />
+                        <SystemSettings
+                            settings={settings}
+                            onUpdate={(data) => updateSettingsMutation.mutate(data)}
+                            isSaving={updateSettingsMutation.isPending}
+                        />
                     )}
                 </div>
             </div>
@@ -87,7 +104,7 @@ const Settings = () => {
 };
 
 // Agency Settings Tab
-const AgencySettings = ({ settings, onUpdate }) => {
+const AgencySettings = ({ settings, onUpdate, isSaving }) => {
     const [formData, setFormData] = useState({
         agencyName: settings.agencyName || '',
         agencyEmail: settings.agencyEmail || '',
@@ -99,9 +116,22 @@ const AgencySettings = ({ settings, onUpdate }) => {
         secondaryColor: settings.secondaryColor || '#2c3438'
     });
 
+    useEffect(() => {
+        setFormData({
+            agencyName: settings.agencyName || '',
+            agencyEmail: settings.agencyEmail || '',
+            agencyPhone: settings.agencyPhone || '',
+            agencyAddress: settings.agencyAddress || '',
+            agencyWebsite: settings.agencyWebsite || '',
+            agencyLogo: settings.agencyLogo || '',
+            primaryColor: settings.primaryColor || '#b4562d',
+            secondaryColor: settings.secondaryColor || '#2c3438'
+        });
+    }, [settings]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onUpdate(formData);
+        onUpdate({ ...settings, ...formData });
     };
 
     return (
@@ -201,8 +231,8 @@ const AgencySettings = ({ settings, onUpdate }) => {
             </div>
 
             <div className={styles.formActions}>
-                <Button type="submit" variant="primary" leftIcon={<Save size={18} />}>
-                    Save Changes
+                <Button type="submit" variant="primary" leftIcon={<Save size={18} />} disabled={isSaving}>
+                    {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>
             </div>
         </form>
@@ -225,7 +255,7 @@ const UserSettings = () => {
 };
 
 // Notification Settings Tab
-const NotificationSettings = ({ settings, onUpdate }) => {
+const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
     const [formData, setFormData] = useState({
         emailNotifications: settings.emailNotifications ?? true,
         newLeadNotification: settings.newLeadNotification ?? true,
@@ -234,9 +264,19 @@ const NotificationSettings = ({ settings, onUpdate }) => {
         reportNotification: settings.reportNotification ?? false
     });
 
+    useEffect(() => {
+        setFormData({
+            emailNotifications: settings.emailNotifications ?? true,
+            newLeadNotification: settings.newLeadNotification ?? true,
+            dealUpdateNotification: settings.dealUpdateNotification ?? true,
+            taskReminderNotification: settings.taskReminderNotification ?? true,
+            reportNotification: settings.reportNotification ?? false
+        });
+    }, [settings]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onUpdate(formData);
+        onUpdate({ ...settings, ...formData });
     };
 
     return (
@@ -296,8 +336,8 @@ const NotificationSettings = ({ settings, onUpdate }) => {
             </div>
 
             <div className={styles.formActions}>
-                <Button type="submit" variant="primary" leftIcon={<Save size={18} />}>
-                    Save Changes
+                <Button type="submit" variant="primary" leftIcon={<Save size={18} />} disabled={isSaving}>
+                    {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>
             </div>
         </form>
@@ -305,17 +345,26 @@ const NotificationSettings = ({ settings, onUpdate }) => {
 };
 
 // System Settings Tab
-const SystemSettings = ({ settings, onUpdate }) => {
+const SystemSettings = ({ settings, onUpdate, isSaving }) => {
     const [formData, setFormData] = useState({
-        currency: settings.currency || 'USD',
+        currency: settings.currency || 'EGP',
         dateFormat: settings.dateFormat || 'MM/DD/YYYY',
         timezone: settings.timezone || 'UTC',
         language: settings.language || 'en'
     });
 
+    useEffect(() => {
+        setFormData({
+            currency: settings.currency || 'EGP',
+            dateFormat: settings.dateFormat || 'MM/DD/YYYY',
+            timezone: settings.timezone || 'UTC',
+            language: settings.language || 'en'
+        });
+    }, [settings]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onUpdate(formData);
+        onUpdate({ ...settings, ...formData });
     };
 
     return (
@@ -330,6 +379,7 @@ const SystemSettings = ({ settings, onUpdate }) => {
                             onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                             className={styles.select}
                         >
+                            <option value="EGP">EGP - Egyptian Pound</option>
                             <option value="USD">USD - US Dollar</option>
                             <option value="EUR">EUR - Euro</option>
                             <option value="GBP">GBP - British Pound</option>
@@ -362,6 +412,7 @@ const SystemSettings = ({ settings, onUpdate }) => {
                             <option value="America/Los_Angeles">Pacific Time</option>
                             <option value="Europe/London">London</option>
                             <option value="Asia/Dubai">Dubai</option>
+                            <option value="Africa/Cairo">Egypt (Cairo)</option>
                         </select>
                     </div>
 
@@ -380,8 +431,8 @@ const SystemSettings = ({ settings, onUpdate }) => {
             </div>
 
             <div className={styles.formActions}>
-                <Button type="submit" variant="primary" leftIcon={<Save size={18} />}>
-                    Save Changes
+                <Button type="submit" variant="primary" leftIcon={<Save size={18} />} disabled={isSaving}>
+                    {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>
             </div>
         </form>

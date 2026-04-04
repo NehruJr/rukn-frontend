@@ -168,6 +168,45 @@ body {
 }
 
 /* ========================================
+   DARK MODE
+   ======================================== */
+[data-theme='dark'] {
+  /* Dark Mode - Primary Colors (keep brand colors) */
+  --color-primary-50: #2a1a16;
+  --color-primary-100: #4a2a20;
+  --color-primary-500: #d97448;
+  --color-primary-600: #b4562d;
+
+  /* Dark Mode - Backgrounds */
+  --color-bg-primary: #1a1f22;
+  --color-bg-secondary: #232a2d;
+  --color-bg-tertiary: #2c3438;
+  --color-bg-overlay: rgba(0, 0, 0, 0.75);
+
+  /* Dark Mode - Text */
+  --color-text-primary: #f7f8f8;
+  --color-text-secondary: #b0b5b8;
+  --color-text-tertiary: #8a9195;
+  --color-text-inverse: #1a1f22;
+
+  /* Dark Mode - Borders */
+  --color-border: #4a5155;
+  --color-border-focus: #d97448;
+
+  /* Dark Mode - Neutral */
+  --color-neutral-50: #2c3438;
+  --color-neutral-100: #4a5155;
+  --color-neutral-200: #666e73;
+  --color-neutral-300: #8a9195;
+
+  /* Adjust shadows for dark mode */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
    TYPOGRAPHY
    ======================================== */
 h1,
@@ -410,6 +449,36 @@ a:hover {
   box-shadow: var(--shadow-lg);
 }
 
+/* Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, var(--color-success-500), var(--color-success-700));
+}
+
+.gradient-chart {
+  background: linear-gradient(180deg, var(--color-primary-500) 0%, rgba(180, 86, 45, 0.1) 100%);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
 /* ========================================
    ANIMATIONS
    ======================================== */
@@ -453,6 +522,30 @@ a:hover {
   }
 }
 
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn var(--transition-base);
 }
@@ -467,6 +560,51 @@ a:hover {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Stagger animations for lists */
+.stagger-item {
+  animation: slideInUp 0.3s ease-out backwards;
+}
+
+.stagger-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.stagger-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.stagger-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.stagger-item:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.stagger-item:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.stagger-item:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.stagger-item:nth-child(7) {
+  animation-delay: 0.35s;
+}
+
+.stagger-item:nth-child(8) {
+  animation-delay: 0.4s;
 }
 
 /* ========================================
@@ -504,4 +642,11 @@ a:hover {
   .grid-cols-4 {
     grid-template-columns: 1fr;
   }
+}
+
+/* ========================================
+   RTL (Arabic) support
+   ======================================== */
+[dir="rtl"] body {
+  text-align: right;
 }

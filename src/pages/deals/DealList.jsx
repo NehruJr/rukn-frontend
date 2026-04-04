@@ -49,7 +49,7 @@ const DealList = () => {
         return DEAL_STATUSES.find(s => s.value === status)?.color || '#6B7280';
     };
 
-    const formatCurrency = (value, currency = 'USD') => {
+    const formatCurrency = (value, currency = 'EGP') => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency,

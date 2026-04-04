@@ -1,5 +1,11 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from './store/authStore';
+import { useUIStore } from './store/uiStore';
+import { useEffect } from 'react';
+import { getSettings } from './services/settingsService';
+import ToastContainer from './components/ui/ToastContainer';
+import GlobalSearch from './components/GlobalSearch';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -13,6 +19,7 @@ import LeadPipeline from './pages/leads/LeadPipeline';
 import PropertyList from './pages/properties/PropertyList';
 import PropertyDetail from './pages/properties/PropertyDetail';
 import AddEditProperty from './pages/properties/AddEditProperty';
+import PublicProperty from './pages/properties/PublicProperty';
 import DealList from './pages/deals/DealList';
 import DealPipeline from './pages/deals/DealPipeline';
 import Calendar from './pages/calendar/Calendar';
@@ -47,62 +54,89 @@ const RoleRoute = ({ children, roles }) => {
 
 function App() {
     const { isAuthenticated } = useAuthStore();
+    const { theme } = useUIStore();
+
+    const { data: settingsData } = useQuery({
+        queryKey: ['settings'],
+        queryFn: getSettings,
+        enabled: !!isAuthenticated
+    });
+    const language = settingsData?.data?.language || 'en';
+
+    // Apply theme to document root
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
+
+    // Apply language and direction (RTL for Arabic)
+    useEffect(() => {
+        const lang = language === 'ar' ? 'ar' : 'en';
+        const dir = language === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', dir);
+    }, [language]);
 
     return (
-        <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
-            <Route path="/register" element={isAuthenticated ? <Navigate to="/" replace /> : <Register />} />
+        <>
+            <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
+                <Route path="/register" element={isAuthenticated ? <Navigate to="/" replace /> : <Register />} />
+                <Route path="/share/:token" element={<PublicProperty />} />
 
-            {/* Protected Routes */}
-            <Route
-                path="/"
-                element={
-                    <ProtectedRoute>
-                        <MainLayout />
-                    </ProtectedRoute>
-                }
-            >
-                <Route index element={<Dashboard />} />
-
-                {/* Leads */}
-                <Route path="leads" element={<LeadList />} />
-                <Route path="leads/pipeline" element={<LeadPipeline />} />
-                <Route path="leads/:id" element={<LeadDetails />} />
-
-                {/* Properties */}
-                <Route path="properties" element={<PropertyList />} />
-                <Route path="properties/new" element={<AddEditProperty />} />
-                <Route path="properties/:id" element={<PropertyDetail />} />
-                <Route path="properties/:id/edit" element={<AddEditProperty />} />
-
-                {/* Deals */}
-                <Route path="deals" element={<DealList />} />
-                <Route path="deals/pipeline" element={<DealPipeline />} />
-
-                {/* Calendar */}
-                <Route path="calendar" element={<Calendar />} />
-
-                {/* Team - Admin/Manager Only */}
+                {/* Protected Routes */}
                 <Route
-                    path="team"
+                    path="/"
                     element={
-                        <RoleRoute roles={['admin', 'manager']}>
-                            <UserManagement />
-                        </RoleRoute>
+                        <ProtectedRoute>
+                            <MainLayout />
+                        </ProtectedRoute>
                     }
-                />
+                >
+                    <Route index element={<Dashboard />} />
 
-                {/* Reports */}
-                <Route path="reports" element={<Reports />} />
+                    {/* Leads */}
+                    <Route path="leads" element={<LeadList />} />
+                    <Route path="leads/pipeline" element={<LeadPipeline />} />
+                    <Route path="leads/:id" element={<LeadDetails />} />
 
-                {/* Settings */}
-                <Route path="settings" element={<Settings />} />
-            </Route>
+                    {/* Properties */}
+                    <Route path="properties" element={<PropertyList />} />
+                    <Route path="properties/new" element={<AddEditProperty />} />
+                    <Route path="properties/:id" element={<PropertyDetail />} />
+                    <Route path="properties/:id/edit" element={<AddEditProperty />} />
 
-            {/* 404 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+                    {/* Deals */}
+                    <Route path="deals" element={<DealList />} />
+                    <Route path="deals/pipeline" element={<DealPipeline />} />
+
+                    {/* Calendar */}
+                    <Route path="calendar" element={<Calendar />} />
+
+                    {/* Team - Admin/Manager Only */}
+                    <Route
+                        path="team"
+                        element={
+                            <RoleRoute roles={['admin', 'manager']}>
+                                <UserManagement />
+                            </RoleRoute>
+                        }
+                    />
+
+                    {/* Reports */}
+                    <Route path="reports" element={<Reports />} />
+
+                    {/* Settings */}
+                    <Route path="settings" element={<Settings />} />
+                </Route>
+
+                {/* 404 */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+
+            <ToastContainer />
+            <GlobalSearch />
+        </>
     );
 }
 

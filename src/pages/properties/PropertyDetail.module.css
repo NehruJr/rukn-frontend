@@ -358,6 +358,34 @@
     text-transform: capitalize;
 }
 
+.assignedList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.assignedItem {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.assignedItem:last-child {
+    border-bottom: none;
+}
+
+.assignedName {
+    font-weight: 500;
+    color: #111827;
+}
+
+.assignedEmail {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
 .loading {
     text-align: center;
     padding: 4rem;

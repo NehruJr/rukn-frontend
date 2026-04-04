@@ -29,5 +29,11 @@ export const userService = {
   deleteUser: async (id) => {
     const response = await api.delete(`/users/${id}`);
     return response.data;
+  },
+
+  // Get all agents (admin/manager/team_leader, for assignment dropdown)
+  getAgents: async () => {
+    const response = await api.get('/users/agents');
+    return response.data;
   }
 };

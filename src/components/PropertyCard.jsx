@@ -21,7 +21,7 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
     const formatPrice = (value) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: currency || 'USD',
+            currency: currency || 'EGP',
             maximumFractionDigits: 0
         }).format(value);
     };

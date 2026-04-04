@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { DEAL_STAGES, TRANSACTION_TYPES } from '@/utils/constants';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import leadService from '@/services/leadService';
 import styles from './DealForm.module.css';
 
 const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
+
     const [formData, setFormData] = useState({
         title: '',
         lead: '',
         property: '',
         transactionType: 'sale',
         dealValue: '',
-        currency: 'USD',
+        currency: 'EGP',
         stage: 'negotiation',
         probability: 50,
         expectedCloseDate: '',
@@ -22,11 +25,53 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
         notes: ''
     });
 
+    // Fetch leads when modal is open (agents get their assigned leads from backend)
+    const { data: leadsResponse } = useQuery({
+        queryKey: ['leads-for-deal'],
+        queryFn: () => leadService.getLeads({ limit: 200 }),
+        enabled: !!isOpen
+    });
+    const leads = leadsResponse?.data || [];
+
+    const selectedLead = formData.lead
+        ? leads.find((l) => (l._id || l.id) === formData.lead)
+        : null;
+    const assignedProperties = selectedLead?.interestedProperties
+        ?.map((i) => i.property)
+        .filter(Boolean) || [];
+
+    // When editing, include initial lead/property in options if not in list
+    const leadInList = leads.some((l) => (l._id || l.id) === formData.lead);
+    const initialLeadLabel = initialData?.lead && typeof initialData.lead === 'object' && initialData.lead.firstName
+        ? `${initialData.lead.firstName} ${initialData.lead.lastName}`.trim()
+        : null;
+    const initialPropertyLabel = initialData?.property && typeof initialData.property === 'object' && initialData.property.title
+        ? initialData.property.title
+        : null;
+
     useEffect(() => {
         if (initialData) {
-            setFormData(initialData);
+            setFormData({
+                ...initialData,
+                lead: initialData.lead?._id || initialData.lead || '',
+                property: initialData.property?._id || initialData.property || ''
+            });
+        } else if (isOpen) {
+            setFormData({
+                title: '',
+                lead: '',
+                property: '',
+                transactionType: 'sale',
+                dealValue: '',
+                currency: 'EGP',
+                stage: 'negotiation',
+                probability: 50,
+                expectedCloseDate: '',
+                commission: { percentage: '', amount: '' },
+                notes: ''
+            });
         }
-    }, [initialData]);
+    }, [initialData, isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,7 +86,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             property: '',
             transactionType: 'sale',
             dealValue: '',
-            currency: 'USD',
+            currency: 'EGP',
             stage: 'negotiation',
             probability: 50,
             expectedCloseDate: '',
@@ -87,28 +132,59 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Lead ID *</label>
-                            <Input
+                            <label>Lead *</label>
+                            <select
                                 value={formData.lead}
-                                onChange={(e) => setFormData({ ...formData, lead: e.target.value })}
-                                placeholder="Enter lead ID"
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    lead: e.target.value,
+                                    property: '' // reset property when lead changes
+                                })}
+                                className={styles.select}
                                 required
-                            />
+                            >
+                                <option value="">Select a lead</option>
+                                {!leadInList && formData.lead && initialLeadLabel && (
+                                    <option value={formData.lead}>{initialLeadLabel} (current)</option>
+                                )}
+                                {leads.map((lead) => (
+                                    <option key={lead._id} value={lead._id}>
+                                        {lead.firstName} {lead.lastName}
+                                        {lead.email ? ` · ${lead.email}` : ''}
+                                    </option>
+                                ))}
+                            </select>
                             <small style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--font-size-xs)' }}>
-                                Get lead ID from the leads page
+                                Leads assigned to you
                             </small>
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Property ID *</label>
-                            <Input
+                            <label>Property *</label>
+                            <select
                                 value={formData.property}
                                 onChange={(e) => setFormData({ ...formData, property: e.target.value })}
-                                placeholder="Enter property ID"
+                                className={styles.select}
                                 required
-                            />
+                                disabled={!formData.lead}
+                            >
+                                <option value="">Select a property</option>
+                                {formData.property && assignedProperties.length === 0 && initialPropertyLabel && (
+                                    <option value={formData.property}>{initialPropertyLabel} (current)</option>
+                                )}
+                                {assignedProperties.map((prop) => (
+                                    <option key={prop._id} value={prop._id}>
+                                        {prop.title || 'Untitled'}
+                                        {prop.price != null ? ` · ${Number(prop.price).toLocaleString()}` : ''}
+                                    </option>
+                                ))}
+                            </select>
                             <small style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--font-size-xs)' }}>
-                                Get property ID from the properties page
+                                {!formData.lead
+                                    ? 'Select a lead first'
+                                    : assignedProperties.length === 0
+                                        ? 'No properties assigned to this lead. Assign from the lead detail page.'
+                                        : 'Properties assigned to this lead'}
                             </small>
                         </div>
 
@@ -130,9 +206,11 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                 onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                                 className={styles.select}
                             >
+                                <option value="EGP">EGP</option>
                                 <option value="USD">USD</option>
                                 <option value="EUR">EUR</option>
                                 <option value="GBP">GBP</option>
+                                <option value="AED">AED</option>
                             </select>
                         </div>
 

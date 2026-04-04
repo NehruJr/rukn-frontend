@@ -35,5 +35,23 @@ export const propertyService = {
   uploadImages: async (id, images) => {
     const response = await api.post(`/properties/${id}/images`, { images });
     return response.data;
+  },
+
+  // Assign agents to property (admin/manager/team_leader)
+  assignAgents: async (id, agentIds) => {
+    const response = await api.post(`/properties/${id}/assign`, { agentIds });
+    return response.data;
+  },
+
+  // Generate or get share link (returns shareUrl path and shareToken)
+  getShareLink: async (id) => {
+    const response = await api.get(`/properties/${id}/share`);
+    return response.data;
+  },
+
+  // Get property by share token (public, no auth required)
+  getPublicProperty: async (token) => {
+    const response = await api.get(`/properties/public/${token}`);
+    return response.data;
   }
 };

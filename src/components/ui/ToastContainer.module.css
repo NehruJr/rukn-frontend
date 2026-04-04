@@ -1,0 +1,22 @@
+.container {
+    position: fixed;
+    top: var(--space-6);
+    right: var(--space-6);
+    z-index: var(--z-tooltip);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    pointer-events: none;
+}
+
+.container>* {
+    pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+    .container {
+        top: var(--space-4);
+        right: var(--space-4);
+        left: var(--space-4);
+    }
+}

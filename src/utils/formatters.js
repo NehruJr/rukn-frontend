@@ -15,7 +15,7 @@ export const formatTimeAgo = (date) => {
   return formatDistance(new Date(date), new Date(), { addSuffix: true });
 };
 
-export const formatCurrency = (amount, currency = 'USD') => {
+export const formatCurrency = (amount, currency = 'EGP') => {
   if (amount === null || amount === undefined) return '';
   
   return new Intl.NumberFormat('en-US', {

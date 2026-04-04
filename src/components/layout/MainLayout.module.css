@@ -4,6 +4,10 @@
     background-color: var(--color-bg-secondary);
 }
 
+[dir="rtl"] .layout {
+    flex-direction: row-reverse;
+}
+
 .mainContent {
     flex: 1;
     display: flex;

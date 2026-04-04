@@ -15,7 +15,7 @@ const AddEditProperty = () => {
         propertyType: 'apartment',
         transactionType: 'sale',
         price: '',
-        currency: 'USD',
+        currency: 'EGP',
         location: {
             address: '',
             city: '',

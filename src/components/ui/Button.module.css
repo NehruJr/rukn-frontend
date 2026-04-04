@@ -10,11 +10,31 @@
     transition: all var(--transition-fast);
     font-family: inherit;
     white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.button:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .button:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 0 3px rgba(180, 86, 45, 0.3);
 }
 
 /* Variants */
@@ -25,8 +45,12 @@
 
 .primary:hover:not(:disabled) {
     background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-800) 100%);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+}
+
+.primary:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .secondary {
@@ -36,6 +60,8 @@
 
 .secondary:hover:not(:disabled) {
     background-color: var(--color-neutral-200);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
 }
 
 .outline {
@@ -48,6 +74,7 @@
     background-color: var(--color-neutral-50);
     border-color: var(--color-primary-500);
     color: var(--color-primary-600);
+    transform: translateY(-1px);
 }
 
 .ghost {
@@ -67,6 +94,8 @@
 
 .danger:hover:not(:disabled) {
     background-color: var(--color-danger-700);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .success {
@@ -76,6 +105,8 @@
 
 .success:hover:not(:disabled) {
     background-color: var(--color-success-700);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 /* Sizes */
@@ -124,9 +155,11 @@
 .rightIcon {
     display: inline-flex;
     align-items: center;
+    z-index: 1;
 }
 
 .content {
     display: inline-flex;
     align-items: center;
+    z-index: 1;
 }

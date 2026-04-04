@@ -35,6 +35,18 @@ export const leadService = {
   addActivity: async (leadId, data) => {
     const response = await api.post(`/leads/${leadId}/activities`, data);
     return response.data;
+  },
+
+  // Add property to lead
+  addPropertyToLead: async (leadId, propertyId, interest = 'medium') => {
+    const response = await api.post(`/leads/${leadId}/properties`, { propertyId, interest });
+    return response.data;
+  },
+
+  // Remove property from lead
+  removePropertyFromLead: async (leadId, propertyId) => {
+    const response = await api.delete(`/leads/${leadId}/properties/${propertyId}`);
+    return response.data;
   }
 };
 

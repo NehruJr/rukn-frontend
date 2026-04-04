@@ -1,0 +1,357 @@
+.wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-secondary, #f9fafb);
+}
+
+.brandHeader,
+.footer {
+    padding: 1rem 1.5rem;
+    text-align: center;
+    background: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.footer {
+    border-bottom: none;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+    margin-top: auto;
+}
+
+.brand {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.main {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem 1.5rem;
+}
+
+.loading,
+.error {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--color-text-secondary);
+}
+
+.error p {
+    font-size: 1.125rem;
+}
+
+.gallerySection {
+    margin-bottom: 2.5rem;
+}
+
+.mainImageWrap {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-neutral-100);
+    margin-bottom: 1rem;
+}
+
+.mainImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.galleryNav {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: background 0.2s;
+}
+
+.galleryNav:hover {
+    background: #fff;
+}
+
+.galleryNavRight {
+    left: auto;
+    right: 0;
+}
+
+.thumbnails {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+    transition: border-color 0.2s, opacity 0.2s;
+    opacity: 0.75;
+}
+
+.thumbnail:hover,
+.activeThumbnail {
+    opacity: 1;
+    border-color: var(--color-primary-500, #3b82f6);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.primary {
+    min-width: 0;
+}
+
+.badges {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: var(--color-primary-100, #e0e7ff);
+    color: var(--color-primary-700, #4f46e5);
+}
+
+.typeBadge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: var(--color-neutral-100);
+    color: var(--color-text-secondary);
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.25;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-primary-500, #3b82f6);
+    margin-bottom: 2rem;
+}
+
+.section {
+    margin-bottom: 2rem;
+}
+
+.section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 1rem 0;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.25rem;
+    background: var(--color-bg-primary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-text-secondary);
+}
+
+.featureValue {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.featureLabel {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+}
+
+.description {
+    line-height: 1.75;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.amenities {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+
+.amenity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+}
+
+.amenity svg {
+    color: var(--color-success-500);
+    flex-shrink: 0;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.agentCard {
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: sticky;
+    top: 1.5rem;
+}
+
+.agentCard h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 1.25rem 0;
+}
+
+.agentInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.agentAvatar {
+    width: 52px;
+    height: 52px;
+    background: var(--color-neutral-100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+}
+
+.agentInfo h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+}
+
+.agentInfo p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.agentContact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.contactLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: color 0.2s;
+}
+
+.contactLink:hover {
+    color: var(--color-primary-500);
+}
+
+.contactButton {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--color-primary-500, #3b82f6);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.contactButton:hover {
+    background: var(--color-primary-600, #2563eb);
+}
