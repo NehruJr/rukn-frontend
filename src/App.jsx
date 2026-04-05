@@ -61,7 +61,7 @@ function App() {
         queryFn: getSettings,
         enabled: !!isAuthenticated
     });
-    const language = settingsData?.data?.language || 'en';
+    const language = settingsData?.data?.language || 'ar';
 
     // Apply theme to document root
     useEffect(() => {

@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { dashboardService } from '@/services/dashboardService';
+import { useLanguage } from '@/hooks/useLanguage';
 import { Users, Building2, FileText, DollarSign, TrendingUp, Clock } from 'lucide-react';
 import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
     const { user } = useAuthStore();
+    const { t, locale, leadPriority, taskPriority, leadSource, taskTitle } = useLanguage();
     const [stats, setStats] = useState(null);
     const [recentLeads, setRecentLeads] = useState([]);
     const [tasks, setTasks] = useState([]);
@@ -31,7 +33,7 @@ const Dashboard = () => {
             setError(null);
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
-            setError('Failed to load dashboard data');
+            setError(t('dashboard.errorLoad'));
         } finally {
             setLoading(false);
         }
@@ -40,20 +42,29 @@ const Dashboard = () => {
     const getRoleBadge = () => {
         switch (user?.role) {
             case 'admin':
-                return { label: 'All Organization', color: '#2c3438' }; // Secondary
+                return { labelKey: 'dashboard.roleAllOrg', color: '#2c3438' };
             case 'manager':
-                return { label: 'My Team', color: '#b4562d' }; // Primary
+                return { labelKey: 'dashboard.roleMyTeam', color: '#b4562d' };
             case 'agent':
-                return { label: 'My Performance', color: '#10B981' }; // Success
+                return { labelKey: 'dashboard.roleMyPerformance', color: '#10B981' };
+            case 'team_leader':
+                return { labelKey: 'dashboard.roleMyTeam', color: '#b4562d' };
+            case 'sales_support':
+                return { labelKey: 'dashboard.roleDashboard', color: '#666e73' };
             default:
-                return { label: 'Dashboard', color: '#666e73' }; // Neutral
+                return { labelKey: 'dashboard.roleDashboard', color: '#666e73' };
         }
     };
+
+    const timeOptions = useMemo(
+        () => ({ hour: 'numeric', minute: 'numeric' }),
+        []
+    );
 
     if (loading) {
         return (
             <div className={styles.dashboard}>
-                <div className={styles.loading}>Loading dashboard...</div>
+                <div className={styles.loading}>{t('dashboard.loading')}</div>
             </div>
         );
     }
@@ -68,57 +79,60 @@ const Dashboard = () => {
 
     const roleBadge = getRoleBadge();
 
-    const statsDisplay = stats ? [
-        {
-            title: 'Total Leads',
-            value: stats.stats.totalLeads?.value || 0,
-            change: stats.stats.totalLeads?.change || '+0%',
-            trend: stats.stats.totalLeads?.trend || 'up',
-            icon: Users,
-            color: '#b4562d' // Primary
-        },
-        {
-            title: 'Active Properties',
-            value: stats.stats.activeProperties?.value || 0,
-            change: stats.stats.activeProperties?.change || '+0%',
-            trend: stats.stats.activeProperties?.trend || 'up',
-            icon: Building2,
-            color: '#10B981' // Success
-        },
-        {
-            title: 'Deals Closed',
-            value: stats.stats.dealsClosed?.value || 0,
-            change: stats.stats.dealsClosed?.change || '+0%',
-            trend: stats.stats.dealsClosed?.trend || 'up',
-            icon: FileText,
-            color: '#F59E0B' // Warning
-        },
-        {
-            title: 'Revenue',
-            value: stats.stats.revenue?.formatted || '$0',
-            change: stats.stats.revenue?.change || '+0%',
-            trend: stats.stats.revenue?.trend || 'up',
-            icon: DollarSign,
-            color: '#2c3438' // Secondary
-        }
-    ] : [];
+    const statsDisplay = stats
+        ? [
+              {
+                  title: t('dashboard.statTotalLeads'),
+                  value: stats.stats.totalLeads?.value || 0,
+                  change: stats.stats.totalLeads?.change || '+0%',
+                  trend: stats.stats.totalLeads?.trend || 'up',
+                  icon: Users,
+                  color: '#b4562d'
+              },
+              {
+                  title: t('dashboard.statActiveProperties'),
+                  value: stats.stats.activeProperties?.value || 0,
+                  change: stats.stats.activeProperties?.change || '+0%',
+                  trend: stats.stats.activeProperties?.trend || 'up',
+                  icon: Building2,
+                  color: '#10B981'
+              },
+              {
+                  title: t('dashboard.statDealsClosed'),
+                  value: stats.stats.dealsClosed?.value || 0,
+                  change: stats.stats.dealsClosed?.change || '+0%',
+                  trend: stats.stats.dealsClosed?.trend || 'up',
+                  icon: FileText,
+                  color: '#F59E0B'
+              },
+              {
+                  title: t('dashboard.statRevenue'),
+                  value: stats.stats.revenue?.formatted || '$0',
+                  change: stats.stats.revenue?.change || '+0%',
+                  trend: stats.stats.revenue?.trend || 'up',
+                  icon: DollarSign,
+                  color: '#2c3438'
+              }
+          ]
+        : [];
 
     return (
         <div className={styles.dashboard}>
             <div className={styles.welcomeSection}>
                 <div>
-                    <h1>Welcome back, {user?.firstName}! 👋</h1>
-                    <p>Here's what's happening with your business today</p>
+                    <h1>
+                        {t('dashboard.welcome')}, {user?.firstName}! {t('dashboard.welcomeEmoji')}
+                    </h1>
+                    <p>{t('dashboard.welcomeSub')}</p>
                 </div>
                 <div
                     className={styles.roleBadge}
                     style={{ backgroundColor: `${roleBadge.color}15`, color: roleBadge.color }}
                 >
-                    {roleBadge.label}
+                    {t(roleBadge.labelKey)}
                 </div>
             </div>
 
-            {/* Stats Grid */}
             <div className={styles.statsGrid}>
                 {statsDisplay.map((stat, index) => {
                     const Icon = stat.icon;
@@ -142,69 +156,67 @@ const Dashboard = () => {
                 })}
             </div>
 
-            {/* Content Grid */}
             <div className={styles.contentGrid}>
-                {/* Recent Leads */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
-                        <h3>Recent Leads</h3>
-                        <a href="/leads" className={styles.viewAll}>View all</a>
+                        <h3>{t('dashboard.recentLeads')}</h3>
+                        <a href="/leads" className={styles.viewAll}>
+                            {t('dashboard.viewAll')}
+                        </a>
                     </div>
                     <div className={styles.leadList}>
                         {recentLeads.length > 0 ? (
-                            recentLeads.map(lead => (
+                            recentLeads.map((lead) => (
                                 <div key={lead._id} className={styles.leadItem}>
                                     <div className={styles.leadAvatar}>
                                         {(lead.firstName?.[0] || '') + (lead.lastName?.[0] || '')}
                                     </div>
                                     <div className={styles.leadInfo}>
-                                        <p className={styles.leadName}>{lead.firstName} {lead.lastName}</p>
+                                        <p className={styles.leadName}>
+                                            {lead.firstName} {lead.lastName}
+                                        </p>
                                         <p className={styles.leadMeta}>
-                                            {lead.source} • {new Date(lead.createdAt).toLocaleString('en-US', {
-                                                hour: 'numeric',
-                                                minute: 'numeric'
-                                            })}
+                                            {leadSource(lead.source)} •{' '}
+                                            {new Date(lead.createdAt).toLocaleString(locale, timeOptions)}
                                         </p>
                                     </div>
                                     <span className={`${styles.priority} ${styles[lead.priority]}`}>
-                                        {lead.priority}
+                                        {leadPriority(lead.priority)}
                                     </span>
                                 </div>
                             ))
                         ) : (
-                            <p className={styles.emptyState}>No recent leads</p>
+                            <p className={styles.emptyState}>{t('dashboard.noRecentLeads')}</p>
                         )}
                     </div>
                 </div>
 
-                {/* Today's Tasks */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
-                        <h3>Today's Tasks</h3>
-                        <a href="/calendar" className={styles.viewAll}>View calendar</a>
+                        <h3>{t('dashboard.todaysTasks')}</h3>
+                        <a href="/calendar" className={styles.viewAll}>
+                            {t('dashboard.viewCalendar')}
+                        </a>
                     </div>
                     <div className={styles.taskList}>
                         {tasks.length > 0 ? (
-                            tasks.map(task => (
+                            tasks.map((task) => (
                                 <div key={task.id} className={styles.taskItem}>
                                     <input type="checkbox" className={styles.taskCheckbox} />
                                     <div className={styles.taskInfo}>
-                                        <p className={styles.taskTitle}>{task.title}</p>
+                                        <p className={styles.taskTitle}>{taskTitle(task.title)}</p>
                                         <p className={styles.taskTime}>
                                             <Clock size={14} />
-                                            {new Date(task.time).toLocaleTimeString('en-US', {
-                                                hour: 'numeric',
-                                                minute: 'numeric'
-                                            })}
+                                            {new Date(task.time).toLocaleTimeString(locale, timeOptions)}
                                         </p>
                                     </div>
                                     <span className={`${styles.taskPriority} ${styles[task.priority]}`}>
-                                        {task.priority}
+                                        {taskPriority(task.priority)}
                                     </span>
                                 </div>
                             ))
                         ) : (
-                            <p className={styles.emptyState}>No tasks for today</p>
+                            <p className={styles.emptyState}>{t('dashboard.noTasksToday')}</p>
                         )}
                     </div>
                 </div>

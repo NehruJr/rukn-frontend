@@ -350,7 +350,7 @@ const SystemSettings = ({ settings, onUpdate, isSaving }) => {
         currency: settings.currency || 'EGP',
         dateFormat: settings.dateFormat || 'MM/DD/YYYY',
         timezone: settings.timezone || 'UTC',
-        language: settings.language || 'en'
+        language: settings.language || 'ar'
     });
 
     useEffect(() => {
@@ -358,7 +358,7 @@ const SystemSettings = ({ settings, onUpdate, isSaving }) => {
             currency: settings.currency || 'EGP',
             dateFormat: settings.dateFormat || 'MM/DD/YYYY',
             timezone: settings.timezone || 'UTC',
-            language: settings.language || 'en'
+            language: settings.language || 'ar'
         });
     }, [settings]);
 
@@ -423,8 +423,8 @@ const SystemSettings = ({ settings, onUpdate, isSaving }) => {
                             onChange={(e) => setFormData({ ...formData, language: e.target.value })}
                             className={styles.select}
                         >
+                            <option value="ar">العربية (Arabic)</option>
                             <option value="en">English</option>
-                            <option value="ar">Arabic</option>
                         </select>
                     </div>
                 </div>
