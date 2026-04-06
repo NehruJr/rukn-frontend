@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useLanguage } from '@/hooks/useLanguage';
 import { leadService } from '@/services/leadService';
 import LeadForm from '@/components/LeadForm';
 import { Plus, Filter, Search } from 'lucide-react';
@@ -10,6 +11,7 @@ import { LEAD_STATUSES, LEAD_PRIORITIES } from '@/utils/constants';
 import styles from './LeadList.module.css';
 
 const LeadList = () => {
+    const { t, leadStatus, leadPriority, leadSource } = useLanguage();
     const [filters, setFilters] = useState({
         search: '',
         status: '',
@@ -45,17 +47,17 @@ const LeadList = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Leads</h1>
-                    <p>Manage and track all your leads</p>
+                    <h1>{t('leads.title')}</h1>
+                    <p>{t('leads.pipeline')}</p>
                 </div>
                 <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>
-                    Add Lead
+                    {t('leads.addLead')}
                 </Button>
             </div>
 
             <div className={styles.toolbar}>
                 <Input
-                    placeholder="Search leads..."
+                    placeholder={t('layout.searchPlaceholder')}
                     leftIcon={<Search size={18} />}
                     value={filters.search}
                     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
@@ -68,9 +70,9 @@ const LeadList = () => {
                         onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                         className={styles.select}
                     >
-                        <option value="">All Statuses</option>
+                        <option value="">{t('common.allStatuses')}</option>
                         {LEAD_STATUSES.map(status => (
-                            <option key={status.value} value={status.value}>{status.label}</option>
+                            <option key={status.value} value={status.value}>{leadStatus(status.value)}</option>
                         ))}
                     </select>
 
@@ -79,14 +81,14 @@ const LeadList = () => {
                         onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
                         className={styles.select}
                     >
-                        <option value="">All Priorities</option>
+                        <option value="">{t('common.allPriorities')}</option>
                         {LEAD_PRIORITIES.map(priority => (
-                            <option key={priority.value} value={priority.value}>{priority.label}</option>
+                            <option key={priority.value} value={priority.value}>{leadPriority(priority.value)}</option>
                         ))}
                     </select>
 
                     <Button variant="outline" leftIcon={<Filter size={18} />}>
-                        More Filters
+                        {t('common.moreFilters')}
                     </Button>
                 </div>
             </div>
@@ -108,14 +110,14 @@ const LeadList = () => {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Contact</th>
-                                <th>Source</th>
-                                <th>Status</th>
-                                <th>Priority</th>
-                                <th>Assigned To</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th>{t('common.name')}</th>
+                                <th>{t('common.contact')}</th>
+                                <th>{t('leads.source')}</th>
+                                <th>{t('leads.status')}</th>
+                                <th>{t('leads.priority')}</th>
+                                <th>{t('leads.assignedTo')}</th>
+                                <th>{t('common.created')}</th>
+                                <th>{t('common.actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -148,7 +150,7 @@ const LeadList = () => {
                                             className={styles.badge}
                                             style={{ backgroundColor: `${getStatusColor(lead.status)}15`, color: getStatusColor(lead.status) }}
                                         >
-                                            {LEAD_STATUSES.find(s => s.value === lead.status)?.label}
+                                            {leadStatus(lead.status)}
                                         </span>
                                     </td>
                                     <td>
@@ -156,7 +158,7 @@ const LeadList = () => {
                                             className={styles.badge}
                                             style={{ backgroundColor: `${getPriorityColor(lead.priority)}15`, color: getPriorityColor(lead.priority) }}
                                         >
-                                            {lead.priority}
+                                            {leadPriority(lead.priority)}
                                         </span>
                                     </td>
                                     <td>
@@ -165,13 +167,13 @@ const LeadList = () => {
                                                 {lead.assignedTo.firstName} {lead.assignedTo.lastName}
                                             </div>
                                         ) : (
-                                            <span className={styles.unassigned}>Unassigned</span>
+                                            <span className={styles.unassigned}>{t('common.unassigned')}</span>
                                         )}
                                     </td>
                                     <td className={styles.date}>{formatTimeAgo(lead.createdAt)}</td>
                                     <td>
                                         <a href={`/leads/${lead._id}`} className={styles.viewLink}>
-                                            View
+                                            {t('common.view')}
                                         </a>
                                     </td>
                                 </tr>

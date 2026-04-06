@@ -43,6 +43,27 @@ export const messages = {
       logout: 'Logout',
       logoAlt: 'Rukn'
     },
+    common: {
+        allStatuses: 'All Statuses',
+        allPriorities: 'All Priorities',
+        moreFilters: 'More Filters',
+        actions: 'Actions',
+        unassigned: 'Unassigned',
+        view: 'View',
+        created: 'Created',
+        name: 'Name',
+        contact: 'Contact'
+    },
+    leadStatus: {
+        new: 'New',
+        contacted: 'Contacted',
+        qualified: 'Qualified',
+        viewing_scheduled: 'Viewing Scheduled',
+        negotiating: 'Negotiating',
+        converted: 'Converted',
+        lost: 'Lost',
+        unqualified: 'Unqualified'
+    },
     roles: {
       admin: 'Admin',
       manager: 'Manager',
@@ -196,6 +217,27 @@ export const messages = {
       logout: 'تسجيل الخروج',
       logoAlt: 'ركن'
     },
+    common: {
+        allStatuses: 'جميع الحالات',
+        allPriorities: 'جميع الأولويات',
+        moreFilters: 'المزيد من الفلاتر',
+        actions: 'الإجراءات',
+        unassigned: 'غير مخصص',
+        view: 'عرض',
+        created: 'تاريخ الإنشاء',
+        name: 'الاسم',
+        contact: 'الاتصال'
+    },
+    leadStatus: {
+        new: 'جديد',
+        contacted: 'تم التواصل',
+        qualified: 'مؤهل',
+        viewing_scheduled: 'تم تحديد موعد معاينة',
+        negotiating: 'تفاوض',
+        converted: 'تم التحويل',
+        lost: 'مفقود',
+        unqualified: 'غير مؤهل'
+    },
     roles: {
       admin: 'مسؤول',
       manager: 'مدير',
@@ -340,6 +382,11 @@ export function createTranslator(lang) {
     return getNested(primary, `leadSource.${key}`) || s;
   }
 
+  function leadStatus(s) {
+    const key = s?.toLowerCase?.() || s;
+    return getNested(primary, `leadStatus.${key}`) || s;
+  }
+
   function userRole(r) {
     const key = r;
     return getNested(primary, `roles.${key}`) || r;
@@ -355,5 +402,5 @@ export function createTranslator(lang) {
     return title;
   }
 
-  return { t, leadPriority, taskPriority, leadSource, userRole, taskTitle };
+  return { t, leadPriority, leadStatus, taskPriority, leadSource, userRole, taskTitle };
 }

@@ -17,12 +17,13 @@ export function useLanguage() {
   const raw = settingsData?.data?.language;
   const language = raw === 'en' ? 'en' : 'ar';
   const locale = language === 'ar' ? 'ar-EG' : 'en-US';
-  const { t, leadPriority, taskPriority, leadSource, userRole, taskTitle } = createTranslator(language);
+  const { t, leadStatus, leadPriority, taskPriority, leadSource, userRole, taskTitle } = createTranslator(language);
 
   return {
     language,
     locale,
     t,
+    leadStatus,
     leadPriority,
     taskPriority,
     leadSource,
