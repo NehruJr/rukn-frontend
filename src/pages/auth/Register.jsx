@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { useUIStore } from '@/store/uiStore';
 import { authService } from '@/services/authService';
+import { createTranslator } from '@/locales/messages';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Mail, Lock, User, Phone, Building2 } from 'lucide-react';
@@ -10,6 +12,9 @@ import styles from './Login.module.css'; // Reuse login styles
 const Register = () => {
     const navigate = useNavigate();
     const { setAuth } = useAuthStore();
+    const { addToast } = useUIStore();
+    const t = createTranslator('ar').t;
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -62,17 +67,17 @@ const Register = () => {
         <div className={styles.container}>
             <div className={styles.leftPanel}>
                 <div className={styles.branding}>
-                    <img src="/ruknlogo.png" alt="Rukn" className={styles.logoImage} />
-                    <h1>Join Rukn CRM</h1>
-                    <p>Start managing your real estate business more efficiently</p>
+                    <img src="/ruknlogo.png" alt={t('layout.logoAlt')} className={styles.logoImage} />
+                    <h1>{t('auth.registerBrandingTitle')}</h1>
+                    <p>{t('auth.registerBrandingDesc')}</p>
                 </div>
             </div>
 
             <div className={styles.rightPanel}>
                 <div className={styles.formContainer}>
                     <div className={styles.header}>
-                        <h2>Create Account</h2>
-                        <p>Sign up to get started with our CRM</p>
+                        <h2>{t('auth.registerTitle')}</h2>
+                        <p>{t('auth.registerSub')}</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className={styles.form}>
@@ -86,7 +91,7 @@ const Register = () => {
                             <Input
                                 name="firstName"
                                 type="text"
-                                label="First Name"
+                                label={t('auth.firstNameLabel')}
                                 placeholder="John"
                                 value={formData.firstName}
                                 onChange={handleChange}
@@ -98,7 +103,7 @@ const Register = () => {
                             <Input
                                 name="lastName"
                                 type="text"
-                                label="Last Name"
+                                label={t('auth.lastNameLabel')}
                                 placeholder="Doe"
                                 value={formData.lastName}
                                 onChange={handleChange}
@@ -111,8 +116,8 @@ const Register = () => {
                         <Input
                             name="email"
                             type="email"
-                            label="Email Address"
-                            placeholder="john@example.com"
+                            label={t('auth.emailLabel')}
+                            placeholder={t('auth.emailPlaceholder')}
                             value={formData.email}
                             onChange={handleChange}
                             leftIcon={<Mail size={18} />}
@@ -123,7 +128,7 @@ const Register = () => {
                         <Input
                             name="phone"
                             type="tel"
-                            label="Phone Number"
+                            label={t('auth.phoneLabel')}
                             placeholder="+1 (555) 000-0000"
                             value={formData.phone}
                             onChange={handleChange}
@@ -134,8 +139,8 @@ const Register = () => {
                         <Input
                             name="password"
                             type="password"
-                            label="Password"
-                            placeholder="Minimum 6 characters"
+                            label={t('auth.passwordLabel')}
+                            placeholder={t('auth.passwordPlaceholder')}
                             value={formData.password}
                             onChange={handleChange}
                             leftIcon={<Lock size={18} />}
@@ -146,8 +151,8 @@ const Register = () => {
                         <Input
                             name="confirmPassword"
                             type="password"
-                            label="Confirm Password"
-                            placeholder="Re-enter your password"
+                            label={t('auth.confirmPasswordLabel')}
+                            placeholder={t('auth.passwordPlaceholder')}
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             leftIcon={<Lock size={18} />}
@@ -162,15 +167,15 @@ const Register = () => {
                             fullWidth
                             loading={loading}
                         >
-                            Create Account
+                            {t('auth.createAccountBtn')}
                         </Button>
                     </form>
 
                     <div className={styles.footer}>
                         <p>
-                            Already have an account?{' '}
+                            {t('auth.alreadyHaveAccount')}{' '}
                             <Link to="/login" className={styles.link}>
-                                Sign in
+                                {t('auth.signInLink')}
                             </Link>
                         </p>
                     </div>

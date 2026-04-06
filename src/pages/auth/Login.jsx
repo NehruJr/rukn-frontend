@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
 import { authService } from '@/services/authService';
+import { createTranslator } from '@/locales/messages';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Mail, Lock, Building2 } from 'lucide-react';
@@ -12,6 +13,10 @@ const Login = () => {
     const navigate = useNavigate();
     const { setAuth } = useAuthStore();
     const { addToast } = useUIStore();
+    
+    // Default to 'ar' if not specified
+    const t = createTranslator('ar').t;
+
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -60,17 +65,17 @@ const Login = () => {
         <div className={styles.container}>
             <div className={styles.leftPanel}>
                 <div className={styles.branding}>
-                    <img src="/ruknlogo.png" alt="Rukn" className={styles.logoImage} />
+                    <img src="/ruknlogo.png" alt={t('layout.logoAlt')} className={styles.logoImage} />
                     <h1>Rukn CRM</h1>
-                    <p>Manage your leads, properties, and deals efficiently</p>
+                    <p>{t('auth.brandingDesc')}</p>
                 </div>
             </div>
 
             <div className={styles.rightPanel}>
                 <div className={styles.formContainer}>
                     <div className={styles.header}>
-                        <h2>Welcome Back</h2>
-                        <p>Sign in to your account to continue</p>
+                        <h2>{t('auth.loginTitle')}</h2>
+                        <p>{t('auth.loginSub')}</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className={styles.form}>
@@ -83,8 +88,8 @@ const Login = () => {
                         <Input
                             name="email"
                             type="email"
-                            label="Email Address"
-                            placeholder="Enter your email"
+                            label={t('auth.emailLabel')}
+                            placeholder={t('auth.emailPlaceholder')}
                             value={formData.email}
                             onChange={handleChange}
                             leftIcon={<Mail size={18} />}
@@ -95,8 +100,8 @@ const Login = () => {
                         <Input
                             name="password"
                             type="password"
-                            label="Password"
-                            placeholder="Enter your password"
+                            label={t('auth.passwordLabel')}
+                            placeholder={t('auth.passwordPlaceholder')}
                             value={formData.password}
                             onChange={handleChange}
                             leftIcon={<Lock size={18} />}
@@ -107,10 +112,10 @@ const Login = () => {
                         <div className={styles.options}>
                             <label className={styles.checkbox}>
                                 <input type="checkbox" />
-                                <span>Remember me</span>
+                                <span>{t('auth.rememberMe')}</span>
                             </label>
                             <Link to="/forgot-password" className={styles.link}>
-                                Forgot password?
+                                {t('auth.forgotPassword')}
                             </Link>
                         </div>
 
@@ -121,15 +126,15 @@ const Login = () => {
                             fullWidth
                             loading={loading}
                         >
-                            Sign In
+                            {t('auth.signInBtn')}
                         </Button>
                     </form>
 
                     <div className={styles.footer}>
                         <p>
-                            Don't have an account?{' '}
+                            {t('auth.noAccount')}{' '}
                             <Link to="/register" className={styles.link}>
-                                Sign up
+                                {t('auth.signUpLink')}
                             </Link>
                         </p>
                     </div>
