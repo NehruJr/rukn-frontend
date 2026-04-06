@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { useUIStore } from '@/store/uiStore';
 import { authService } from '@/services/authService';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -10,6 +11,7 @@ import styles from './Login.module.css';
 const Login = () => {
     const navigate = useNavigate();
     const { setAuth } = useAuthStore();
+    const { addToast } = useUIStore();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -31,11 +33,24 @@ const Login = () => {
         setLoading(true);
 
         try {
+            console.log('Attempting login with:', formData.email);
             const response = await authService.login(formData);
-            setAuth(response);
-            navigate('/');
+            
+            console.log('Login Response:', response);
+            
+            if (response.success || response.token) {
+                setAuth(response);
+                addToast({ type: 'success', message: 'Logged in successfully!' });
+                console.log('Auth set, navigating to dashboard...');
+                navigate('/', { replace: true });
+            } else {
+                setError('Login failed: Invalid server response');
+            }
         } catch (err) {
-            setError(err.response?.data?.message || 'Invalid email or password');
+            console.error('Login Error:', err);
+            const errorMessage = err.response?.data?.message || err.message || 'Invalid email or password';
+            setError(errorMessage);
+            addToast({ type: 'error', message: errorMessage });
         } finally {
             setLoading(false);
         }
