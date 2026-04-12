@@ -147,6 +147,7 @@ const LeadPipeline = () => {
 
 // Droppable Column Component
 const DroppableColumn = ({ id, title, color, leads, getPriorityColor }) => {
+    const { t } = useLanguage();
     const { setNodeRef } = useDroppable({ id });
 
     return (

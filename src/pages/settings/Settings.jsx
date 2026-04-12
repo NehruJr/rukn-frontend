@@ -107,6 +107,7 @@ const Settings = () => {
 
 // Agency Settings Tab
 const AgencySettings = ({ settings, onUpdate, isSaving }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         agencyName: settings.agencyName || '',
         agencyEmail: settings.agencyEmail || '',
@@ -243,6 +244,7 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
 
 // User Settings Tab
 const UserSettings = () => {
+    const { t } = useLanguage();
     return (
         <div className={styles.section}>
             <h3>User & Role Management</h3>
@@ -254,6 +256,7 @@ const UserSettings = () => {
 
 // Notification Settings Tab
 const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         emailNotifications: settings.emailNotifications ?? true,
         newLeadNotification: settings.newLeadNotification ?? true,
@@ -344,6 +347,7 @@ const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
 
 // System Settings Tab
 const SystemSettings = ({ settings, onUpdate, isSaving }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         currency: settings.currency || 'EGP',
         dateFormat: settings.dateFormat || 'MM/DD/YYYY',
