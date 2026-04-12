@@ -1,9 +1,11 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Users, Building2, FileText, Clock } from 'lucide-react';
 import styles from './GlobalSearch.module.css';
 
 const GlobalSearch = () => {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
@@ -113,7 +115,7 @@ const GlobalSearch = () => {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
-                    <kbd className={styles.kbd}>ESC</kbd>
+                    <kbd className={styles.kbd}>{t('dashboard_extra.esc')}</kbd>
                 </div>
 
                 {results.length > 0 ? (
@@ -138,14 +140,11 @@ const GlobalSearch = () => {
                 ) : (
                     <div className={styles.hint}>
                         <div className={styles.hintItem}>
-                            <Users size={16} /> Search for leads
-                        </div>
+                            <Users size={16} />{t('dashboard_extra.search_for_leads')}</div>
                         <div className={styles.hintItem}>
-                            <Building2 size={16} /> Search for properties
-                        </div>
+                            <Building2 size={16} />{t('dashboard_extra.search_for_properties')}</div>
                         <div className={styles.hintItem}>
-                            <FileText size={16} /> Search for deals
-                        </div>
+                            <FileText size={16} />{t('dashboard_extra.search_for_deals')}</div>
                     </div>
                 )}
 
@@ -153,7 +152,7 @@ const GlobalSearch = () => {
                     <div className={styles.shortcuts}>
                         <span><kbd>↑</kbd><kbd>↓</kbd> to navigate</span>
                         <span><kbd>↵</kbd> to select</span>
-                        <span><kbd>ESC</kbd> to close</span>
+                        <span><kbd>{t('dashboard_extra.esc')}</kbd> to close</span>
                     </div>
                 </div>
             </div>

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import styles from './Dropdown.module.css';
@@ -19,6 +20,7 @@ const Dropdown = ({
 
     useEffect(() => {
         const handleClickOutside = (event) => {
+    const { t } = useLanguage();
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
@@ -144,7 +146,7 @@ const Dropdown = ({
                                     );
                                 })
                             ) : (
-                                <div className={styles.empty}>No options found</div>
+                                <div className={styles.empty}>{t('dashboard_extra.no_options_found')}</div>
                             )}
                         </div>
                     </div>

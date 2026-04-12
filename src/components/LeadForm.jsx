@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import Button from '@/components/ui/Button';
@@ -6,6 +7,7 @@ import { LEAD_STATUSES, LEAD_PRIORITIES } from '@/utils/constants';
 import styles from './LeadForm.module.css';
 
 const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add Lead' }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -109,10 +111,10 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                     {errors.submit && <div className={styles.errorBanner}>{errors.submit}</div>}
 
                     <div className={styles.section}>
-                        <h3>Basic Information</h3>
+                        <h3>{t('dashboard_extra.basic_information')}</h3>
                         <div className={styles.row}>
                             <Input
-                                label="First Name"
+                                label={t('dashboard_extra.first_name')}
                                 name="firstName"
                                 value={formData.firstName}
                                 onChange={handleChange}
@@ -121,7 +123,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                                 fullWidth
                             />
                             <Input
-                                label="Last Name"
+                                label={t('dashboard_extra.last_name')}
                                 name="lastName"
                                 value={formData.lastName}
                                 onChange={handleChange}
@@ -132,7 +134,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                         </div>
                         <div className={styles.row}>
                             <Input
-                                label="Email"
+                                label={t('dashboard_extra.email')}
                                 name="email"
                                 type="email"
                                 value={formData.email}
@@ -141,7 +143,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                                 fullWidth
                             />
                             <Input
-                                label="Phone"
+                                label={t('dashboard_extra.phone')}
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
@@ -153,17 +155,17 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                     </div>
 
                     <div className={styles.section}>
-                        <h3>Lead Details</h3>
+                        <h3>{t('dashboard_extra.lead_details')}</h3>
                         <div className={styles.row}>
                             <div className={styles.formGroup}>
-                                <label>Source</label>
+                                <label>{t('dashboard_extra.source')}</label>
                                 <select
                                     name="source"
                                     value={formData.source}
                                     onChange={handleChange}
                                     className={styles.select}
                                 >
-                                    <option value="website">Website</option>
+                                    <option value="website">{t('dashboard_extra.website')}</option>
                                     <option value="facebook">Facebook</option>
                                     <option value="olx">OLX</option>
                                     <option value="referral">Referral</option>
@@ -173,7 +175,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                                 </select>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Status</label>
+                                <label>{t('dashboard_extra.status')}</label>
                                 <select
                                     name="status"
                                     value={formData.status}
@@ -190,7 +192,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                         </div>
                         <div className={styles.row}>
                             <div className={styles.formGroup}>
-                                <label>Priority</label>
+                                <label>{t('dashboard_extra.priority')}</label>
                                 <select
                                     name="priority"
                                     value={formData.priority}
@@ -205,15 +207,15 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                                 </select>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Transaction Type</label>
+                                <label>{t('dashboard_extra.transaction_type')}</label>
                                 <select
                                     name="transactionType"
                                     value={formData.transactionType}
                                     onChange={handleChange}
                                     className={styles.select}
                                 >
-                                    <option value="sale">Buy</option>
-                                    <option value="rent">Rent</option>
+                                    <option value="sale">{t('dashboard_extra.buy')}</option>
+                                    <option value="rent">{t('dashboard_extra.rent')}</option>
                                 </select>
                             </div>
                         </div>
@@ -240,7 +242,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Notes</label>
+                            <label>{t('dashboard_extra.notes')}</label>
                             <textarea
                                 name="notes"
                                 value={formData.notes}
@@ -253,12 +255,8 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                     </div>
 
                     <div className={styles.footer}>
-                        <Button type="button" variant="outline" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" variant="primary" loading={loading} leftIcon={<Save size={18} />}>
-                            Save Lead
-                        </Button>
+                        <Button type="button" variant="outline" onClick={onClose}>{t('dashboard_extra.cancel')}</Button>
+                        <Button type="submit" variant="primary" loading={loading} leftIcon={<Save size={18} />}>{t('dashboard_extra.save_lead')}</Button>
                     </div>
                 </form>
             </div>

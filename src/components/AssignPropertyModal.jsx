@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { propertyService } from '@/services/propertyService';
 import Modal from '@/components/ui/Modal';
@@ -27,6 +28,7 @@ const AssignPropertyModal = ({
     }, [isOpen, search]);
 
     const fetchProperties = async () => {
+    const { t } = useLanguage();
         setLoading(true);
         try {
             const res = await propertyService.getProperties({
@@ -67,9 +69,9 @@ const AssignPropertyModal = ({
                     className={styles.searchInput}
                 />
                 {loading ? (
-                    <p className={styles.loading}>Loading properties...</p>
+                    <p className={styles.loading}>{t('dashboard_extra.loading_properties')}</p>
                 ) : properties.length === 0 ? (
-                    <p className={styles.empty}>No properties found.</p>
+                    <p className={styles.empty}>{t('dashboard_extra.no_properties_found_1')}</p>
                 ) : (
                     <ul className={styles.list}>
                         {properties.map((property) => {

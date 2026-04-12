@@ -93,15 +93,15 @@ const LeadList = () => {
                 </div>
             </div>
 
-            {isLoading && <div className={styles.loading}>Loading leads...</div>}
+            {isLoading && <div className={styles.loading}>{t('dashboard_extra.loading_leads')}</div>}
 
-            {error && <div className={styles.error}>Error loading leads. Please try again.</div>}
+            {error && <div className={styles.error}>{t('dashboard_extra.error_loading_leads_please_try_again')}</div>}
 
             {!isLoading && !error && leads.length === 0 && (
                 <div className={styles.empty}>
-                    <h3>No leads found</h3>
-                    <p>Get started by adding your first lead</p>
-                    <Button variant="primary" onClick={() => setIsModalOpen(true)}>Add Lead</Button>
+                    <h3>{t('dashboard_extra.no_leads_found')}</h3>
+                    <p>{t('dashboard_extra.get_started_by_adding_your_first_lead')}</p>
+                    <Button variant="primary" onClick={() => setIsModalOpen(true)}>{t('dashboard_extra.add_lead')}</Button>
                 </div>
             )}
 

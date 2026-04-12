@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { userService } from '@/services/userService';
 import Modal from '@/components/ui/Modal';
@@ -30,6 +31,7 @@ const AssignAgentsModal = ({
     }, [assignedAgentIds, isOpen]);
 
     const fetchAgents = async () => {
+    const { t } = useLanguage();
         setLoading(true);
         try {
             const res = await userService.getAgents();
@@ -71,9 +73,9 @@ const AssignAgentsModal = ({
         <Modal isOpen={isOpen} onClose={onClose} title="Assign Agents" size="md">
             <div className={styles.content}>
                 {loading ? (
-                    <p className={styles.loading}>Loading agents...</p>
+                    <p className={styles.loading}>{t('dashboard_extra.loading_agents')}</p>
                 ) : agents.length === 0 ? (
-                    <p className={styles.empty}>No agents available.</p>
+                    <p className={styles.empty}>{t('dashboard_extra.no_agents_available')}</p>
                 ) : (
                     <ul className={styles.list}>
                         {agents.map((agent) => {
@@ -102,17 +104,13 @@ const AssignAgentsModal = ({
                     </ul>
                 )}
                 <div className={styles.actions}>
-                    <Button variant="secondary" onClick={onClose}>
-                        Cancel
-                    </Button>
+                    <Button variant="secondary" onClick={onClose}>{t('dashboard_extra.cancel')}</Button>
                     <Button
                         variant="primary"
                         onClick={handleConfirm}
                         disabled={loading || saving || agents.length === 0}
                         loading={saving}
-                    >
-                        Confirm
-                    </Button>
+                    >{t('dashboard_extra.confirm')}</Button>
                 </div>
             </div>
         </Modal>

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable, useDroppable } from '@dnd-kit/core';
@@ -6,6 +7,7 @@ import { DEAL_STAGES } from '@/utils/constants';
 import styles from './DealPipeline.module.css';
 
 const DealPipeline = () => {
+    const { t } = useLanguage();
     const [activeId, setActiveId] = useState(null);
     const queryClient = useQueryClient();
 
@@ -55,28 +57,28 @@ const DealPipeline = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Deal Pipeline</h1>
-                    <p>Drag and drop deals to update their stage</p>
+                    <h1>{t('dashboard_extra.deal_pipeline')}</h1>
+                    <p>{t('dashboard_extra.drag_and_drop_deals_to_update_their_stag')}</p>
                 </div>
-                <a href="/deals" className={styles.listViewLink}>List View</a>
+                <a href="/deals" className={styles.listViewLink}>{t('dashboard_extra.list_view')}</a>
             </div>
 
             <div className={styles.stats}>
                 <div className={styles.statCard}>
-                    <div className={styles.statLabel}>Total Deals</div>
+                    <div className={styles.statLabel}>{t('dashboard_extra.total_deals')}</div>
                     <div className={styles.statValue}>{stats.totalDeals || 0}</div>
                 </div>
                 <div className={styles.statCard}>
-                    <div className={styles.statLabel}>Total Value</div>
+                    <div className={styles.statLabel}>{t('dashboard_extra.total_value')}</div>
                     <div className={styles.statValue}>{formatCurrency(stats.totalValue || 0)}</div>
                 </div>
                 <div className={styles.statCard}>
-                    <div className={styles.statLabel}>Avg Probability</div>
+                    <div className={styles.statLabel}>{t('dashboard_extra.avg_probability')}</div>
                     <div className={styles.statValue}>{Math.round(stats.averageProbability || 0)}%</div>
                 </div>
             </div>
 
-            {isLoading && <div className={styles.loading}>Loading pipeline...</div>}
+            {isLoading && <div className={styles.loading}>{t('dashboard_extra.loading_pipeline')}</div>}
 
             {!isLoading && (
                 <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={(e) => setActiveId(e.active.id)} onDragEnd={handleDragEnd}>

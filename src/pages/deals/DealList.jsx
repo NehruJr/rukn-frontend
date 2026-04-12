@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { dealService } from '@/services/dealService';
@@ -10,6 +11,7 @@ import DealForm from '@/components/DealForm';
 import styles from './DealList.module.css';
 
 const DealList = () => {
+    const { t } = useLanguage();
     const [filters, setFilters] = useState({
         search: '',
         status: '',
@@ -61,16 +63,12 @@ const DealList = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Deals</h1>
-                    <p>Manage and track all your deals</p>
+                    <h1>{t('dashboard_extra.deals')}</h1>
+                    <p>{t('dashboard_extra.manage_and_track_all_your_deals')}</p>
                 </div>
                 <div className={styles.headerActions}>
-                    <Button variant="outline" onClick={() => window.location.href = '/deals/pipeline'}>
-                        Pipeline View
-                    </Button>
-                    <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>
-                        Add Deal
-                    </Button>
+                    <Button variant="outline" onClick={() => window.location.href = '/deals/pipeline'}>{t('dashboard_extra.pipeline_view')}</Button>
+                    <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>{t('dashboard_extra.add_deal')}</Button>
                 </div>
             </div>
 
@@ -89,7 +87,7 @@ const DealList = () => {
                         onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                         className={styles.select}
                     >
-                        <option value="">All Statuses</option>
+                        <option value="">{t('dashboard_extra.all_statuses')}</option>
                         {DEAL_STATUSES.map(status => (
                             <option key={status.value} value={status.value}>{status.label}</option>
                         ))}
@@ -100,27 +98,25 @@ const DealList = () => {
                         onChange={(e) => setFilters({ ...filters, stage: e.target.value })}
                         className={styles.select}
                     >
-                        <option value="">All Stages</option>
+                        <option value="">{t('dashboard_extra.all_stages')}</option>
                         {DEAL_STAGES.map(stage => (
                             <option key={stage.value} value={stage.value}>{stage.label}</option>
                         ))}
                     </select>
 
-                    <Button variant="outline" leftIcon={<Filter size={18} />}>
-                        More Filters
-                    </Button>
+                    <Button variant="outline" leftIcon={<Filter size={18} />}>{t('dashboard_extra.more_filters')}</Button>
                 </div>
             </div>
 
-            {isLoading && <div className={styles.loading}>Loading deals...</div>}
+            {isLoading && <div className={styles.loading}>{t('dashboard_extra.loading_deals')}</div>}
 
-            {error && <div className={styles.error}>Error loading deals. Please try again.</div>}
+            {error && <div className={styles.error}>{t('dashboard_extra.error_loading_deals_please_try_again')}</div>}
 
             {!isLoading && !error && deals.length === 0 && (
                 <div className={styles.empty}>
-                    <h3>No deals found</h3>
-                    <p>Get started by adding your first deal</p>
-                    <Button variant="primary" onClick={() => setIsModalOpen(true)}>Add Deal</Button>
+                    <h3>{t('dashboard_extra.no_deals_found')}</h3>
+                    <p>{t('dashboard_extra.get_started_by_adding_your_first_deal')}</p>
+                    <Button variant="primary" onClick={() => setIsModalOpen(true)}>{t('dashboard_extra.add_deal')}</Button>
                 </div>
             )}
 
@@ -130,16 +126,16 @@ const DealList = () => {
                         <thead>
                             <tr>
                                 <th>Deal #</th>
-                                <th>Title</th>
-                                <th>Lead</th>
-                                <th>Value</th>
-                                <th>Stage</th>
-                                <th>Probability</th>
-                                <th>Status</th>
-                                <th>Agent</th>
-                                <th>Expected Close</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th>{t('dashboard_extra.title')}</th>
+                                <th>{t('dashboard_extra.lead')}</th>
+                                <th>{t('dashboard_extra.value')}</th>
+                                <th>{t('dashboard_extra.stage')}</th>
+                                <th>{t('dashboard_extra.probability')}</th>
+                                <th>{t('dashboard_extra.status')}</th>
+                                <th>{t('dashboard_extra.agent')}</th>
+                                <th>{t('dashboard_extra.expected_close')}</th>
+                                <th>{t('dashboard_extra.created')}</th>
+                                <th>{t('dashboard_extra.actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -203,9 +199,7 @@ const DealList = () => {
                                     </td>
                                     <td className={styles.date}>{formatTimeAgo(deal.createdAt)}</td>
                                     <td>
-                                        <a href={`/deals/${deal._id}`} className={styles.viewLink}>
-                                            View
-                                        </a>
+                                        <a href={`/deals/${deal._id}`} className={styles.viewLink}>{t('dashboard_extra.view')}</a>
                                     </td>
                                 </tr>
                             ))}

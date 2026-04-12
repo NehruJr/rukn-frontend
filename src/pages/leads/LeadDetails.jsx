@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -23,6 +24,7 @@ import AssignPropertyModal from '@/components/AssignPropertyModal';
 import styles from './LeadDetails.module.css';
 
 const LeadDetails = () => {
+    const { t } = useLanguage();
     const { id } = useParams();
     const queryClient = useQueryClient();
     const user = useAuthStore((s) => s.user);
@@ -134,8 +136,7 @@ const LeadDetails = () => {
     if (error) {
         return (
             <div className={styles.container}>
-                <div className={styles.error}>
-                    Failed to load lead. <Link to="/leads">Back to leads</Link>
+                <div className={styles.error}>{t('dashboard_extra.failed_to_load_lead')}<Link to="/leads">{t('dashboard_extra.back_to_leads')}</Link>
                 </div>
             </div>
         );
@@ -149,9 +150,7 @@ const LeadDetails = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <Link to="/leads" className={styles.backLink}>
-                    <ArrowLeft size={20} />
-                    Back to leads
-                </Link>
+                    <ArrowLeft size={20} />{t('dashboard_extra.back_to_leads')}</Link>
                 <div className={styles.headerMain}>
                     <div>
                         <h1 className={styles.title}>
@@ -182,7 +181,7 @@ const LeadDetails = () => {
                     </div>
                     <div className={styles.headerActions}>
                         <label className={styles.statusLabel}>
-                            <span>Status</span>
+                            <span>{t('dashboard_extra.status')}</span>
                             <select
                                 value={lead.status}
                                 onChange={handleStatusChange}
@@ -200,16 +199,14 @@ const LeadDetails = () => {
                             variant="primary"
                             leftIcon={<Calendar size={18} />}
                             onClick={() => setMeetingModalOpen(true)}
-                        >
-                            Schedule meeting
-                        </Button>
+                        >{t('dashboard_extra.schedule_meeting')}</Button>
                     </div>
                 </div>
             </div>
 
             <div className={styles.grid}>
                 <section className={styles.section}>
-                    <h3 className={styles.sectionTitle}>Contact</h3>
+                    <h3 className={styles.sectionTitle}>{t('dashboard_extra.contact')}</h3>
                     <div className={styles.contactList}>
                         {lead.email && (
                             <a href={`mailto:${lead.email}`} className={styles.contactItem}>
@@ -235,7 +232,7 @@ const LeadDetails = () => {
                 </section>
 
                 <section className={styles.section}>
-                    <h3 className={styles.sectionTitle}>Requirements</h3>
+                    <h3 className={styles.sectionTitle}>{t('dashboard_extra.requirements')}</h3>
                     <div className={styles.meta}>
                         {lead.transactionType && (
                             <span>Type: {lead.transactionType}</span>
@@ -261,15 +258,13 @@ const LeadDetails = () => {
 
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <h3 className={styles.sectionTitle}>Assigned properties</h3>
+                        <h3 className={styles.sectionTitle}>{t('dashboard_extra.assigned_properties')}</h3>
                         <Button
                             size="sm"
                             variant="outline"
                             leftIcon={<Plus size={16} />}
                             onClick={() => setPropertyModalOpen(true)}
-                        >
-                            Assign property
-                        </Button>
+                        >{t('dashboard_extra.assign_property')}</Button>
                     </div>
                     {interestedProperties.length === 0 ? (
                         <p className={styles.emptyText}>
@@ -323,9 +318,9 @@ const LeadDetails = () => {
                 </section>
 
                 <section className={styles.section}>
-                    <h3 className={styles.sectionTitle}>Activity</h3>
+                    <h3 className={styles.sectionTitle}>{t('dashboard_extra.activity')}</h3>
                     {activities.length === 0 ? (
-                        <p className={styles.emptyText}>No activity yet.</p>
+                        <p className={styles.emptyText}>{t('dashboard_extra.no_activity_yet')}</p>
                     ) : (
                         <ul className={styles.activityList}>
                             {activities.slice(0, 10).map((act) => (

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -9,6 +10,7 @@ import Input from '@/components/ui/Input';
 import styles from './LeadPipeline.module.css';
 
 const LeadPipeline = () => {
+    const { t } = useLanguage();
     const [filters, setFilters] = useState({
         search: '',
         priority: '',
@@ -78,8 +80,8 @@ const LeadPipeline = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Lead Pipeline</h1>
-                    <p>Drag and drop leads to update their status</p>
+                    <h1>{t('dashboard_extra.lead_pipeline')}</h1>
+                    <p>{t('dashboard_extra.drag_and_drop_leads_to_update_their_stat')}</p>
                 </div>
             </div>
 
@@ -97,18 +99,16 @@ const LeadPipeline = () => {
                     onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
                     className={styles.select}
                 >
-                    <option value="">All Priorities</option>
+                    <option value="">{t('dashboard_extra.all_priorities')}</option>
                     {LEAD_PRIORITIES.map(priority => (
                         <option key={priority.value} value={priority.value}>{priority.label}</option>
                     ))}
                 </select>
 
-                <Button variant="outline" leftIcon={<Filter size={18} />}>
-                    More Filters
-                </Button>
+                <Button variant="outline" leftIcon={<Filter size={18} />}>{t('dashboard_extra.more_filters')}</Button>
             </div>
 
-            {isLoading && <div className={styles.loading}>Loading pipeline...</div>}
+            {isLoading && <div className={styles.loading}>{t('dashboard_extra.loading_pipeline')}</div>}
 
             {!isLoading && (
                 <DndContext
@@ -164,7 +164,7 @@ const DroppableColumn = ({ id, title, color, leads, getPriorityColor }) => {
                     />
                 ))}
                 {leads.length === 0 && (
-                    <div className={styles.emptyColumn}>No leads</div>
+                    <div className={styles.emptyColumn}>{t('dashboard_extra.no_leads')}</div>
                 )}
             </div>
         </div>

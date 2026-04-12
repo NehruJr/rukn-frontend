@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { taskService } from '@/services/taskService';
@@ -9,6 +10,7 @@ import TaskForm from '@/components/TaskForm';
 import styles from './Calendar.module.css';
 
 const Calendar = () => {
+    const { t } = useLanguage();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,12 +53,10 @@ const Calendar = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Calendar</h1>
-                    <p>Manage your tasks and schedule</p>
+                    <h1>{t('dashboard_extra.calendar')}</h1>
+                    <p>{t('dashboard_extra.manage_your_tasks_and_schedule')}</p>
                 </div>
-                <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>
-                    Add Task
-                </Button>
+                <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>{t('dashboard_extra.add_task')}</Button>
             </div>
 
             <div className={styles.content}>
@@ -89,8 +89,8 @@ const Calendar = () => {
                     <div className={styles.taskList}>
                         {selectedDateTasks.length === 0 && (
                             <div className={styles.emptyState}>
-                                <p>No tasks for this day</p>
-                                <Button size="sm" onClick={() => setIsModalOpen(true)}>Add Task</Button>
+                                <p>{t('dashboard_extra.no_tasks_for_this_day')}</p>
+                                <Button size="sm" onClick={() => setIsModalOpen(true)}>{t('dashboard_extra.add_task')}</Button>
                             </div>
                         )}
 

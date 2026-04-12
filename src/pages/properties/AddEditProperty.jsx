@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
@@ -5,6 +6,7 @@ import { ArrowLeft, Save, Upload, X } from 'lucide-react';
 import styles from './AddEditProperty.module.css';
 
 const AddEditProperty = () => {
+    const { t } = useLanguage();
     const { id } = useParams();
     const navigate = useNavigate();
     const isEditMode = !!id;
@@ -196,10 +198,10 @@ const AddEditProperty = () => {
 
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.section}>
-                    <h2>Basic Information</h2>
+                    <h2>{t('dashboard_extra.basic_information')}</h2>
                     <div className={styles.grid}>
                         <div className={styles.formGroup}>
-                            <label>Title</label>
+                            <label>{t('dashboard_extra.title')}</label>
                             <input
                                 type="text"
                                 name="title"
@@ -209,24 +211,24 @@ const AddEditProperty = () => {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Type</label>
+                            <label>{t('dashboard_extra.type')}</label>
                             <select name="propertyType" value={formData.propertyType} onChange={handleChange}>
-                                <option value="apartment">Apartment</option>
-                                <option value="villa">Villa</option>
-                                <option value="townhouse">Townhouse</option>
-                                <option value="office">Office</option>
-                                <option value="land">Land</option>
+                                <option value="apartment">{t('dashboard_extra.apartment')}</option>
+                                <option value="villa">{t('dashboard_extra.villa')}</option>
+                                <option value="townhouse">{t('dashboard_extra.townhouse')}</option>
+                                <option value="office">{t('dashboard_extra.office')}</option>
+                                <option value="land">{t('dashboard_extra.land')}</option>
                             </select>
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Transaction Type</label>
+                            <label>{t('dashboard_extra.transaction_type')}</label>
                             <select name="transactionType" value={formData.transactionType} onChange={handleChange}>
-                                <option value="sale">For Sale</option>
-                                <option value="rent">For Rent</option>
+                                <option value="sale">{t('dashboard_extra.for_sale')}</option>
+                                <option value="rent">{t('dashboard_extra.for_rent')}</option>
                             </select>
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Price</label>
+                            <label>{t('dashboard_extra.price')}</label>
                             <input
                                 type="number"
                                 name="price"
@@ -237,7 +239,7 @@ const AddEditProperty = () => {
                         </div>
                     </div>
                     <div className={styles.formGroup}>
-                        <label>Description</label>
+                        <label>{t('dashboard_extra.description')}</label>
                         <textarea
                             name="description"
                             value={formData.description}
@@ -249,10 +251,10 @@ const AddEditProperty = () => {
                 </div>
 
                 <div className={styles.section}>
-                    <h2>Location</h2>
+                    <h2>{t('dashboard_extra.location')}</h2>
                     <div className={styles.grid}>
                         <div className={styles.formGroup}>
-                            <label>Address</label>
+                            <label>{t('dashboard_extra.address')}</label>
                             <input
                                 type="text"
                                 name="location.address"
@@ -262,7 +264,7 @@ const AddEditProperty = () => {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>City</label>
+                            <label>{t('dashboard_extra.city')}</label>
                             <input
                                 type="text"
                                 name="location.city"
@@ -284,10 +286,10 @@ const AddEditProperty = () => {
                 </div>
 
                 <div className={styles.section}>
-                    <h2>Features</h2>
+                    <h2>{t('dashboard_extra.features')}</h2>
                     <div className={styles.grid}>
                         <div className={styles.formGroup}>
-                            <label>Bedrooms</label>
+                            <label>{t('dashboard_extra.bedrooms')}</label>
                             <input
                                 type="number"
                                 name="features.bedrooms"
@@ -296,7 +298,7 @@ const AddEditProperty = () => {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Bathrooms</label>
+                            <label>{t('dashboard_extra.bathrooms')}</label>
                             <input
                                 type="number"
                                 name="features.bathrooms"
@@ -315,7 +317,7 @@ const AddEditProperty = () => {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Year Built</label>
+                            <label>{t('dashboard_extra.year_built')}</label>
                             <input
                                 type="number"
                                 name="features.yearBuilt"
@@ -326,7 +328,7 @@ const AddEditProperty = () => {
                     </div>
 
                     <div className={styles.amenitiesGroup}>
-                        <label>Amenities</label>
+                        <label>{t('dashboard_extra.amenities')}</label>
                         <div className={styles.amenitiesGrid}>
                             {amenitiesList.map(amenity => (
                                 <label key={amenity} className={styles.checkboxLabel}>
@@ -344,7 +346,7 @@ const AddEditProperty = () => {
                 </div>
 
                 <div className={styles.section}>
-                    <h2>Images</h2>
+                    <h2>{t('dashboard_extra.images')}</h2>
                     <div className={styles.imageUpload}>
                         <input
                             type="file"
@@ -356,7 +358,7 @@ const AddEditProperty = () => {
                         />
                         <label htmlFor="images" className={styles.uploadButton}>
                             <Upload size={20} />
-                            <span>Upload Images</span>
+                            <span>{t('dashboard_extra.upload_images')}</span>
                         </label>
                     </div>
 
@@ -381,9 +383,7 @@ const AddEditProperty = () => {
                         type="button"
                         onClick={() => navigate('/properties')}
                         className={styles.cancelButton}
-                    >
-                        Cancel
-                    </button>
+                    >{t('dashboard_extra.cancel')}</button>
                     <button
                         type="submit"
                         className={styles.saveButton}

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { TASK_TYPES, TASK_PRIORITIES, TASK_STATUSES } from '@/utils/constants';
 import { format } from 'date-fns';
@@ -6,6 +7,7 @@ import Input from '@/components/ui/Input';
 import styles from './DealForm.module.css';
 
 const TaskForm = ({ isOpen, onClose, onSubmit, initialData = null, initialDate = null }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -54,7 +56,7 @@ const TaskForm = ({ isOpen, onClose, onSubmit, initialData = null, initialDate =
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Type</label>
+                            <label>{t('dashboard_extra.type')}</label>
                             <select
                                 value={formData.type}
                                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -67,7 +69,7 @@ const TaskForm = ({ isOpen, onClose, onSubmit, initialData = null, initialDate =
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Priority</label>
+                            <label>{t('dashboard_extra.priority')}</label>
                             <select
                                 value={formData.priority}
                                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
@@ -90,7 +92,7 @@ const TaskForm = ({ isOpen, onClose, onSubmit, initialData = null, initialDate =
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Due Time</label>
+                            <label>{t('dashboard_extra.due_time')}</label>
                             <Input
                                 type="time"
                                 value={formData.dueTime}
@@ -99,7 +101,7 @@ const TaskForm = ({ isOpen, onClose, onSubmit, initialData = null, initialDate =
                         </div>
 
                         <div className={styles.formGroupFull}>
-                            <label>Description</label>
+                            <label>{t('dashboard_extra.description')}</label>
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -110,7 +112,7 @@ const TaskForm = ({ isOpen, onClose, onSubmit, initialData = null, initialDate =
                         </div>
 
                         <div className={styles.formGroupFull}>
-                            <label>Notes</label>
+                            <label>{t('dashboard_extra.notes')}</label>
                             <textarea
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -122,9 +124,7 @@ const TaskForm = ({ isOpen, onClose, onSubmit, initialData = null, initialDate =
                     </div>
 
                     <div className={styles.footer}>
-                        <Button type="button" variant="outline" onClick={onClose}>
-                            Cancel
-                        </Button>
+                        <Button type="button" variant="outline" onClick={onClose}>{t('dashboard_extra.cancel')}</Button>
                         <Button type="submit" variant="primary">
                             {initialData ? 'Update Task' : 'Create Task'}
                         </Button>

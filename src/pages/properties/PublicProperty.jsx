@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
@@ -7,6 +8,7 @@ import {
 import styles from './PublicProperty.module.css';
 
 const PublicProperty = () => {
+    const { t } = useLanguage();
     const { token } = useParams();
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ const PublicProperty = () => {
                 <header className={styles.brandHeader}>
                     <span className={styles.brand}>Powered by Realy</span>
                 </header>
-                <div className={styles.loading}>Loading property...</div>
+                <div className={styles.loading}>{t('dashboard_extra.loading_property')}</div>
             </div>
         );
     }
@@ -144,7 +146,7 @@ const PublicProperty = () => {
                         </div>
 
                         <section className={styles.section}>
-                            <h2>Overview</h2>
+                            <h2>{t('dashboard_extra.overview')}</h2>
                             <div className={styles.features}>
                                 <div className={styles.featureItem}>
                                     <Bed size={24} />
@@ -152,7 +154,7 @@ const PublicProperty = () => {
                                         <span className={styles.featureValue}>
                                             {property.features?.bedrooms ?? '—'}
                                         </span>
-                                        <span className={styles.featureLabel}>Bedrooms</span>
+                                        <span className={styles.featureLabel}>{t('dashboard_extra.bedrooms')}</span>
                                     </div>
                                 </div>
                                 <div className={styles.featureItem}>
@@ -161,7 +163,7 @@ const PublicProperty = () => {
                                         <span className={styles.featureValue}>
                                             {property.features?.bathrooms ?? '—'}
                                         </span>
-                                        <span className={styles.featureLabel}>Bathrooms</span>
+                                        <span className={styles.featureLabel}>{t('dashboard_extra.bathrooms')}</span>
                                     </div>
                                 </div>
                                 <div className={styles.featureItem}>
@@ -181,7 +183,7 @@ const PublicProperty = () => {
                                         <span className={styles.featureValue}>
                                             {property.features?.yearBuilt ?? 'N/A'}
                                         </span>
-                                        <span className={styles.featureLabel}>Year Built</span>
+                                        <span className={styles.featureLabel}>{t('dashboard_extra.year_built')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -189,14 +191,14 @@ const PublicProperty = () => {
 
                         {property.description && (
                             <section className={styles.section}>
-                                <h2>Description</h2>
+                                <h2>{t('dashboard_extra.description')}</h2>
                                 <p className={styles.description}>{property.description}</p>
                             </section>
                         )}
 
                         {property.features?.amenities?.length > 0 && (
                             <section className={styles.section}>
-                                <h2>Amenities</h2>
+                                <h2>{t('dashboard_extra.amenities')}</h2>
                                 <div className={styles.amenities}>
                                     {property.features.amenities.map((amenity, index) => (
                                         <div key={index} className={styles.amenity}>
@@ -212,14 +214,14 @@ const PublicProperty = () => {
                     <aside className={styles.sidebar}>
                         {agent && (
                             <div className={styles.agentCard}>
-                                <h3>Contact Agent</h3>
+                                <h3>{t('dashboard_extra.contact_agent')}</h3>
                                 <div className={styles.agentInfo}>
                                     <div className={styles.agentAvatar}>
                                         {agent.firstName?.[0]}{agent.lastName?.[0]}
                                     </div>
                                     <div>
                                         <h4>{agent.firstName} {agent.lastName}</h4>
-                                        <p>Real Estate Agent</p>
+                                        <p>{t('dashboard_extra.real_estate_agent')}</p>
                                     </div>
                                 </div>
                                 <div className={styles.agentContact}>
@@ -240,9 +242,7 @@ const PublicProperty = () => {
                                     <a
                                         href={`mailto:${agent.email}`}
                                         className={styles.contactButton}
-                                    >
-                                        Contact Agent
-                                    </a>
+                                    >{t('dashboard_extra.contact_agent')}</a>
                                 )}
                             </div>
                         )}

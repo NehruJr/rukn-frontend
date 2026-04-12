@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Building2, Users, Bell, Settings as SettingsIcon, Save } from 'lucide-react';
@@ -8,6 +9,7 @@ import { getSettings, updateSettings } from '@/services/settingsService';
 import styles from './Settings.module.css';
 
 const Settings = () => {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('agency');
     const queryClient = useQueryClient();
     const addToast = useUIStore((s) => s.addToast);
@@ -48,8 +50,8 @@ const Settings = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Settings</h1>
-                    <p>Manage your agency settings and configuration</p>
+                    <h1>{t('dashboard_extra.settings')}</h1>
+                    <p>{t('dashboard_extra.manage_your_agency_settings_and_configur')}</p>
                 </div>
             </div>
 
@@ -68,7 +70,7 @@ const Settings = () => {
                 </div>
 
                 <div className={styles.tabContent}>
-                    {isLoading && <div className={styles.loading}>Loading settings...</div>}
+                    {isLoading && <div className={styles.loading}>{t('dashboard_extra.loading_settings')}</div>}
 
                     {!isLoading && activeTab === 'agency' && (
                         <AgencySettings
@@ -137,7 +139,7 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.section}>
-                <h3>Agency Information</h3>
+                <h3>{t('dashboard_extra.agency_information')}</h3>
                 <div className={styles.formGrid}>
                     <div className={styles.formGroup}>
                         <label>Agency Name *</label>
@@ -161,7 +163,7 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>Phone</label>
+                        <label>{t('dashboard_extra.phone')}</label>
                         <Input
                             type="tel"
                             value={formData.agencyPhone}
@@ -171,7 +173,7 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>Website</label>
+                        <label>{t('dashboard_extra.website')}</label>
                         <Input
                             type="url"
                             value={formData.agencyWebsite}
@@ -181,7 +183,7 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
                     </div>
 
                     <div className={styles.formGroupFull}>
-                        <label>Address</label>
+                        <label>{t('dashboard_extra.address')}</label>
                         <textarea
                             value={formData.agencyAddress}
                             onChange={(e) => setFormData({ ...formData, agencyAddress: e.target.value })}
@@ -194,10 +196,10 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
             </div>
 
             <div className={styles.section}>
-                <h3>Branding</h3>
+                <h3>{t('dashboard_extra.branding')}</h3>
                 <div className={styles.formGrid}>
                     <div className={styles.formGroup}>
-                        <label>Primary Color</label>
+                        <label>{t('dashboard_extra.primary_color')}</label>
                         <div className={styles.colorInput}>
                             <input
                                 type="color"
@@ -213,7 +215,7 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>Secondary Color</label>
+                        <label>{t('dashboard_extra.secondary_color')}</label>
                         <div className={styles.colorInput}>
                             <input
                                 type="color"
@@ -244,12 +246,8 @@ const UserSettings = () => {
     return (
         <div className={styles.section}>
             <h3>User & Role Management</h3>
-            <p className={styles.sectionDescription}>
-                Manage user permissions and roles from the Team page.
-            </p>
-            <Button variant="outline" onClick={() => window.location.href = '/team'}>
-                Go to Team Management
-            </Button>
+            <p className={styles.sectionDescription}>{t('dashboard_extra.manage_user_permissions_and_roles_from_t')}</p>
+            <Button variant="outline" onClick={() => window.location.href = '/team'}>{t('dashboard_extra.go_to_team_management')}</Button>
         </div>
     );
 };
@@ -282,7 +280,7 @@ const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.section}>
-                <h3>Email Notifications</h3>
+                <h3>{t('dashboard_extra.email_notifications')}</h3>
                 <div className={styles.checkboxGroup}>
                     <label className={styles.checkbox}>
                         <input
@@ -290,7 +288,7 @@ const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
                             checked={formData.emailNotifications}
                             onChange={(e) => setFormData({ ...formData, emailNotifications: e.target.checked })}
                         />
-                        <span>Enable email notifications</span>
+                        <span>{t('dashboard_extra.enable_email_notifications')}</span>
                     </label>
 
                     <label className={styles.checkbox}>
@@ -300,7 +298,7 @@ const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
                             onChange={(e) => setFormData({ ...formData, newLeadNotification: e.target.checked })}
                             disabled={!formData.emailNotifications}
                         />
-                        <span>New lead notifications</span>
+                        <span>{t('dashboard_extra.new_lead_notifications')}</span>
                     </label>
 
                     <label className={styles.checkbox}>
@@ -310,7 +308,7 @@ const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
                             onChange={(e) => setFormData({ ...formData, dealUpdateNotification: e.target.checked })}
                             disabled={!formData.emailNotifications}
                         />
-                        <span>Deal update notifications</span>
+                        <span>{t('dashboard_extra.deal_update_notifications')}</span>
                     </label>
 
                     <label className={styles.checkbox}>
@@ -320,7 +318,7 @@ const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
                             onChange={(e) => setFormData({ ...formData, taskReminderNotification: e.target.checked })}
                             disabled={!formData.emailNotifications}
                         />
-                        <span>Task reminder notifications</span>
+                        <span>{t('dashboard_extra.task_reminder_notifications')}</span>
                     </label>
 
                     <label className={styles.checkbox}>
@@ -330,7 +328,7 @@ const NotificationSettings = ({ settings, onUpdate, isSaving }) => {
                             onChange={(e) => setFormData({ ...formData, reportNotification: e.target.checked })}
                             disabled={!formData.emailNotifications}
                         />
-                        <span>Weekly report notifications</span>
+                        <span>{t('dashboard_extra.weekly_report_notifications')}</span>
                     </label>
                 </div>
             </div>
@@ -370,10 +368,10 @@ const SystemSettings = ({ settings, onUpdate, isSaving }) => {
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.section}>
-                <h3>Regional Settings</h3>
+                <h3>{t('dashboard_extra.regional_settings')}</h3>
                 <div className={styles.formGrid}>
                     <div className={styles.formGroup}>
-                        <label>Default Currency</label>
+                        <label>{t('dashboard_extra.default_currency')}</label>
                         <select
                             value={formData.currency}
                             onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
@@ -388,7 +386,7 @@ const SystemSettings = ({ settings, onUpdate, isSaving }) => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>Date Format</label>
+                        <label>{t('dashboard_extra.date_format')}</label>
                         <select
                             value={formData.dateFormat}
                             onChange={(e) => setFormData({ ...formData, dateFormat: e.target.value })}
@@ -401,7 +399,7 @@ const SystemSettings = ({ settings, onUpdate, isSaving }) => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>Timezone</label>
+                        <label>{t('dashboard_extra.timezone')}</label>
                         <select
                             value={formData.timezone}
                             onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
@@ -417,7 +415,7 @@ const SystemSettings = ({ settings, onUpdate, isSaving }) => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>Language</label>
+                        <label>{t('dashboard_extra.language')}</label>
                         <select
                             value={formData.language}
                             onChange={(e) => setFormData({ ...formData, language: e.target.value })}

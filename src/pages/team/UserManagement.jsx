@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { userService } from '@/services/userService';
 import { useAuthStore } from '@/store/authStore';
@@ -6,6 +7,7 @@ import { Plus, Search, Edit2, Trash2, Shield, Mail, Phone, MoreVertical } from '
 import styles from './UserManagement.module.css';
 
 const UserManagement = () => {
+    const { t } = useLanguage();
     const { user: currentUser } = useAuthStore();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -100,20 +102,18 @@ const UserManagement = () => {
         }
     };
 
-    if (loading) return <div className={styles.loading}>Loading users...</div>;
+    if (loading) return <div className={styles.loading}>{t('dashboard_extra.loading_users')}</div>;
     if (error) return <div className={styles.error}>{error}</div>;
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Team Management</h1>
-                    <p>Manage your team members and permissions</p>
+                    <h1>{t('dashboard_extra.team_management')}</h1>
+                    <p>{t('dashboard_extra.manage_your_team_members_and_permissions')}</p>
                 </div>
                 <button onClick={openCreateModal} className={styles.addButton}>
-                    <Plus size={20} />
-                    Add Member
-                </button>
+                    <Plus size={20} />{t('dashboard_extra.add_member')}</button>
             </div>
 
             <div className={styles.controls}>
@@ -176,7 +176,7 @@ const UserManagement = () => {
 
                         {!user.isActive && (
                             <div className={styles.inactiveOverlay}>
-                                <span>Inactive</span>
+                                <span>{t('dashboard_extra.inactive')}</span>
                             </div>
                         )}
                     </div>

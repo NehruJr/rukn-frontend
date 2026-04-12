@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DEAL_STAGES, TRANSACTION_TYPES } from '@/utils/constants';
@@ -7,6 +8,7 @@ import leadService from '@/services/leadService';
 import styles from './DealForm.module.css';
 
 const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
+    const { t } = useLanguage();
 
     const [formData, setFormData] = useState({
         title: '',
@@ -143,7 +145,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                 className={styles.select}
                                 required
                             >
-                                <option value="">Select a lead</option>
+                                <option value="">{t('dashboard_extra.select_a_lead')}</option>
                                 {!leadInList && formData.lead && initialLeadLabel && (
                                     <option value={formData.lead}>{initialLeadLabel} (current)</option>
                                 )}
@@ -154,9 +156,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                     </option>
                                 ))}
                             </select>
-                            <small style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--font-size-xs)' }}>
-                                Leads assigned to you
-                            </small>
+                            <small style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--font-size-xs)' }}>{t('dashboard_extra.leads_assigned_to_you')}</small>
                         </div>
 
                         <div className={styles.formGroup}>
@@ -168,7 +168,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                 required
                                 disabled={!formData.lead}
                             >
-                                <option value="">Select a property</option>
+                                <option value="">{t('dashboard_extra.select_a_property')}</option>
                                 {formData.property && assignedProperties.length === 0 && initialPropertyLabel && (
                                     <option value={formData.property}>{initialPropertyLabel} (current)</option>
                                 )}
@@ -200,7 +200,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Currency</label>
+                            <label>{t('dashboard_extra.currency')}</label>
                             <select
                                 value={formData.currency}
                                 onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
@@ -215,7 +215,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Stage</label>
+                            <label>{t('dashboard_extra.stage')}</label>
                             <select
                                 value={formData.stage}
                                 onChange={(e) => setFormData({ ...formData, stage: e.target.value })}
@@ -239,7 +239,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label>Expected Close Date</label>
+                            <label>{t('dashboard_extra.expected_close_date')}</label>
                             <Input
                                 type="date"
                                 value={formData.expectedCloseDate}
@@ -262,7 +262,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                         </div>
 
                         <div className={styles.formGroupFull}>
-                            <label>Notes</label>
+                            <label>{t('dashboard_extra.notes')}</label>
                             <textarea
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -274,9 +274,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                     </div>
 
                     <div className={styles.footer}>
-                        <Button type="button" variant="outline" onClick={onClose}>
-                            Cancel
-                        </Button>
+                        <Button type="button" variant="outline" onClick={onClose}>{t('dashboard_extra.cancel')}</Button>
                         <Button type="submit" variant="primary">
                             {initialData ? 'Update Deal' : 'Create Deal'}
                         </Button>

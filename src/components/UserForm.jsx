@@ -1,8 +1,10 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { X, Save, Shield, User } from 'lucide-react';
 import styles from './UserForm.module.css';
 
 const UserForm = ({ user, onClose, onSave, loading }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -100,10 +102,10 @@ const UserForm = ({ user, onClose, onSave, loading }) => {
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.section}>
-                        <h3><User size={18} /> Basic Information</h3>
+                        <h3><User size={18} />{t('dashboard_extra.basic_information')}</h3>
                         <div className={styles.grid}>
                             <div className={styles.formGroup}>
-                                <label>First Name</label>
+                                <label>{t('dashboard_extra.first_name')}</label>
                                 <input
                                     type="text"
                                     name="firstName"
@@ -114,7 +116,7 @@ const UserForm = ({ user, onClose, onSave, loading }) => {
                                 {errors.firstName && <span className={styles.errorText}>{errors.firstName}</span>}
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Last Name</label>
+                                <label>{t('dashboard_extra.last_name')}</label>
                                 <input
                                     type="text"
                                     name="lastName"
@@ -125,7 +127,7 @@ const UserForm = ({ user, onClose, onSave, loading }) => {
                                 {errors.lastName && <span className={styles.errorText}>{errors.lastName}</span>}
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Email</label>
+                                <label>{t('dashboard_extra.email')}</label>
                                 <input
                                     type="email"
                                     name="email"
@@ -136,7 +138,7 @@ const UserForm = ({ user, onClose, onSave, loading }) => {
                                 {errors.email && <span className={styles.errorText}>{errors.email}</span>}
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Phone</label>
+                                <label>{t('dashboard_extra.phone')}</label>
                                 <input
                                     type="tel"
                                     name="phone"
@@ -156,24 +158,24 @@ const UserForm = ({ user, onClose, onSave, loading }) => {
                                 {errors.password && <span className={styles.errorText}>{errors.password}</span>}
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Role</label>
+                                <label>{t('dashboard_extra.role')}</label>
                                 <select
                                     name="role"
                                     value={formData.role}
                                     onChange={handleChange}
                                 >
-                                    <option value="agent">Agent</option>
-                                    <option value="team_leader">Team Leader</option>
-                                    <option value="manager">Manager</option>
-                                    <option value="sales_support">Sales Support</option>
-                                    <option value="admin">Admin</option>
+                                    <option value="agent">{t('dashboard_extra.agent')}</option>
+                                    <option value="team_leader">{t('dashboard_extra.team_leader')}</option>
+                                    <option value="manager">{t('dashboard_extra.manager')}</option>
+                                    <option value="sales_support">{t('dashboard_extra.sales_support')}</option>
+                                    <option value="admin">{t('dashboard_extra.admin')}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <div className={styles.section}>
-                        <h3><Shield size={18} /> Permissions</h3>
+                        <h3><Shield size={18} />{t('dashboard_extra.permissions')}</h3>
                         <div className={styles.permissionsGrid}>
                             {availablePermissions.map(perm => (
                                 <label key={perm.id} className={styles.permissionItem}>
@@ -188,7 +190,7 @@ const UserForm = ({ user, onClose, onSave, loading }) => {
                             ))}
                         </div>
                         {formData.role === 'admin' && (
-                            <p className={styles.note}>Admin users have full access to all features.</p>
+                            <p className={styles.note}>{t('dashboard_extra.admin_users_have_full_access_to_all_feat')}</p>
                         )}
                     </div>
 
@@ -200,20 +202,16 @@ const UserForm = ({ user, onClose, onSave, loading }) => {
                                 checked={formData.isActive}
                                 onChange={handleChange}
                             />
-                            <span>Active Account</span>
+                            <span>{t('dashboard_extra.active_account')}</span>
                         </label>
                     </div>
 
                     <div className={styles.actions}>
-                        <button type="button" onClick={onClose} className={styles.cancelButton}>
-                            Cancel
-                        </button>
+                        <button type="button" onClick={onClose} className={styles.cancelButton}>{t('dashboard_extra.cancel')}</button>
                         <button type="submit" className={styles.saveButton} disabled={loading}>
                             {loading ? 'Saving...' : (
                                 <>
-                                    <Save size={18} />
-                                    Save User
-                                </>
+                                    <Save size={18} />{t('dashboard_extra.save_user')}</>
                             )}
                         </button>
                     </div>

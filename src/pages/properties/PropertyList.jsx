@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
@@ -7,6 +8,7 @@ import { Plus, Search, Filter, X } from 'lucide-react';
 import styles from './PropertyList.module.css';
 
 const PropertyList = () => {
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const { hasPermission } = useAuthStore();
     const [properties, setProperties] = useState([]);
@@ -87,7 +89,7 @@ const PropertyList = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Properties</h1>
+                    <h1>{t('dashboard_extra.properties')}</h1>
                     <p>{pagination.total} properties found</p>
                 </div>
                 {hasPermission('properties.create') && (
@@ -95,9 +97,7 @@ const PropertyList = () => {
                         onClick={() => navigate('/properties/new')}
                         className={styles.addButton}
                     >
-                        <Plus size={20} />
-                        Add Property
-                    </button>
+                        <Plus size={20} />{t('dashboard_extra.add_property')}</button>
                 )}
             </div>
 
@@ -116,43 +116,41 @@ const PropertyList = () => {
                     className={`${styles.filterButton} ${showFilters ? styles.active : ''}`}
                     onClick={() => setShowFilters(!showFilters)}
                 >
-                    <Filter size={20} />
-                    Filters
-                </button>
+                    <Filter size={20} />{t('dashboard_extra.filters')}</button>
             </div>
 
             {showFilters && (
                 <div className={styles.filtersPanel}>
                     <div className={styles.filterGroup}>
-                        <label>Type</label>
+                        <label>{t('dashboard_extra.type')}</label>
                         <select name="propertyType" value={filters.propertyType} onChange={handleFilterChange}>
-                            <option value="">All Types</option>
-                            <option value="apartment">Apartment</option>
-                            <option value="villa">Villa</option>
-                            <option value="office">Office</option>
-                            <option value="land">Land</option>
+                            <option value="">{t('dashboard_extra.all_types')}</option>
+                            <option value="apartment">{t('dashboard_extra.apartment')}</option>
+                            <option value="villa">{t('dashboard_extra.villa')}</option>
+                            <option value="office">{t('dashboard_extra.office')}</option>
+                            <option value="land">{t('dashboard_extra.land')}</option>
                         </select>
                     </div>
                     <div className={styles.filterGroup}>
-                        <label>For</label>
+                        <label>{t('dashboard_extra.for')}</label>
                         <select name="transactionType" value={filters.transactionType} onChange={handleFilterChange}>
-                            <option value="">Any</option>
-                            <option value="sale">Sale</option>
-                            <option value="rent">Rent</option>
+                            <option value="">{t('dashboard_extra.any')}</option>
+                            <option value="sale">{t('dashboard_extra.sale')}</option>
+                            <option value="rent">{t('dashboard_extra.rent')}</option>
                         </select>
                     </div>
                     <div className={styles.filterGroup}>
-                        <label>Status</label>
+                        <label>{t('dashboard_extra.status')}</label>
                         <select name="status" value={filters.status} onChange={handleFilterChange}>
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="pending">Pending</option>
-                            <option value="sold">Sold</option>
-                            <option value="rented">Rented</option>
+                            <option value="">{t('dashboard_extra.all_status')}</option>
+                            <option value="active">{t('dashboard_extra.active')}</option>
+                            <option value="pending">{t('dashboard_extra.pending')}</option>
+                            <option value="sold">{t('dashboard_extra.sold')}</option>
+                            <option value="rented">{t('dashboard_extra.rented')}</option>
                         </select>
                     </div>
                     <div className={styles.filterGroup}>
-                        <label>Min Price</label>
+                        <label>{t('dashboard_extra.min_price')}</label>
                         <input
                             type="number"
                             name="minPrice"
@@ -162,7 +160,7 @@ const PropertyList = () => {
                         />
                     </div>
                     <div className={styles.filterGroup}>
-                        <label>Max Price</label>
+                        <label>{t('dashboard_extra.max_price')}</label>
                         <input
                             type="number"
                             name="maxPrice"
@@ -172,13 +170,12 @@ const PropertyList = () => {
                         />
                     </div>
                     <button onClick={clearFilters} className={styles.clearButton}>
-                        <X size={16} /> Clear
-                    </button>
+                        <X size={16} />{t('dashboard_extra.clear')}</button>
                 </div>
             )}
 
             {loading ? (
-                <div className={styles.loading}>Loading properties...</div>
+                <div className={styles.loading}>{t('dashboard_extra.loading_properties')}</div>
             ) : (
                 <>
                     <div className={styles.grid}>
@@ -195,8 +192,8 @@ const PropertyList = () => {
 
                     {properties.length === 0 && (
                         <div className={styles.emptyState}>
-                            <h3>No properties found</h3>
-                            <p>Try adjusting your filters or add a new property.</p>
+                            <h3>{t('dashboard_extra.no_properties_found')}</h3>
+                            <p>{t('dashboard_extra.try_adjusting_your_filters_or_add_a_new_')}</p>
                         </div>
                     )}
 
@@ -205,16 +202,12 @@ const PropertyList = () => {
                             <button
                                 disabled={pagination.page === 1}
                                 onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                            >
-                                Previous
-                            </button>
+                            >{t('dashboard_extra.previous')}</button>
                             <span>Page {pagination.page} of {pagination.pages}</span>
                             <button
                                 disabled={pagination.page === pagination.pages}
                                 onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                            >
-                                Next
-                            </button>
+                            >{t('dashboard_extra.next')}</button>
                         </div>
                     )}
                 </>

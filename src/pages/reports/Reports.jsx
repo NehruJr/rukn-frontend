@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { reportService } from '@/services/reportService';
@@ -6,6 +7,7 @@ import { TrendingUp, Users, DollarSign, Target } from 'lucide-react';
 import styles from './Reports.module.css';
 
 const Reports = () => {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('overview');
     const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
 
@@ -52,7 +54,7 @@ const Reports = () => {
             <div className={styles.header}>
                 <div>
                     <h1>Reports &amp; Analytics</h1>
-                    <p>Insights and performance metrics</p>
+                    <p>{t('dashboard_extra.insights_and_performance_metrics')}</p>
                 </div>
                 <div className={styles.dateFilter}>
                     <input
@@ -118,7 +120,7 @@ const Reports = () => {
 
                     {funnelData?.data && (
                         <div className={styles.chartCard}>
-                            <h3>Conversion Funnel</h3>
+                            <h3>{t('dashboard_extra.conversion_funnel')}</h3>
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={funnelData.data}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -137,7 +139,7 @@ const Reports = () => {
                 <div className={styles.content}>
                     <div className={styles.chartsGrid}>
                         <div className={styles.chartCard}>
-                            <h3>Leads by Source</h3>
+                            <h3>{t('dashboard_extra.leads_by_source')}</h3>
                             <ResponsiveContainer width="100%" height={300}>
                                 <PieChart>
                                     <Pie data={leadData.data.bySource} dataKey="count" nameKey="_id" cx="50%" cy="50%" outerRadius={100} label>
@@ -152,7 +154,7 @@ const Reports = () => {
                         </div>
 
                         <div className={styles.chartCard}>
-                            <h3>Leads by Status</h3>
+                            <h3>{t('dashboard_extra.leads_by_status')}</h3>
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={leadData.data.byStatus}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -165,7 +167,7 @@ const Reports = () => {
                         </div>
 
                         <div className={styles.chartCard}>
-                            <h3>Leads Over Time</h3>
+                            <h3>{t('dashboard_extra.leads_over_time')}</h3>
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={leadData.data.timeline}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -184,7 +186,7 @@ const Reports = () => {
                 <div className={styles.content}>
                     <div className={styles.chartsGrid}>
                         <div className={styles.chartCard}>
-                            <h3>Deals by Stage</h3>
+                            <h3>{t('dashboard_extra.deals_by_stage')}</h3>
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={dealData.data.byStage}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -197,7 +199,7 @@ const Reports = () => {
                         </div>
 
                         <div className={styles.chartCard}>
-                            <h3>Revenue by Agent</h3>
+                            <h3>{t('dashboard_extra.revenue_by_agent')}</h3>
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={dealData.data.byAgent}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -215,17 +217,17 @@ const Reports = () => {
             {activeTab === 'agents' && agentData?.data && (
                 <div className={styles.content}>
                     <div className={styles.tableCard}>
-                        <h3>Agent Performance</h3>
+                        <h3>{t('dashboard_extra.agent_performance')}</h3>
                         <table className={styles.table}>
                             <thead>
                                 <tr>
-                                    <th>Agent</th>
+                                    <th>{t('dashboard_extra.agent')}</th>
                                     <th>Leads</th>
-                                    <th>Converted</th>
-                                    <th>Conv. Rate</th>
-                                    <th>Deals</th>
-                                    <th>Won</th>
-                                    <th>Revenue</th>
+                                    <th>{t('dashboard_extra.converted')}</th>
+                                    <th>{t('dashboard_extra.conv_rate')}</th>
+                                    <th>{t('dashboard_extra.deals')}</th>
+                                    <th>{t('dashboard_extra.won')}</th>
+                                    <th>{t('dashboard_extra.revenue')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -250,7 +252,7 @@ const Reports = () => {
                 <div className={styles.content}>
                     <div className={styles.chartsGrid}>
                         <div className={styles.chartCard}>
-                            <h3>Revenue Timeline</h3>
+                            <h3>{t('dashboard_extra.revenue_timeline')}</h3>
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={revenueData.data.revenueTimeline}>
                                     <CartesianGrid strokeDasharray="3 3" />

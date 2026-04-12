@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
@@ -11,6 +12,7 @@ import {
 import styles from './PropertyDetail.module.css';
 
 const PropertyDetail = () => {
+    const { t } = useLanguage();
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, hasPermission, hasRole } = useAuthStore();
@@ -71,7 +73,7 @@ const PropertyDetail = () => {
         }
     };
 
-    if (loading) return <div className={styles.loading}>Loading property details...</div>;
+    if (loading) return <div className={styles.loading}>{t('dashboard_extra.loading_property_details')}</div>;
     if (!property) return null;
 
     const canEdit = user?.role === 'admin' || (user?._id === property.listedBy?._id && hasPermission('properties.edit'));
@@ -84,8 +86,7 @@ const PropertyDetail = () => {
     return (
         <div className={styles.container}>
             <button onClick={() => navigate('/properties')} className={styles.backButton}>
-                <ArrowLeft size={20} /> Back to Properties
-            </button>
+                <ArrowLeft size={20} />{t('dashboard_extra.back_to_properties')}</button>
 
             <div className={styles.header}>
                 <div>
@@ -170,20 +171,20 @@ const PropertyDetail = () => {
             <div className={styles.contentGrid}>
                 <div className={styles.mainContent}>
                     <div className={styles.section}>
-                        <h2>Overview</h2>
+                        <h2>{t('dashboard_extra.overview')}</h2>
                         <div className={styles.features}>
                             <div className={styles.featureItem}>
                                 <Bed size={24} />
                                 <div>
                                     <span className={styles.featureValue}>{property.features.bedrooms}</span>
-                                    <span className={styles.featureLabel}>Bedrooms</span>
+                                    <span className={styles.featureLabel}>{t('dashboard_extra.bedrooms')}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
                                 <Bath size={24} />
                                 <div>
                                     <span className={styles.featureValue}>{property.features.bathrooms}</span>
-                                    <span className={styles.featureLabel}>Bathrooms</span>
+                                    <span className={styles.featureLabel}>{t('dashboard_extra.bathrooms')}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
@@ -197,20 +198,20 @@ const PropertyDetail = () => {
                                 <Calendar size={24} />
                                 <div>
                                     <span className={styles.featureValue}>{property.features.yearBuilt || 'N/A'}</span>
-                                    <span className={styles.featureLabel}>Year Built</span>
+                                    <span className={styles.featureLabel}>{t('dashboard_extra.year_built')}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className={styles.section}>
-                        <h2>Description</h2>
+                        <h2>{t('dashboard_extra.description')}</h2>
                         <p className={styles.description}>{property.description}</p>
                     </div>
 
                     {property.features.amenities?.length > 0 && (
                         <div className={styles.section}>
-                            <h2>Amenities</h2>
+                            <h2>{t('dashboard_extra.amenities')}</h2>
                             <div className={styles.amenities}>
                                 {property.features.amenities.map((amenity, index) => (
                                     <div key={index} className={styles.amenity}>
@@ -226,7 +227,7 @@ const PropertyDetail = () => {
                 <div className={styles.sidebar}>
                     {canAssignAgents && (property.assignedAgents?.length > 0) && (
                         <div className={styles.detailsCard}>
-                            <h3>Assigned Agents</h3>
+                            <h3>{t('dashboard_extra.assigned_agents')}</h3>
                             <ul className={styles.assignedList}>
                                 {property.assignedAgents.map((agent) => (
                                     <li key={agent._id} className={styles.assignedItem}>
@@ -242,14 +243,14 @@ const PropertyDetail = () => {
                         </div>
                     )}
                     <div className={styles.agentCard}>
-                        <h3>Listing Agent</h3>
+                        <h3>{t('dashboard_extra.listing_agent')}</h3>
                         <div className={styles.agentInfo}>
                             <div className={styles.agentAvatar}>
                                 {property.listedBy?.firstName?.[0]}{property.listedBy?.lastName?.[0]}
                             </div>
                             <div>
                                 <h4>{property.listedBy?.firstName} {property.listedBy?.lastName}</h4>
-                                <p>Real Estate Agent</p>
+                                <p>{t('dashboard_extra.real_estate_agent')}</p>
                             </div>
                         </div>
                         <div className={styles.agentContact}>
@@ -264,27 +265,25 @@ const PropertyDetail = () => {
                                 </a>
                             )}
                         </div>
-                        <button className={styles.contactButton}>
-                            Contact Agent
-                        </button>
+                        <button className={styles.contactButton}>{t('dashboard_extra.contact_agent')}</button>
                     </div>
 
                     <div className={styles.detailsCard}>
-                        <h3>Property Details</h3>
+                        <h3>{t('dashboard_extra.property_details')}</h3>
                         <div className={styles.detailRow}>
-                            <span>Type</span>
+                            <span>{t('dashboard_extra.type')}</span>
                             <span className={styles.detailValue}>{property.propertyType}</span>
                         </div>
                         <div className={styles.detailRow}>
-                            <span>Status</span>
+                            <span>{t('dashboard_extra.status')}</span>
                             <span className={styles.detailValue}>{property.status}</span>
                         </div>
                         <div className={styles.detailRow}>
-                            <span>Furnishing</span>
+                            <span>{t('dashboard_extra.furnishing')}</span>
                             <span className={styles.detailValue}>{property.features.furnished || 'Not specified'}</span>
                         </div>
                         <div className={styles.detailRow}>
-                            <span>Listed</span>
+                            <span>{t('dashboard_extra.listed')}</span>
                             <span className={styles.detailValue}>
                                 {new Date(property.createdAt).toLocaleDateString()}
                             </span>
