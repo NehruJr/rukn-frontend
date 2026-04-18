@@ -45,15 +45,15 @@ const Login = () => {
             
             if (response.success || response.token) {
                 setAuth(response);
-                addToast({ type: 'success', message: 'Logged in successfully!' });
+                addToast({ type: 'success', message: t('auth.loginSuccess') });
                 console.log('Auth set, navigating to dashboard...');
                 navigate('/', { replace: true });
             } else {
-                setError('Login failed: Invalid server response');
+                setError(t('auth.loginFailServer'));
             }
         } catch (err) {
             console.error('Login Error:', err);
-            const errorMessage = err.response?.data?.message || err.message || 'Invalid email or password';
+            const errorMessage = err.response?.data?.message || err.message || t('auth.invalidCredentials');
             setError(errorMessage);
             addToast({ type: 'error', message: errorMessage });
         } finally {

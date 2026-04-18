@@ -10,7 +10,7 @@ import Input from '@/components/ui/Input';
 import styles from './LeadPipeline.module.css';
 
 const LeadPipeline = () => {
-    const { t } = useLanguage();
+    const { t, leadStatus, leadPriority, leadSource } = useLanguage();
     const [filters, setFilters] = useState({
         search: '',
         priority: '',
@@ -87,7 +87,7 @@ const LeadPipeline = () => {
 
             <div className={styles.toolbar}>
                 <Input
-                    placeholder="Search leads..."
+                    placeholder={t('dashboard_extra.search_for_leads') || "Search leads..."}
                     leftIcon={<Search size={18} />}
                     value={filters.search}
                     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
@@ -101,7 +101,7 @@ const LeadPipeline = () => {
                 >
                     <option value="">{t('dashboard_extra.all_priorities')}</option>
                     {LEAD_PRIORITIES.map(priority => (
-                        <option key={priority.value} value={priority.value}>{priority.label}</option>
+                        <option key={priority.value} value={priority.value}>{leadPriority(priority.value)}</option>
                     ))}
                 </select>
 
@@ -122,7 +122,7 @@ const LeadPipeline = () => {
                             <DroppableColumn
                                 key={status.value}
                                 id={status.value}
-                                title={status.label}
+                                title={leadStatus(status.value)}
                                 color={status.color}
                                 leads={groupedLeads[status.value] || []}
                                 getPriorityColor={getPriorityColor}
@@ -197,6 +197,7 @@ const DraggableLeadCard = ({ lead, getPriorityColor }) => {
 
 // Lead Card Component
 const LeadCard = ({ lead, getPriorityColor, isDragging = false }) => {
+    const { leadPriority, leadSource } = useLanguage();
     return (
         <a
             href={`/leads/${lead._id}`}
@@ -217,7 +218,7 @@ const LeadCard = ({ lead, getPriorityColor, isDragging = false }) => {
                     className={styles.priorityBadge}
                     style={{ backgroundColor: `${getPriorityColor(lead.priority)}15`, color: getPriorityColor(lead.priority) }}
                 >
-                    {lead.priority}
+                    {leadPriority(lead.priority)}
                 </span>
             </div>
 
@@ -230,7 +231,7 @@ const LeadCard = ({ lead, getPriorityColor, isDragging = false }) => {
             )}
 
             <div className={styles.cardFooter}>
-                <span className={styles.source}>{lead.source}</span>
+                <span className={styles.source}>{leadSource(lead.source)}</span>
                 {lead.assignedTo && (
                     <span className={styles.agent}>
                         {lead.assignedTo.firstName} {lead.assignedTo.lastName}

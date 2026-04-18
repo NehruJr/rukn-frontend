@@ -17,7 +17,7 @@ export function useLanguage() {
   const raw = settingsData?.data?.language;
   const language = raw === 'en' ? 'en' : 'ar';
   const locale = language === 'ar' ? 'ar-EG' : 'en-US';
-  const { t, leadStatus, leadPriority, taskPriority, leadSource, userRole, taskTitle } = createTranslator(language);
+  const { t, leadStatus, leadPriority, taskPriority, leadSource, userRole, taskTitle, dealStage } = createTranslator(language);
 
   return {
     language,
@@ -28,6 +28,7 @@ export function useLanguage() {
     taskPriority,
     leadSource,
     userRole,
-    taskTitle
+    taskTitle,
+    dealStage
   };
 }

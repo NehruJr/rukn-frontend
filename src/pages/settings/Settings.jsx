@@ -40,10 +40,10 @@ const Settings = () => {
     const settings = settingsData?.data || {};
 
     const tabs = [
-        { id: 'agency', label: 'Agency Info', icon: <Building2 size={18} /> },
-        { id: 'users', label: 'User Management', icon: <Users size={18} /> },
-        { id: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
-        { id: 'system', label: 'System', icon: <SettingsIcon size={18} /> }
+        { id: 'agency', label: t('settings.tabAgencyInfo'), icon: <Building2 size={18} /> },
+        { id: 'users', label: t('settings.tabUserMgmt'), icon: <Users size={18} /> },
+        { id: 'notifications', label: t('settings.tabNotifications'), icon: <Bell size={18} /> },
+        { id: 'system', label: t('settings.tabSystem'), icon: <SettingsIcon size={18} /> }
     ];
 
     return (
@@ -143,22 +143,22 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
                 <h3>{t('dashboard_extra.agency_information')}</h3>
                 <div className={styles.formGrid}>
                     <div className={styles.formGroup}>
-                        <label>Agency Name *</label>
+                        <label>{t('settings.agencyNameStar')}</label>
                         <Input
                             value={formData.agencyName}
                             onChange={(e) => setFormData({ ...formData, agencyName: e.target.value })}
-                            placeholder="Enter agency name"
+                            placeholder={t('settings.enterAgencyName')}
                             required
                         />
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>Email *</label>
+                        <label>{t('settings.emailStar')}</label>
                         <Input
                             type="email"
                             value={formData.agencyEmail}
                             onChange={(e) => setFormData({ ...formData, agencyEmail: e.target.value })}
-                            placeholder="agency@example.com"
+                            placeholder={t('settings.agencyEmailEx')}
                             required
                         />
                     </div>
@@ -247,7 +247,7 @@ const UserSettings = () => {
     const { t } = useLanguage();
     return (
         <div className={styles.section}>
-            <h3>User & Role Management</h3>
+            <h3>{t('settings.userRoleAuth')}</h3>
             <p className={styles.sectionDescription}>{t('dashboard_extra.manage_user_permissions_and_roles_from_t')}</p>
             <Button variant="outline" onClick={() => window.location.href = '/team'}>{t('dashboard_extra.go_to_team_management')}</Button>
         </div>

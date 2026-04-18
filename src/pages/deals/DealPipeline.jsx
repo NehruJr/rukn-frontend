@@ -7,7 +7,7 @@ import { DEAL_STAGES } from '@/utils/constants';
 import styles from './DealPipeline.module.css';
 
 const DealPipeline = () => {
-    const { t } = useLanguage();
+    const { t, dealStage } = useLanguage();
     const [activeId, setActiveId] = useState(null);
     const queryClient = useQueryClient();
 
@@ -87,7 +87,7 @@ const DealPipeline = () => {
                             <DroppableColumn
                                 key={stage.value}
                                 id={stage.value}
-                                title={stage.label}
+                                title={dealStage(stage.value)}
                                 deals={pipeline[stage.value] || []}
                                 formatCurrency={formatCurrency}
                             />
@@ -104,6 +104,7 @@ const DealPipeline = () => {
 
 const DroppableColumn = ({ id, title, deals, formatCurrency }) => {
     const { setNodeRef } = useDroppable({ id });
+    const { t } = useLanguage();
 
     const getStageColor = (stage) => {
         const colors = {
@@ -123,7 +124,7 @@ const DroppableColumn = ({ id, title, deals, formatCurrency }) => {
                 {deals.map(deal => (
                     <DraggableDealCard key={deal._id} deal={deal} formatCurrency={formatCurrency} />
                 ))}
-                {deals.length === 0 && <div className={styles.emptyColumn}>No deals</div>}
+                {deals.length === 0 && <div className={styles.emptyColumn}>{t('dashboard_extra.no_deals_found')}</div>}
             </div>
         </div>
     );
@@ -159,7 +160,7 @@ const DealCard = ({ deal, formatCurrency, isDragging = false }) => (
             <div className={styles.agent}>{deal.agent.firstName} {deal.agent.lastName}</div>
         )}
         {deal.expectedCloseDate && (
-            <div className={styles.date}>Expected: {new Date(deal.expectedCloseDate).toLocaleDateString()}</div>
+            <div className={styles.date}>{t('dashboard_extra.expected_close')}: {new Date(deal.expectedCloseDate).toLocaleDateString()}</div>
         )}
     </a>
 );

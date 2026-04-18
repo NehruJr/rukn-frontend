@@ -19,7 +19,7 @@ const PublicProperty = () => {
         if (token) {
             fetchProperty();
         } else {
-            setError('Invalid link');
+            setError(t('publicProp.invalidLink'));
             setLoading(false);
         }
     }, [token]);
@@ -32,7 +32,7 @@ const PublicProperty = () => {
             setProperty(response?.data ?? response);
         } catch (err) {
             console.error('Error fetching public property:', err);
-            setError(err?.response?.data?.message || 'Property not found or link has expired');
+            setError(err?.response?.data?.message || t('publicProp.propNotFoundExpired'));
         } finally {
             setLoading(false);
         }
@@ -49,7 +49,7 @@ const PublicProperty = () => {
         return (
             <div className={styles.wrapper}>
                 <header className={styles.brandHeader}>
-                    <span className={styles.brand}>Powered by Realy</span>
+                    <span className={styles.brand}>{t('publicProp.poweredBy')}</span>
                 </header>
                 <div className={styles.loading}>{t('dashboard_extra.loading_property')}</div>
             </div>
@@ -60,10 +60,10 @@ const PublicProperty = () => {
         return (
             <div className={styles.wrapper}>
                 <header className={styles.brandHeader}>
-                    <span className={styles.brand}>Powered by Realy</span>
+                    <span className={styles.brand}>{t('publicProp.poweredBy')}</span>
                 </header>
                 <div className={styles.error}>
-                    <p>{error || 'Property not found'}</p>
+                    <p>{error || t('publicProp.propNotFound')}</p>
                 </div>
             </div>
         );
@@ -74,7 +74,7 @@ const PublicProperty = () => {
     return (
         <div className={styles.wrapper}>
             <header className={styles.brandHeader}>
-                <span className={styles.brand}>Powered by Realy</span>
+                <span className={styles.brand}>{t('publicProp.poweredBy')}</span>
             </header>
 
             <main className={styles.main}>
@@ -251,7 +251,7 @@ const PublicProperty = () => {
             </main>
 
             <footer className={styles.footer}>
-                <span className={styles.brand}>Powered by Realy</span>
+                <span className={styles.brand}>{t('publicProp.poweredBy')}</span>
             </footer>
         </div>
     );

@@ -64,6 +64,14 @@ export const messages = {
         lost: 'Lost',
         unqualified: 'Unqualified'
     },
+    dealStage: {
+      negotiation: 'Negotiation',
+      contract_sent: 'Contract Sent',
+      contract_signed: 'Contract Signed',
+      payment_pending: 'Payment Pending',
+      completed: 'Completed',
+      cancelled: 'Cancelled'
+    },
     roles: {
       admin: 'Admin',
       manager: 'Manager',
@@ -117,7 +125,10 @@ export const messages = {
       signInLink: 'Sign in',
       brandingDesc: 'Manage your leads, properties, and deals efficiently',
       registerBrandingTitle: 'Join Rukn CRM',
-      registerBrandingDesc: 'Start managing your real estate business more efficiently'
+      registerBrandingDesc: 'Start managing your real estate business more efficiently',
+      loginSuccess: 'Logged in successfully!',
+      loginFailServer: 'Login failed: Invalid server response',
+      invalidCredentials: 'Invalid email or password'
     },
     leads: {
       title: 'Leads',
@@ -174,7 +185,24 @@ export const messages = {
       notifications: 'Notifications',
       security: 'Security',
       language: 'Language',
-      appearance: 'Appearance'
+      appearance: 'Appearance',
+      agencyNameStar: 'Agency Name *',
+      enterAgencyName: 'Enter agency name',
+      emailStar: 'Email *',
+      agencyEmailEx: 'agency@example.com',
+      saving: 'Saving...',
+      saveChanges: 'Save Changes',
+      userRoleAuth: 'User & Role Management',
+      tabAgencyInfo: 'Agency Info',
+      tabUserMgmt: 'User Management',
+      tabNotifications: 'Notifications',
+      tabSystem: 'System'
+    },
+    publicProp: {
+      invalidLink: 'Invalid link',
+      propNotFoundExpired: 'Property not found or link has expired',
+      propNotFound: 'Property not found',
+      poweredBy: 'Powered by Realy'
     },
     dashboard_extra: {
       "settings": "Settings",
@@ -420,6 +448,14 @@ export const messages = {
         lost: 'مفقود',
         unqualified: 'غير مؤهل'
     },
+    dealStage: {
+      negotiation: 'تفاوض',
+      contract_sent: 'تم إرسال العقد',
+      contract_signed: 'تم توقيع العقد',
+      payment_pending: 'في انتظار الدفع',
+      completed: 'مكتمل',
+      cancelled: 'ملغى'
+    },
     roles: {
       admin: 'مسؤول',
       manager: 'مدير',
@@ -473,7 +509,10 @@ export const messages = {
       signInLink: 'تسجيل الدخول',
       brandingDesc: 'إدارة العملاء والعقارات والصفقات بكفاءة عالية',
       registerBrandingTitle: 'انضم إلى ركن CRM',
-      registerBrandingDesc: 'ابدأ في إدارة أعمالك العقارية بكفاءة أكبر اليوم'
+      registerBrandingDesc: 'ابدأ في إدارة أعمالك العقارية بكفاءة أكبر اليوم',
+      loginSuccess: 'تم تسجيل الدخول بنجاح!',
+      loginFailServer: 'فشل تسجيل الدخول: استجابة خادم غير صالحة',
+      invalidCredentials: 'البريد الإلكتروني أو كلمة المرور غير صالحة'
     },
     leads: {
       title: 'العملاء المحتملون',
@@ -530,7 +569,24 @@ export const messages = {
       notifications: 'التنبيهات',
       security: 'الأمان',
       language: 'اللغة',
-      appearance: 'المظهر'
+      appearance: 'المظهر',
+      agencyNameStar: 'اسم الوكالة *',
+      enterAgencyName: 'أدخل اسم الوكالة',
+      emailStar: 'البريد الإلكتروني *',
+      agencyEmailEx: 'agency@example.com',
+      saving: 'جاري الحفظ...',
+      saveChanges: 'حفظ التغييرات',
+      userRoleAuth: 'إدارة المستخدمين والصلاحيات',
+      tabAgencyInfo: 'معلومات الوكالة',
+      tabUserMgmt: 'إدارة المستخدمين',
+      tabNotifications: 'التنبيهات',
+      tabSystem: 'النظام'
+    },
+    publicProp: {
+      invalidLink: 'رابط غير صالح',
+      propNotFoundExpired: 'لم يتم العثور على العقار أو انتهت صلاحية الرابط',
+      propNotFound: 'العقار غير موجود',
+      poweredBy: 'مدعوم من Realy'
     },
     dashboard_extra: {
       "settings": "الإعدادات",
@@ -756,7 +812,6 @@ export function createTranslator(lang) {
     return getNested(primary, `roles.${key}`) || r;
   }
 
-  /** Localize task title from API (e.g. "Follow up with John Doe") */
   function taskTitle(title) {
     if (!title || isEn) return title;
     const enPrefix = messages.en.taskTitle.followUpPrefix;
@@ -766,5 +821,10 @@ export function createTranslator(lang) {
     return title;
   }
 
-  return { t, leadPriority, leadStatus, taskPriority, leadSource, userRole, taskTitle };
+  function dealStage(s) {
+    const key = s?.toLowerCase?.() || s;
+    return getNested(primary, `dealStage.${key}`) || s;
+  }
+
+  return { t, leadPriority, leadStatus, taskPriority, leadSource, userRole, taskTitle, dealStage };
 }
