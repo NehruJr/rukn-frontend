@@ -19,6 +19,8 @@ const AssignPropertyModal = ({
     const [savingId, setSavingId] = useState(null);
     const [search, setSearch] = useState('');
 
+    const { t } = useLanguage();
+
     const assignedSet = new Set(assignedPropertyIds.map((id) => id?.toString?.() || id));
 
     useEffect(() => {
@@ -28,7 +30,6 @@ const AssignPropertyModal = ({
     }, [isOpen, search]);
 
     const fetchProperties = async () => {
-    const { t } = useLanguage();
         setLoading(true);
         try {
             const res = await propertyService.getProperties({

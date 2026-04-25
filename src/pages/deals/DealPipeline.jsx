@@ -1,6 +1,7 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable, useDroppable } from '@dnd-kit/core';
 import { dealService } from '@/services/dealService';
 import { DEAL_STAGES } from '@/utils/constants';
@@ -94,7 +95,7 @@ const DealPipeline = () => {
                         ))}
                     </div>
                     <DragOverlay>
-                        {activeDeal && <DealCard deal={activeDeal} formatCurrency={formatCurrency} isDragging />}
+                        {activeDeal && <DealCard deal={activeDeal} formatCurrency={formatCurrency} t={t} isDragging />}
                     </DragOverlay>
                 </DndContext>
             )}
@@ -122,7 +123,7 @@ const DroppableColumn = ({ id, title, deals, formatCurrency }) => {
             </div>
             <div className={styles.columnContent}>
                 {deals.map(deal => (
-                    <DraggableDealCard key={deal._id} deal={deal} formatCurrency={formatCurrency} />
+                    <DraggableDealCard key={deal._id} deal={deal} formatCurrency={formatCurrency} t={t} />
                 ))}
                 {deals.length === 0 && <div className={styles.emptyColumn}>{t('dashboard_extra.no_deals_found')}</div>}
             </div>
@@ -130,7 +131,7 @@ const DroppableColumn = ({ id, title, deals, formatCurrency }) => {
     );
 };
 
-const DraggableDealCard = ({ deal, formatCurrency }) => {
+const DraggableDealCard = ({ deal, formatCurrency, t }) => {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: deal._id });
     const style = transform ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -139,13 +140,13 @@ const DraggableDealCard = ({ deal, formatCurrency }) => {
 
     return (
         <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            <DealCard deal={deal} formatCurrency={formatCurrency} />
+            <DealCard deal={deal} formatCurrency={formatCurrency} t={t} />
         </div>
     );
 };
 
-const DealCard = ({ deal, formatCurrency, isDragging = false }) => (
-    <a href={`/deals/${deal._id}`} className={`${styles.card} ${isDragging ? styles.dragging : ''}`}
+const DealCard = ({ deal, formatCurrency, t, isDragging = false }) => (
+    <Link to={`/deals/${deal._id}`} className={`${styles.card} ${isDragging ? styles.dragging : ''}`}
         onClick={(e) => isDragging && e.preventDefault()}>
         <div className={styles.cardHeader}>
             <div className={styles.dealNumber}>{deal.dealNumber}</div>
@@ -162,7 +163,7 @@ const DealCard = ({ deal, formatCurrency, isDragging = false }) => (
         {deal.expectedCloseDate && (
             <div className={styles.date}>{t('dashboard_extra.expected_close')}: {new Date(deal.expectedCloseDate).toLocaleDateString()}</div>
         )}
-    </a>
+    </Link>
 );
 
 export default DealPipeline;

@@ -18,9 +18,10 @@ const Dropdown = ({
     const [searchTerm, setSearchTerm] = useState('');
     const dropdownRef = useRef(null);
 
+    const { t } = useLanguage();
+
     useEffect(() => {
         const handleClickOutside = (event) => {
-    const { t } = useLanguage();
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }

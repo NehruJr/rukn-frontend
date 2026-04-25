@@ -101,7 +101,7 @@ const PropertyDetail = () => {
                     <h1 className={styles.title}>{property.title}</h1>
                     <div className={styles.location}>
                         <MapPin size={20} />
-                        <span>{property.location.address}, {property.location.city}</span>
+                        <span>{property.location?.address}, {property.location?.city}</span>
                     </div>
                 </div>
                 <div className={styles.headerActions}>
@@ -153,7 +153,7 @@ const PropertyDetail = () => {
 
             <div className={styles.gallery}>
                 <div className={styles.mainImage}>
-                    <img src={images[activeImage].url} alt={property.title} />
+                    <img src={images[activeImage]?.url} alt={property.title} />
                 </div>
                 <div className={styles.thumbnails}>
                     {images.map((img, index) => (
@@ -176,28 +176,28 @@ const PropertyDetail = () => {
                             <div className={styles.featureItem}>
                                 <Bed size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features.bedrooms}</span>
+                                    <span className={styles.featureValue}>{property.features?.bedrooms || 'N/A'}</span>
                                     <span className={styles.featureLabel}>{t('dashboard_extra.bedrooms')}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
                                 <Bath size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features.bathrooms}</span>
+                                    <span className={styles.featureValue}>{property.features?.bathrooms || 'N/A'}</span>
                                     <span className={styles.featureLabel}>{t('dashboard_extra.bathrooms')}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
                                 <Maximize size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features.area.value}</span>
-                                    <span className={styles.featureLabel}>{property.features.area.unit}</span>
+                                    <span className={styles.featureValue}>{property.features?.area?.value || 'N/A'}</span>
+                                    <span className={styles.featureLabel}>{property.features?.area?.unit || 'sqm'}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
                                 <Calendar size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features.yearBuilt || 'N/A'}</span>
+                                    <span className={styles.featureValue}>{property.features?.yearBuilt || 'N/A'}</span>
                                     <span className={styles.featureLabel}>{t('dashboard_extra.year_built')}</span>
                                 </div>
                             </div>
@@ -209,7 +209,7 @@ const PropertyDetail = () => {
                         <p className={styles.description}>{property.description}</p>
                     </div>
 
-                    {property.features.amenities?.length > 0 && (
+                    {property.features?.amenities?.length > 0 && (
                         <div className={styles.section}>
                             <h2>{t('dashboard_extra.amenities')}</h2>
                             <div className={styles.amenities}>
@@ -280,7 +280,7 @@ const PropertyDetail = () => {
                         </div>
                         <div className={styles.detailRow}>
                             <span>{t('dashboard_extra.furnishing')}</span>
-                            <span className={styles.detailValue}>{property.features.furnished || 'Not specified'}</span>
+                            <span className={styles.detailValue}>{property.features?.furnished || 'Not specified'}</span>
                         </div>
                         <div className={styles.detailRow}>
                             <span>{t('dashboard_extra.listed')}</span>

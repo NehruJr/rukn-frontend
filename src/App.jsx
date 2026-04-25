@@ -22,6 +22,7 @@ import AddEditProperty from './pages/properties/AddEditProperty';
 import PublicProperty from './pages/properties/PublicProperty';
 import DealList from './pages/deals/DealList';
 import DealPipeline from './pages/deals/DealPipeline';
+import DealDetails from './pages/deals/DealDetails';
 import Calendar from './pages/calendar/Calendar';
 import UserManagement from './pages/team/UserManagement';
 import Reports from './pages/reports/Reports';
@@ -109,6 +110,7 @@ function App() {
                     {/* Deals */}
                     <Route path="deals" element={<DealList />} />
                     <Route path="deals/pipeline" element={<DealPipeline />} />
+                    <Route path="deals/:id" element={<DealDetails />} />
 
                     {/* Calendar */}
                     <Route path="calendar" element={<Calendar />} />

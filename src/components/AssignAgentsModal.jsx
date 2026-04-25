@@ -17,6 +17,8 @@ const AssignAgentsModal = ({
     const [saving, setSaving] = useState(false);
     const [selectedIds, setSelectedIds] = useState(new Set(assignedAgentIds.map(id => id?.toString?.() || id)));
 
+    const { t } = useLanguage();
+    
     useEffect(() => {
         if (isOpen) {
             setSelectedIds(new Set(assignedAgentIds.map(id => id?.toString?.() || id)));
@@ -31,7 +33,6 @@ const AssignAgentsModal = ({
     }, [assignedAgentIds, isOpen]);
 
     const fetchAgents = async () => {
-    const { t } = useLanguage();
         setLoading(true);
         try {
             const res = await userService.getAgents();

@@ -1,5 +1,6 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { dealService } from '@/services/dealService';
 import { DEAL_STAGES, DEAL_STATUSES } from '@/utils/constants';
@@ -199,7 +200,7 @@ const DealList = () => {
                                     </td>
                                     <td className={styles.date}>{formatTimeAgo(deal.createdAt)}</td>
                                     <td>
-                                        <a href={`/deals/${deal._id}`} className={styles.viewLink}>{t('dashboard_extra.view')}</a>
+                                        <Link to={`/deals/${deal._id}`} className={styles.viewLink}>{t('dashboard_extra.view')}</Link>
                                     </td>
                                 </tr>
                             ))}
