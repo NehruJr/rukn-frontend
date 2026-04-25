@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Building2, Users, Bell, Settings as SettingsIcon, Save } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/store/uiStore';
 import { getSettings, updateSettings } from '@/services/settingsService';
 import styles from './Settings.module.css';
@@ -245,11 +246,12 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
 // User Settings Tab
 const UserSettings = () => {
     const { t } = useLanguage();
+    const navigate = useNavigate();
     return (
         <div className={styles.section}>
             <h3>{t('settings.userRoleAuth')}</h3>
             <p className={styles.sectionDescription}>{t('dashboard_extra.manage_user_permissions_and_roles_from_t')}</p>
-            <Button variant="outline" onClick={() => window.location.href = '/team'}>{t('dashboard_extra.go_to_team_management')}</Button>
+            <Button variant="outline" onClick={() => navigate('/team')}>{t('dashboard_extra.go_to_team_management')}</Button>
         </div>
     );
 };

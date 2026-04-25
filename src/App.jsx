@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { getSettings } from './services/settingsService';
 import ToastContainer from './components/ui/ToastContainer';
 import GlobalSearch from './components/GlobalSearch';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -24,6 +25,7 @@ import DealList from './pages/deals/DealList';
 import DealPipeline from './pages/deals/DealPipeline';
 import DealDetails from './pages/deals/DealDetails';
 import Calendar from './pages/calendar/Calendar';
+import TaskDetails from './pages/tasks/TaskDetails';
 import UserManagement from './pages/team/UserManagement';
 import Reports from './pages/reports/Reports';
 import Settings from './pages/settings/Settings';
@@ -78,7 +80,7 @@ function App() {
     }, [language]);
 
     return (
-        <>
+        <ErrorBoundary>
             <Routes>
                 {/* Public Routes */}
                 <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
@@ -112,8 +114,9 @@ function App() {
                     <Route path="deals/pipeline" element={<DealPipeline />} />
                     <Route path="deals/:id" element={<DealDetails />} />
 
-                    {/* Calendar */}
+                    {/* Calendar & Tasks */}
                     <Route path="calendar" element={<Calendar />} />
+                    <Route path="tasks/:id" element={<TaskDetails />} />
 
                     {/* Team - Admin/Manager Only */}
                     <Route
@@ -138,7 +141,7 @@ function App() {
 
             <ToastContainer />
             <GlobalSearch />
-        </>
+        </ErrorBoundary>
     );
 }
 

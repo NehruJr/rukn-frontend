@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Link } from 'react-router-dom';
 import { leadService } from '@/services/leadService';
 import LeadForm from '@/components/LeadForm';
 import { Plus, Filter, Search } from 'lucide-react';
@@ -172,9 +173,9 @@ const LeadList = () => {
                                     </td>
                                     <td className={styles.date}>{formatTimeAgo(lead.createdAt)}</td>
                                     <td>
-                                        <a href={`/leads/${lead._id}`} className={styles.viewLink}>
+                                        <Link to={`/leads/${lead._id}`} className={styles.viewLink}>
                                             {t('common.view')}
-                                        </a>
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}

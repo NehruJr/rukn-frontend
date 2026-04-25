@@ -1,6 +1,7 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { taskService } from '@/services/taskService';
 import { TASK_TYPES, TASK_PRIORITIES, TASK_STATUSES } from '@/utils/constants';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns';
@@ -171,7 +172,7 @@ const TaskCard = ({ task, getPriorityColor }) => {
     };
 
     return (
-        <a href={`/tasks/${task._id}`} className={styles.taskCard}>
+        <Link to={`/tasks/${task._id}`} className={styles.taskCard}>
             <div className={styles.taskHeader}>
                 <span
                     className={styles.priorityBadge}
@@ -197,7 +198,7 @@ const TaskCard = ({ task, getPriorityColor }) => {
                     <span className={styles.taskAssignee}>{task.assignedTo.firstName} {task.assignedTo.lastName}</span>
                 )}
             </div>
-        </a>
+        </Link>
     );
 };
 

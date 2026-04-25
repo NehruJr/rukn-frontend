@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { dashboardService } from '@/services/dashboardService';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Link } from 'react-router-dom';
 import { Users, Building2, FileText, DollarSign, TrendingUp, Clock } from 'lucide-react';
 import styles from './Dashboard.module.css';
 
@@ -160,9 +161,9 @@ const Dashboard = () => {
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h3>{t('dashboard.recentLeads')}</h3>
-                        <a href="/leads" className={styles.viewAll}>
+                        <Link to="/leads" className={styles.viewAll}>
                             {t('dashboard.viewAll')}
-                        </a>
+                        </Link>
                     </div>
                     <div className={styles.leadList}>
                         {recentLeads.length > 0 ? (
@@ -194,9 +195,9 @@ const Dashboard = () => {
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h3>{t('dashboard.todaysTasks')}</h3>
-                        <a href="/calendar" className={styles.viewAll}>
+                        <Link to="/calendar" className={styles.viewAll}>
                             {t('dashboard.viewCalendar')}
-                        </a>
+                        </Link>
                     </div>
                     <div className={styles.taskList}>
                         {tasks.length > 0 ? (

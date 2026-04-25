@@ -1,6 +1,6 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { dealService } from '@/services/dealService';
 import { DEAL_STAGES, DEAL_STATUSES } from '@/utils/constants';
@@ -13,6 +13,7 @@ import styles from './DealList.module.css';
 
 const DealList = () => {
     const { t } = useLanguage();
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         search: '',
         status: '',
@@ -68,7 +69,7 @@ const DealList = () => {
                     <p>{t('dashboard_extra.manage_and_track_all_your_deals')}</p>
                 </div>
                 <div className={styles.headerActions}>
-                    <Button variant="outline" onClick={() => window.location.href = '/deals/pipeline'}>{t('dashboard_extra.pipeline_view')}</Button>
+                    <Button variant="outline" onClick={() => navigate('/deals/pipeline')}>{t('dashboard_extra.pipeline_view')}</Button>
                     <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>{t('dashboard_extra.add_deal')}</Button>
                 </div>
             </div>

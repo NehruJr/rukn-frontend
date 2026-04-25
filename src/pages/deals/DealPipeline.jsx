@@ -61,7 +61,7 @@ const DealPipeline = () => {
                     <h1>{t('dashboard_extra.deal_pipeline')}</h1>
                     <p>{t('dashboard_extra.drag_and_drop_deals_to_update_their_stag')}</p>
                 </div>
-                <a href="/deals" className={styles.listViewLink}>{t('dashboard_extra.list_view')}</a>
+                <Link to="/deals" className={styles.listViewLink}>{t('dashboard_extra.list_view')}</Link>
             </div>
 
             <div className={styles.stats}>

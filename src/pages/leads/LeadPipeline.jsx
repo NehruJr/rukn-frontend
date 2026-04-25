@@ -1,7 +1,8 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { Link } from 'react-router-dom';
+import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable, useDroppable } from '@dnd-kit/core';
 import { leadService } from '@/services/leadService';
 import { LEAD_STATUSES, LEAD_PRIORITIES } from '@/utils/constants';
 import Button from '@/components/ui/Button';
@@ -199,8 +200,8 @@ const DraggableLeadCard = ({ lead, getPriorityColor }) => {
 const LeadCard = ({ lead, getPriorityColor, isDragging = false }) => {
     const { leadPriority, leadSource } = useLanguage();
     return (
-        <a
-            href={`/leads/${lead._id}`}
+        <Link
+            to={`/leads/${lead._id}`}
             className={`${styles.card} ${isDragging ? styles.dragging : ''}`}
             onClick={(e) => isDragging && e.preventDefault()}
         >
@@ -238,11 +239,8 @@ const LeadCard = ({ lead, getPriorityColor, isDragging = false }) => {
                     </span>
                 )}
             </div>
-        </a>
+        </Link>
     );
 };
-
-// Import missing hooks
-import { useDraggable, useDroppable } from '@dnd-kit/core';
 
 export default LeadPipeline;
