@@ -9,12 +9,35 @@
     top: 0;
     z-index: var(--z-sticky);
     box-shadow: var(--shadow-sm);
+    gap: var(--space-3);
+}
+
+/* Hamburger — hidden on desktop, shown on mobile */
+.hamburger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.hamburger:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
 }
 
 .searchContainer {
     position: relative;
     flex: 1;
     max-width: 500px;
+    min-width: 0;
 }
 
 .searchIcon {
@@ -25,6 +48,11 @@
     color: var(--color-text-tertiary);
 }
 
+[dir="rtl"] .searchIcon {
+    left: auto;
+    right: var(--space-4);
+}
+
 .searchInput {
     width: 100%;
     padding: var(--space-3) var(--space-3) var(--space-3) var(--space-10);
@@ -33,6 +61,11 @@
     font-size: var(--font-size-sm);
     transition: all var(--transition-fast);
     background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+[dir="rtl"] .searchInput {
+    padding: var(--space-3) var(--space-10) var(--space-3) var(--space-3);
 }
 
 .searchInput:focus {
@@ -46,6 +79,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-4);
+    flex-shrink: 0;
 }
 
 .iconButton {
@@ -114,12 +148,14 @@
     justify-content: center;
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-sm);
+    flex-shrink: 0;
 }
 
 .userName {
     font-weight: var(--font-weight-medium);
     font-size: var(--font-size-sm);
     color: var(--color-text-primary);
+    white-space: nowrap;
 }
 
 .logoutBtn {
@@ -140,16 +176,33 @@
     color: var(--color-danger-600);
 }
 
+/* ── Mobile ── */
 @media (max-width: 768px) {
     .header {
-        padding: var(--space-3) var(--space-4);
+        padding: var(--space-3);
+        gap: var(--space-2);
+    }
+
+    .hamburger {
+        display: flex;
     }
 
     .searchContainer {
-        max-width: 200px;
+        max-width: none;
+        flex: 1;
     }
 
     .userName {
         display: none;
+    }
+
+    .actions {
+        gap: var(--space-2);
+    }
+}
+
+@media (max-width: 400px) {
+    .searchContainer {
+        max-width: 120px;
     }
 }

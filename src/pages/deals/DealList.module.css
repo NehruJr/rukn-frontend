@@ -209,3 +209,55 @@
     color: var(--color-primary-700);
     text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--space-3);
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+    }
+
+    .header h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .headerActions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .toolbar {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .searchInput {
+        max-width: none;
+        width: 100%;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .select {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    /* Horizontal scroll on mobile */
+    .tableContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        min-width: 700px;
+    }
+}

@@ -20,6 +20,11 @@ const Input = forwardRef(({
         className
     ].filter(Boolean).join(' ');
 
+    // Force LTR layout for password fields so entered characters don't reverse
+    const isPasswordField = props.type === 'password' || props.name === 'password';
+    const forcedDir = isPasswordField ? 'ltr' : undefined;
+    const forcedLang = isPasswordField ? 'en' : undefined;
+
     return (
         <div className={`${styles.inputWrapper} ${fullWidth ? styles.fullWidth : ''}`}>
             {label && (
@@ -34,7 +39,11 @@ const Input = forwardRef(({
 
                 <input
                     ref={ref}
-                    className={inputClasses}
+                    className={
+                        isPasswordField ? `${inputClasses} ${styles.forceLTR}` : inputClasses
+                    }
+                    dir={props.dir ?? forcedDir}
+                    lang={props.lang ?? forcedLang}
                     {...props}
                 />
 

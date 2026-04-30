@@ -264,13 +264,27 @@
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding: var(--space-3);
+    }
+
     .contentGrid {
         grid-template-columns: 1fr;
     }
 
     .header {
         flex-direction: column;
-        gap: 1.5rem;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-4);
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .price {
+        font-size: 1.5rem;
     }
 
     .headerActions {
@@ -278,5 +292,13 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .badges {
+        flex-wrap: wrap;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
     }
 }

@@ -246,3 +246,56 @@
     padding: 4rem;
     color: #6b7280;
 }
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--space-3);
+    }
+
+    .header {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .form {
+        padding: var(--space-4);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .amenitiesGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .imagePreview {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+        gap: var(--space-2);
+    }
+
+    .cancelButton,
+    .saveButton {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .amenitiesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .imagePreview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

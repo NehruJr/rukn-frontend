@@ -9,6 +9,36 @@
     position: sticky;
     top: 0;
     z-index: var(--z-fixed);
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px !important;
+        transform: translateX(-100%);
+        transition: transform var(--transition-base);
+        z-index: var(--z-fixed);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .sidebar:not(.collapsed) {
+        transform: translateX(0);
+    }
+
+    /* RTL: slide from right */
+    [dir="rtl"] .sidebar {
+        left: auto;
+        right: 0;
+        transform: translateX(100%);
+    }
+
+    [dir="rtl"] .sidebar:not(.collapsed) {
+        transform: translateX(0);
+    }
 }
 
 [dir="rtl"] .sidebar {

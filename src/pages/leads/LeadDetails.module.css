@@ -279,11 +279,35 @@
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding: var(--space-3);
+    }
+
     .headerMain {
         flex-direction: column;
     }
 
+    .headerActions {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+    }
+
+    .select {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .badges {
+        flex-wrap: wrap;
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
     .grid {
         grid-template-columns: 1fr;
+        gap: var(--space-4);
     }
 }

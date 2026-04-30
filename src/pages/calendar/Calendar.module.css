@@ -248,3 +248,64 @@
     color: var(--color-text-secondary);
     font-weight: var(--font-weight-medium);
 }
+
+@media (max-width: 1024px) {
+    .content {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .sidebar {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--space-3);
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+
+    .header h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .content {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+        height: auto;
+    }
+
+    .calendarSection {
+        padding: var(--space-3);
+    }
+
+    .day {
+        min-height: 60px;
+        padding: var(--space-2);
+    }
+
+    .weekDay {
+        font-size: var(--font-size-xs);
+        padding: var(--space-1);
+    }
+
+    .daysGrid {
+        gap: var(--space-1);
+    }
+
+    .weekHeader {
+        gap: var(--space-1);
+    }
+
+    .sidebar {
+        max-height: 350px;
+        padding: var(--space-3);
+    }
+}

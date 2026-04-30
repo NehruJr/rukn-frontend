@@ -293,10 +293,45 @@
 
 @media (max-width: 768px) {
     .statsGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+        margin-bottom: var(--space-5);
     }
 
     .contentGrid {
         grid-template-columns: 1fr;
+    }
+
+    .welcomeSection {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+    }
+
+    .welcomeSection h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .statCard {
+        padding: var(--space-3);
+    }
+
+    .statValue {
+        font-size: var(--font-size-2xl);
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
+}
+
+@media (max-width: 480px) {
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcomeSection h1 {
+        font-size: var(--font-size-xl);
     }
 }

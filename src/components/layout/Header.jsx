@@ -1,14 +1,16 @@
-import { Bell, Search, LogOut } from 'lucide-react';
+import { Bell, Search, LogOut, Menu } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { authService } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useUIStore } from '@/store/uiStore';
 import styles from './Header.module.css';
 
 const Header = () => {
-    const { user, logout } = useAuthStore();
+    const { user } = useAuthStore();
     const navigate = useNavigate();
     const { t } = useLanguage();
+    const { toggleSidebar } = useUIStore();
 
     const handleLogout = async () => {
         await authService.logout();
@@ -17,6 +19,16 @@ const Header = () => {
 
     return (
         <header className={styles.header}>
+            {/* Hamburger — visible on mobile only */}
+            <button
+                type="button"
+                className={styles.hamburger}
+                onClick={toggleSidebar}
+                aria-label="Toggle menu"
+            >
+                <Menu size={22} />
+            </button>
+
             <div className={styles.searchContainer}>
                 <Search size={18} className={styles.searchIcon} />
                 <input

@@ -38,6 +38,13 @@
     outline: none;
 }
 
+/* Force left-to-right rendering for fields that should always use English/ASCII input (e.g., passwords) */
+.forceLTR {
+    direction: ltr !important;
+    unicode-bidi: isolate-override; /* keeps embedding isolated so surrounding RTL doesn't affect input */
+    text-align: left; /* ensure caret starts on the left */
+}
+
 .input::placeholder {
     color: var(--color-text-tertiary);
 }
