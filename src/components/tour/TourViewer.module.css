@@ -1,0 +1,113 @@
+.viewerWrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+.emptyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: var(--bg-secondary, #f8fafc);
+  border: 2px dashed var(--border-color, #e2e8f0);
+  border-radius: 0.75rem;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.95rem;
+}
+
+.topBar {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.sceneTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.75);
+  color: #fff;
+  padding: 0.4rem 0.85rem;
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  pointer-events: auto;
+}
+
+.sparkleIcon {
+  color: #fbbf24;
+}
+
+.sceneSelector {
+  pointer-events: auto;
+}
+
+.select {
+  background: rgba(15, 23, 42, 0.75);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  outline: none;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.select option {
+  background: #1e293b;
+  color: #fff;
+}
+
+.floatingControls {
+  position: absolute;
+  bottom: 3.5rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.ctrlBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(15, 23, 42, 0.8);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.ctrlBtn:hover {
+  background: rgba(59, 130, 246, 0.8);
+  border-color: #3b82f6;
+}
+
+.ctrlActive {
+  background: #3b82f6;
+  border-color: #60a5fa;
+}

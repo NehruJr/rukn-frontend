@@ -2,7 +2,10 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
-import { ArrowLeft, Save, Upload, X } from 'lucide-react';
+import { tourService } from '@/services/tourService';
+import { ArrowLeft, Save, Upload, X, Compass, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import MediaUploader from '@/components/media/MediaUploader';
+import TourEditor from '@/components/tour/TourEditor';
 import styles from './AddEditProperty.module.css';
 
 const AddEditProperty = () => {
@@ -11,6 +14,8 @@ const AddEditProperty = () => {
     const navigate = useNavigate();
     const isEditMode = !!id;
     const [loading, setLoading] = useState(false);
+    const [tour, setTour] = useState(null);
+    const [showTourStudio, setShowTourStudio] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -61,6 +66,14 @@ const AddEditProperty = () => {
                 }
             });
             setImageUrls(property.media?.images || []);
+
+            try {
+                const tourRes = await tourService.getTourByProperty(id);
+                setTour(tourRes?.data ?? tourRes);
+            } catch (tErr) {
+                // Tour does not exist yet
+                setTour(null);
+            }
         } catch (err) {
             console.error('Error fetching property:', err);
             alert('Failed to load property');
@@ -347,34 +360,66 @@ const AddEditProperty = () => {
 
                 <div className={styles.section}>
                     <h2>{t('dashboard_extra.images')}</h2>
-                    <div className={styles.imageUpload}>
-                        <input
-                            type="file"
-                            id="images"
-                            multiple
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className={styles.fileInput}
-                        />
-                        <label htmlFor="images" className={styles.uploadButton}>
-                            <Upload size={20} />
-                            <span>{t('dashboard_extra.upload_images')}</span>
-                        </label>
-                    </div>
+                    <MediaUploader
+                        images={formData.media?.images || []}
+                        onChange={(newImages) => {
+                            const resolved = typeof newImages === 'function' ? newImages(formData.media?.images || []) : newImages;
+                            setFormData((prev) => ({
+                                ...prev,
+                                media: {
+                                    ...prev.media,
+                                    images: resolved
+                                }
+                            }));
+                        }}
+                    />
+                </div>
 
-                    <div className={styles.imagePreview}>
-                        {imageUrls.map((img, index) => (
-                            <div key={index} className={styles.previewItem}>
-                                <img src={img.url} alt={`Preview ${index}`} />
+                <div className={styles.section}>
+                    <h2>360° Virtual Walkthrough</h2>
+                    <div className={styles.tourSection}>
+                        <div className={styles.tourSectionHeader}>
+                            <h3>
+                                <Compass size={20} color="#2563eb" />
+                                <span>360° Virtual Tour Studio</span>
+                            </h3>
+                            {isEditMode && (
                                 <button
                                     type="button"
-                                    onClick={() => removeImage(index)}
-                                    className={styles.removeButton}
+                                    onClick={() => setShowTourStudio(prev => !prev)}
+                                    className={styles.tourToggleBtn}
                                 >
-                                    <X size={16} />
+                                    <Sparkles size={16} />
+                                    <span>{showTourStudio ? 'Close Tour Studio' : (tour ? 'Edit 360° Tour' : 'Create 360° Tour')}</span>
+                                    {showTourStudio ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                 </button>
-                            </div>
-                        ))}
+                            )}
+                        </div>
+
+                        {isEditMode ? (
+                            showTourStudio ? (
+                                <div style={{ marginTop: '1.5rem', background: '#ffffff', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                    <TourEditor
+                                        propertyId={id}
+                                        existingTour={tour}
+                                        onSaved={(savedTour) => {
+                                            setTour(savedTour);
+                                            alert('360° Tour saved successfully!');
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                <p className={styles.tourNotice}>
+                                    {tour
+                                        ? `This property has an active 360° tour with ${tour.scenes?.length || 0} scenes. Click "Edit 360° Tour" to adjust hotspots or add rooms.`
+                                        : 'No 360° tour attached to this property yet. Click "Create 360° Tour" to upload 360 photos or phone panoramas.'}
+                                </p>
+                            )
+                        ) : (
+                            <p className={styles.tourNotice}>
+                                Save this property first. Once created, you can access the 360° Virtual Tour Studio to upload panoramas, link rooms, and enable gyroscope/VR modes.
+                            </p>
+                        )}
                     </div>
                 </div>
 
