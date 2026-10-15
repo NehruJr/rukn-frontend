@@ -2,12 +2,16 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
+import { tourService } from '@/services/tourService';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
 import AssignAgentsModal from '@/components/AssignAgentsModal';
+import TourViewer from '@/components/tour/TourViewer';
+import TourEditor from '@/components/tour/TourEditor';
 import {
     MapPin, Bed, Bath, Maximize, Edit2, Trash2, ArrowLeft,
-    Calendar, User, Mail, Phone, CheckCircle, Share2, UserPlus
+    Calendar, User, Mail, Phone, CheckCircle, Share2, UserPlus,
+    Compass, Sparkles, X, ExternalLink, Copy
 } from 'lucide-react';
 import styles from './PropertyDetail.module.css';
 
@@ -18,13 +22,38 @@ const PropertyDetail = () => {
     const { user, hasPermission, hasRole } = useAuthStore();
     const { addToast } = useUIStore();
     const [property, setProperty] = useState(null);
+    const [tour, setTour] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [loadingTour, setLoadingTour] = useState(false);
     const [activeImage, setActiveImage] = useState(0);
     const [assignModalOpen, setAssignModalOpen] = useState(false);
+    const [tourViewerOpen, setTourViewerOpen] = useState(false);
+    const [tourEditorOpen, setTourEditorOpen] = useState(false);
 
     useEffect(() => {
         fetchProperty();
+        fetchTour();
     }, [id]);
+
+    const fetchTour = async () => {
+        try {
+            setLoadingTour(true);
+            const res = await tourService.getTourByProperty(id);
+            setTour(res?.data ?? res);
+        } catch (err) {
+            // Tour not found for this property yet
+            setTour(null);
+        } finally {
+            setLoadingTour(false);
+        }
+    };
+
+    const handleCopyTourLink = async () => {
+        if (!tour?.shareToken) return;
+        const url = `${window.location.origin}/tour/${tour.shareToken}`;
+        await navigator.clipboard.writeText(url);
+        addToast({ type: 'success', message: '360° Virtual Tour link copied!' });
+    };
 
     const fetchProperty = async () => {
         try {
@@ -150,6 +179,64 @@ const PropertyDetail = () => {
                     </div>
                 </div>
             </div>
+
+            {/* 360° Virtual Tour Banner */}
+            {(tour || canEdit) && (
+                <div className={styles.tourBanner}>
+                    <div className={styles.tourBannerLeft}>
+                        <div className={styles.tourBannerIcon}>
+                            <Compass size={24} />
+                        </div>
+                        <div>
+                            <div className={styles.tourBannerTitle}>
+                                {tour ? '360° Immersive Virtual Walkthrough' : '360° Virtual Tour Available'}
+                            </div>
+                            <div className={styles.tourBannerDesc}>
+                                {tour
+                                    ? `${tour.scenes?.length || 0} interactive rooms • Gyroscope mobile support • VR Stereo mode`
+                                    : 'Upload 360° photos or mobile phone panoramas to create an interactive tour'}
+                            </div>
+                        </div>
+                    </div>
+                    <div className={styles.tourBannerActions}>
+                        {tour && (
+                            <>
+                                <button
+                                    onClick={() => setTourViewerOpen(true)}
+                                    className={styles.tourBtnPrimary}
+                                >
+                                    <Eye size={18} />
+                                    <span>Launch 360° Tour</span>
+                                </button>
+                                <button
+                                    onClick={() => window.open(`/tour/${tour.shareToken}`, '_blank')}
+                                    className={styles.tourBtnSecondary}
+                                    title="Open Public Tour in New Tab"
+                                >
+                                    <ExternalLink size={16} />
+                                    <span>Public Link</span>
+                                </button>
+                                <button
+                                    onClick={handleCopyTourLink}
+                                    className={styles.tourBtnSecondary}
+                                    title="Copy Tour Link"
+                                >
+                                    <Copy size={16} />
+                                </button>
+                            </>
+                        )}
+                        {canEdit && (
+                            <button
+                                onClick={() => setTourEditorOpen(true)}
+                                className={styles.tourBtnSecondary}
+                            >
+                                <Sparkles size={16} />
+                                <span>{tour ? 'Edit 360° Tour' : 'Create 360° Tour'}</span>
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <div className={styles.gallery}>
                 <div className={styles.mainImage}>
@@ -299,6 +386,63 @@ const PropertyDetail = () => {
                 assignedAgentIds={(property.assignedAgents || []).map(a => a._id || a)}
                 onConfirm={handleAssignConfirm}
             />
+
+            {/* 360 Tour Viewer Modal */}
+            {tourViewerOpen && tour && (
+                <div className={styles.tourModalOverlay} onClick={() => setTourViewerOpen(false)}>
+                    <div className={styles.tourModalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.tourModalHeader}>
+                            <h3>{tour.title || '360° Virtual Walkthrough'}</h3>
+                            <div className={styles.tourModalHeaderActions}>
+                                <button
+                                    onClick={() => window.open(`/tour/${tour.shareToken}`, '_blank')}
+                                    className={styles.tourBtnSecondary}
+                                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+                                >
+                                    <ExternalLink size={14} /> Fullscreen
+                                </button>
+                                <button
+                                    onClick={() => setTourViewerOpen(false)}
+                                    className={styles.tourModalCloseBtn}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </div>
+                        <div className={styles.tourModalBody}>
+                            <TourViewer tour={tour} height="70vh" />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 360 Tour Studio Editor Modal */}
+            {tourEditorOpen && (
+                <div className={styles.tourModalOverlay} onClick={() => setTourEditorOpen(false)}>
+                    <div className={styles.tourModalContent} style={{ maxWidth: '1200px' }} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.tourModalHeader}>
+                            <h3>360° Virtual Tour Studio</h3>
+                            <button
+                                onClick={() => setTourEditorOpen(false)}
+                                className={styles.tourModalCloseBtn}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className={styles.tourModalBody} style={{ padding: '1.5rem' }}>
+                            <TourEditor
+                                propertyId={id}
+                                existingTour={tour}
+                                onSaved={(savedTour) => {
+                                    setTour(savedTour);
+                                    setTourEditorOpen(false);
+                                    addToast({ type: 'success', message: '360° Virtual Tour saved successfully!' });
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

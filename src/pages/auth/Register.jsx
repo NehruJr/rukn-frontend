@@ -6,7 +6,8 @@ import { authService } from '@/services/authService';
 import { createTranslator } from '@/locales/messages';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { Mail, Lock, User, Phone, Building2 } from 'lucide-react';
+import inputStyles from '@/components/ui/Input.module.css';
+import { Mail, Lock, User, Phone, Building2, Globe } from 'lucide-react';
 import styles from './Login.module.css'; // Reuse login styles
 
 const Register = () => {
@@ -16,6 +17,8 @@ const Register = () => {
     const t = createTranslator('ar').t;
 
     const [formData, setFormData] = useState({
+        agencyName: '',
+        market: 'egypt',
         firstName: '',
         lastName: '',
         email: '',
@@ -39,6 +42,11 @@ const Register = () => {
         setError('');
 
         // Validation
+        if (!formData.agencyName.trim()) {
+            setError('Agency name is required');
+            return;
+        }
+
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords do not match');
             return;
@@ -87,6 +95,41 @@ const Register = () => {
                             </div>
                         )}
 
+                        <Input
+                            name="agencyName"
+                            type="text"
+                            label={t('auth.agencyNameLabel')}
+                            placeholder={t('auth.agencyNamePlaceholder')}
+                            value={formData.agencyName}
+                            onChange={handleChange}
+                            leftIcon={<Building2 size={18} />}
+                            required
+                            fullWidth
+                        />
+
+                        <div className={inputStyles.inputWrapper}>
+                            <label className={inputStyles.label}>
+                                {t('auth.marketLabel')}
+                                <span className={inputStyles.required}>*</span>
+                            </label>
+                            <div className={inputStyles.inputContainer}>
+                                <span className={inputStyles.leftIcon}>
+                                    <Globe size={18} />
+                                </span>
+                                <select
+                                    name="market"
+                                    value={formData.market}
+                                    onChange={handleChange}
+                                    className={`${inputStyles.input} ${inputStyles.hasLeftIcon}`}
+                                    required
+                                >
+                                    <option value="egypt">{t('auth.marketEgypt')}</option>
+                                    <option value="uae">{t('auth.marketUAE')}</option>
+                                    <option value="saudi_arabia">{t('auth.marketSaudi')}</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div className="flex gap-4">
                             <Input
                                 name="firstName"
@@ -129,7 +172,7 @@ const Register = () => {
                             name="phone"
                             type="tel"
                             label={t('auth.phoneLabel')}
-                            placeholder="+1 (555) 000-0000"
+                            placeholder="+20 100 000 0000"
                             value={formData.phone}
                             onChange={handleChange}
                             leftIcon={<Phone size={18} />}

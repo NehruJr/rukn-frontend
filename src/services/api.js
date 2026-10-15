@@ -23,7 +23,22 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling
+// Concurrency queue for silent refresh
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// Response interceptor for error handling with silent refresh
 api.interceptors.response.use(
   (response) => {
     return response;
@@ -31,26 +46,58 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Handle 401 Unauthorized
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    // Do not attempt refresh on auth endpoints to avoid infinite loop
+    const isAuthEndpoint = originalRequest?.url?.includes('/auth/login') ||
+                           originalRequest?.url?.includes('/auth/refresh') ||
+                           originalRequest?.url?.includes('/auth/register');
 
-      // Try to refresh token
-      const { refreshToken, logout } = useAuthStore.getState();
-      
-      if (refreshToken) {
-        try {
-          // Implement refresh token logic here
-          // For now, just logout
-          logout();
-          window.location.href = '/login';
-        } catch (refreshError) {
-          logout();
+    // Handle 401 Unauthorized
+    if (error.response?.status === 401 && !originalRequest?._retry && !isAuthEndpoint) {
+      if (isRefreshing) {
+        // Queue the request until refresh completes
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((newToken) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return api(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const { refreshToken, logout, refreshAuth } = useAuthStore.getState();
+
+      if (!refreshToken) {
+        processQueue(error, null);
+        isRefreshing = false;
+        logout();
+        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
           window.location.href = '/login';
         }
-      } else {
+        return Promise.reject(error);
+      }
+
+      try {
+        const data = await refreshAuth();
+        const newToken = data.token;
+        api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        processQueue(null, newToken);
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
         logout();
-        window.location.href = '/login';
+        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

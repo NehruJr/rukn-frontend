@@ -2,8 +2,11 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
+import { tourService } from '@/services/tourService';
+import TourViewer from '@/components/tour/TourViewer';
 import {
-    MapPin, Bed, Bath, Maximize, Calendar, Mail, Phone, CheckCircle, ChevronLeft, ChevronRight
+    MapPin, Bed, Bath, Maximize, Calendar, Mail, Phone, CheckCircle, ChevronLeft, ChevronRight,
+    Compass, Eye, X, ExternalLink
 } from 'lucide-react';
 import styles from './PublicProperty.module.css';
 
@@ -11,6 +14,8 @@ const PublicProperty = () => {
     const { t } = useLanguage();
     const { token } = useParams();
     const [property, setProperty] = useState(null);
+    const [tour, setTour] = useState(null);
+    const [tourModalOpen, setTourModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeImage, setActiveImage] = useState(0);
@@ -29,7 +34,18 @@ const PublicProperty = () => {
             setLoading(true);
             setError(null);
             const response = await propertyService.getPublicProperty(token);
-            setProperty(response?.data ?? response);
+            const propData = response?.data ?? response;
+            setProperty(propData);
+
+            const tourToken = propData?.media?.virtualTour || propData?.virtualTourToken;
+            if (tourToken) {
+                try {
+                    const tourRes = await tourService.getPublicTour(tourToken);
+                    setTour(tourRes?.data ?? tourRes);
+                } catch (tErr) {
+                    console.warn('Could not load virtual tour:', tErr);
+                }
+            }
         } catch (err) {
             console.error('Error fetching public property:', err);
             setError(err?.response?.data?.message || t('publicProp.propNotFoundExpired'));
@@ -80,6 +96,17 @@ const PublicProperty = () => {
             <main className={styles.main}>
                 <div className={styles.gallerySection}>
                     <div className={styles.mainImageWrap}>
+                        {tour && (
+                            <button
+                                type="button"
+                                className={styles.tourBadgeOnImage}
+                                onClick={() => setTourModalOpen(true)}
+                                title="Explore in 360°"
+                            >
+                                <Compass size={16} />
+                                <span>360° Tour</span>
+                            </button>
+                        )}
                         <img
                             src={images[activeImage].url}
                             alt={property.title}
@@ -144,6 +171,23 @@ const PublicProperty = () => {
                                 maximumFractionDigits: 0
                             }).format(property.price)}
                         </div>
+
+                        {tour && (
+                            <div className={styles.tourActionCard}>
+                                <div className={styles.tourActionText}>
+                                    <h3>Explore in 360° Virtual Reality</h3>
+                                    <p>Walk through {tour.scenes?.length || 0} interactive rooms with gyroscope and VR headset support.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    className={styles.tourLaunchBtn}
+                                    onClick={() => setTourModalOpen(true)}
+                                >
+                                    <Eye size={18} />
+                                    <span>Take Virtual Tour</span>
+                                </button>
+                            </div>
+                        )}
 
                         <section className={styles.section}>
                             <h2>{t('dashboard_extra.overview')}</h2>
@@ -253,6 +297,45 @@ const PublicProperty = () => {
             <footer className={styles.footer}>
                 <span className={styles.brand}>{t('publicProp.poweredBy')}</span>
             </footer>
+
+            {/* 360 Virtual Tour Modal */}
+            {tourModalOpen && tour && (
+                <div className={styles.tourModalOverlay} onClick={() => setTourModalOpen(false)}>
+                    <div className={styles.tourModalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.tourModalHeader}>
+                            <h3>{tour.title || '360° Virtual Walkthrough'}</h3>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <a
+                                    href={`/tour/${tour.shareToken}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.4rem',
+                                        fontSize: '0.85rem',
+                                        color: '#3b82f6',
+                                        textDecoration: 'none',
+                                        fontWeight: 600
+                                    }}
+                                >
+                                    <ExternalLink size={14} /> Fullscreen
+                                </a>
+                                <button
+                                    type="button"
+                                    onClick={() => setTourModalOpen(false)}
+                                    className={styles.tourModalCloseBtn}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </div>
+                        <div style={{ flex: 1, height: '70vh' }}>
+                            <TourViewer tour={tour} height="70vh" />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
