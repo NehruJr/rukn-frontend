@@ -13,6 +13,12 @@ export const propertyService = {
     return response.data;
   },
 
+  // Get auto-matched leads for a property
+  getMatchedLeads: async (propertyId, params = {}) => {
+    const response = await api.get(`/properties/${propertyId}/matched-leads`, { params });
+    return response.data;
+  },
+
   // Create new property
   createProperty: async (propertyData) => {
     const response = await api.post('/properties', propertyData);

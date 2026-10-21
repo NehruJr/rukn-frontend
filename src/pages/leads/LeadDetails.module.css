@@ -98,6 +98,10 @@
     border-color: var(--color-primary-500);
 }
 
+.aiExtractorContainer {
+    margin-bottom: var(--space-6);
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -276,6 +280,199 @@
 .activityDate {
     font-size: var(--font-size-xs);
     color: var(--color-text-tertiary);
+}
+
+.scoreSubtext {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    font-weight: var(--font-weight-normal);
+}
+
+.matchGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+}
+
+.matchCard {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.matchCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--color-primary-300);
+}
+
+.matchImageContainer {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    background: var(--color-bg-tertiary);
+    overflow: hidden;
+}
+
+.matchImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.matchScoreBadge {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    background: #059669;
+    color: white;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.matchDetails {
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex: 1;
+}
+
+.matchTitle {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.matchTitle:hover {
+    color: var(--color-primary-600);
+}
+
+.matchPrice {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary-600);
+}
+
+.matchMeta {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.scoreProgressTrack {
+    width: 100%;
+    height: 6px;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-top: var(--space-1);
+}
+
+.scoreProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.reasonsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: var(--space-1);
+}
+
+.reasonTag {
+    font-size: 11px;
+    padding: 2px 6px;
+    background: #ecfdf5;
+    color: #065f46;
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.matchActions {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-2);
+}
+
+.pitchBtnEn,
+.pitchBtnAr {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 8px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pitchBtnEn {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.pitchBtnEn:hover {
+    background: #10b981;
+    color: white;
+}
+
+.pitchBtnAr {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.pitchBtnAr:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.pitchBtnAi {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 8px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    background: #faf5ff;
+    color: #7e22ce;
+    border: 1px solid #e9d5ff;
+    transition: all var(--transition-fast);
+}
+
+.pitchBtnAi:hover {
+    background: #8b5cf6;
+    color: white;
+    border-color: #8b5cf6;
 }
 
 @media (max-width: 768px) {

@@ -22,6 +22,14 @@ export const LEAD_SOURCES = [
   { value: 'referral', label: 'Referral' },
   { value: 'call', label: 'Call' },
   { value: 'walk_in', label: 'Walk-in' },
+  { value: 'property_finder', label: 'Property Finder' },
+  { value: 'bayut', label: 'Bayut' },
+  { value: 'dubizzle', label: 'Dubizzle' },
+  { value: 'aqar', label: 'Aqar' },
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'tiktok', label: 'TikTok' },
+  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'cold_call', label: 'Cold Call' },
   { value: 'other', label: 'Other' }
 ];
 
@@ -30,6 +38,9 @@ export const PROPERTY_TYPES = [
   { value: 'villa', label: 'Villa' },
   { value: 'townhouse', label: 'Townhouse' },
   { value: 'penthouse', label: 'Penthouse' },
+  { value: 'duplex', label: 'Duplex' },
+  { value: 'chalet', label: 'Chalet' },
+  { value: 'studio', label: 'Studio' },
   { value: 'office', label: 'Office' },
   { value: 'shop', label: 'Shop' },
   { value: 'warehouse', label: 'Warehouse' },
@@ -40,6 +51,28 @@ export const PROPERTY_TYPES = [
 export const TRANSACTION_TYPES = [
   { value: 'sale', label: 'Sale' },
   { value: 'rent', label: 'Rent' }
+];
+
+export const LISTING_CATEGORIES = [
+  { value: 'primary_offplan', label: 'Primary / Off-Plan' },
+  { value: 'resale', label: 'Resale' },
+  { value: 'rental', label: 'Rental' }
+];
+
+export const FINISHING_TYPES = [
+  { value: 'core_and_shell', label: 'Core & Shell' },
+  { value: 'semi_finished', label: 'Semi-Finished' },
+  { value: 'fully_finished', label: 'Fully Finished' },
+  { value: 'furnished', label: 'Furnished' },
+  { value: 'luxury_finished', label: 'Luxury Finished' },
+  { value: 'other', label: 'Other' }
+];
+
+export const INSTALLMENT_FREQUENCIES = [
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'quarterly', label: 'Quarterly' },
+  { value: 'semi_annual', label: 'Semi-Annual' },
+  { value: 'annual', label: 'Annual' }
 ];
 
 export const PROPERTY_STATUSES = [
@@ -96,4 +129,3 @@ export const TASK_STATUSES = [
   { value: 'completed', label: 'Completed', color: '#10B981' },
   { value: 'cancelled', label: 'Cancelled', color: '#6B7280' }
 ];
-
