@@ -4,9 +4,11 @@ import { useParams } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
 import { tourService } from '@/services/tourService';
 import TourViewer from '@/components/tour/TourViewer';
+import PaymentPlanCalculator from '@/components/PaymentPlanCalculator';
+import PropertyOfferModal from '@/components/PropertyOfferModal';
 import {
     MapPin, Bed, Bath, Maximize, Calendar, Mail, Phone, CheckCircle, ChevronLeft, ChevronRight,
-    Compass, Eye, X, ExternalLink
+    Compass, Eye, X, ExternalLink, Printer
 } from 'lucide-react';
 import styles from './PublicProperty.module.css';
 
@@ -16,6 +18,7 @@ const PublicProperty = () => {
     const [property, setProperty] = useState(null);
     const [tour, setTour] = useState(null);
     const [tourModalOpen, setTourModalOpen] = useState(false);
+    const [offerModalOpen, setOfferModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeImage, setActiveImage] = useState(0);
@@ -233,6 +236,21 @@ const PublicProperty = () => {
                             </div>
                         </section>
 
+                        {/* Off-Plan Payment Plan & Installment Calculator */}
+                        {(property.listingCategory === 'primary_offplan' || property.transactionType === 'sale' || property.paymentPlan?.installmentYears > 0) && (
+                            <section className={styles.section} style={{ padding: 0, background: 'transparent', border: 'none' }}>
+                                <PaymentPlanCalculator
+                                    price={property.price}
+                                    currency={property.currency || 'EGP'}
+                                    paymentPlan={property.paymentPlan}
+                                    deliveryDate={property.developer?.deliveryDate}
+                                    developerName={property.developer?.name}
+                                    projectName={property.developer?.projectName}
+                                    title="Payment Plan & Installment Calculator"
+                                />
+                            </section>
+                        )}
+
                         {property.description && (
                             <section className={styles.section}>
                                 <h2>{t('dashboard_extra.description')}</h2>
@@ -288,6 +306,15 @@ const PublicProperty = () => {
                                         className={styles.contactButton}
                                     >{t('dashboard_extra.contact_agent')}</a>
                                 )}
+                                <button
+                                    type="button"
+                                    onClick={() => setOfferModalOpen(true)}
+                                    className={styles.contactButton}
+                                    style={{ marginTop: '0.75rem', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer' }}
+                                >
+                                    <Printer size={16} />
+                                    <span>Print / PDF Brochure</span>
+                                </button>
                             </div>
                         )}
                     </aside>
@@ -336,6 +363,14 @@ const PublicProperty = () => {
                     </div>
                 </div>
             )}
+
+            {/* Branded PDF Offer Brochure Modal */}
+            <PropertyOfferModal
+                isOpen={offerModalOpen}
+                onClose={() => setOfferModalOpen(false)}
+                property={property}
+                tour={tour}
+            />
         </div>
     );
 };

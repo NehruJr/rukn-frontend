@@ -10,7 +10,9 @@ import {
     Calendar,
     Plus,
     Trash2,
-    ExternalLink
+    ExternalLink,
+    MessageSquare,
+    Sparkles
 } from 'lucide-react';
 import { format } from 'date-fns';
 import leadService from '@/services/leadService';
@@ -18,9 +20,12 @@ import { taskService } from '@/services/taskService';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
 import { LEAD_STATUSES, LEAD_PRIORITIES } from '@/utils/constants';
+import { getWhatsAppPitchUrl } from '@/utils/whatsappPitch';
 import Button from '@/components/ui/Button';
 import TaskForm from '@/components/TaskForm';
 import AssignPropertyModal from '@/components/AssignPropertyModal';
+import AINoteExtractor from '@/components/AINoteExtractor';
+import WhatsAppPitchModal from '@/components/WhatsAppPitchModal';
 import styles from './LeadDetails.module.css';
 
 const LeadDetails = () => {
@@ -32,6 +37,8 @@ const LeadDetails = () => {
 
     const [propertyModalOpen, setPropertyModalOpen] = useState(false);
     const [meetingModalOpen, setMeetingModalOpen] = useState(false);
+    const [pitchModalOpen, setPitchModalOpen] = useState(false);
+    const [pitchSelectedProperty, setPitchSelectedProperty] = useState(null);
 
     const { data: leadRes, isLoading, error } = useQuery({
         queryKey: ['lead', id],
@@ -39,9 +46,43 @@ const LeadDetails = () => {
         enabled: !!id
     });
 
+    const { data: matchesRes, isLoading: loadingMatches } = useQuery({
+        queryKey: ['lead-matches', id],
+        queryFn: () => leadService.getLeadMatches(id),
+        enabled: !!id
+    });
+    const matchedProperties = matchesRes?.data || [];
+
     const lead = leadRes?.data || null;
     const activities = lead?.activities || [];
     const interestedProperties = lead?.interestedProperties || [];
+
+    const handlePitchProperty = async (property, language = 'en') => {
+        const url = getWhatsAppPitchUrl({
+            property,
+            lead,
+            language,
+            tourShareToken: property.virtualTour?.shareToken || property.tourShareToken
+        });
+        window.open(url, '_blank');
+
+        try {
+            await leadService.addActivity(id, {
+                type: 'whatsapp',
+                title: `WhatsApp Pitch (${language.toUpperCase()}) - ${property.title}`,
+                description: `Sent bilingual pitch for "${property.title}" (${property.currency || 'EGP'} ${Number(property.price).toLocaleString()}) via WhatsApp.`
+            });
+            queryClient.invalidateQueries(['lead', id]);
+            addToast({ type: 'success', message: 'WhatsApp opened & activity logged!' });
+        } catch (err) {
+            console.error('Failed to log WhatsApp activity:', err);
+        }
+    };
+
+    const handleOpenAiPitch = (property = null) => {
+        setPitchSelectedProperty(property);
+        setPitchModalOpen(true);
+    };
 
     const updateLeadMutation = useMutation({
         mutationFn: (data) => leadService.updateLead(id, data),
@@ -200,8 +241,26 @@ const LeadDetails = () => {
                             leftIcon={<Calendar size={18} />}
                             onClick={() => setMeetingModalOpen(true)}
                         >{t('dashboard_extra.schedule_meeting')}</Button>
+                        <Button
+                            variant="outline"
+                            leftIcon={<Sparkles size={18} color="#7c3aed" />}
+                            onClick={() => handleOpenAiPitch(matchedProperties[0]?.property || interestedProperties[0]?.property || null)}
+                        >
+                            AI WhatsApp Pitch
+                        </Button>
                     </div>
                 </div>
+            </div>
+
+            {/* Smart AI Call/WhatsApp Note Extractor */}
+            <div className={styles.aiExtractorContainer}>
+                <AINoteExtractor
+                    lead={lead}
+                    onSuccess={() => {
+                        queryClient.invalidateQueries(['lead', id]);
+                        queryClient.invalidateQueries(['leads']);
+                    }}
+                />
             </div>
 
             <div className={styles.grid}>
@@ -254,6 +313,101 @@ const LeadDetails = () => {
                             <p className={styles.notes}>{lead.requirements.notes}</p>
                         )}
                     </div>
+                </section>
+
+                {/* Auto-Matched Active Properties */}
+                <section className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <h3 className={styles.sectionTitle}>
+                            <Sparkles size={18} color="#2563eb" />
+                            <span>Auto-Matched Properties ({matchedProperties.length})</span>
+                        </h3>
+                        <span className={styles.scoreSubtext}>Scored by Country, Budget, Type & Location</span>
+                    </div>
+
+                    {loadingMatches ? (
+                        <p className={styles.emptyText}>Finding matching inventory...</p>
+                    ) : matchedProperties.length === 0 ? (
+                        <p className={styles.emptyText}>No properties match this lead's criteria right now.</p>
+                    ) : (
+                        <div className={styles.matchGrid}>
+                            {matchedProperties.map(({ property, matchScore, matchReasons }) => {
+                                const primaryImg = property.media?.images?.find(i => i.isPrimary)?.url || property.media?.images?.[0]?.url || '/placeholder-property.jpg';
+                                return (
+                                    <div key={property._id} className={styles.matchCard}>
+                                        <div className={styles.matchImageContainer}>
+                                            <img src={primaryImg} alt={property.title} className={styles.matchImg} />
+                                            <span className={styles.matchScoreBadge}>{matchScore}% Match</span>
+                                        </div>
+
+                                        <div className={styles.matchDetails}>
+                                            <Link to={`/properties/${property._id}`} className={styles.matchTitle}>
+                                                {property.title}
+                                                <ExternalLink size={14} />
+                                            </Link>
+
+                                            <div className={styles.matchPrice}>
+                                                {new Intl.NumberFormat('en-US', {
+                                                    style: 'currency',
+                                                    currency: property.currency || 'EGP',
+                                                    maximumFractionDigits: 0
+                                                }).format(property.price || 0)}
+                                            </div>
+
+                                            <div className={styles.matchMeta}>
+                                                <span>{[property.location?.area, property.location?.city].filter(Boolean).join(', ') || 'Prime Location'}</span>
+                                                <span>•</span>
+                                                <span>{property.features?.bedrooms || 0} Beds</span>
+                                                {property.developer?.name && (
+                                                    <>
+                                                        <span>•</span>
+                                                        <span>{property.developer.name}</span>
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            <div className={styles.scoreProgressTrack}>
+                                                <div
+                                                    className={styles.scoreProgressFill}
+                                                    style={{ width: `${matchScore}%` }}
+                                                />
+                                            </div>
+
+                                            <div className={styles.reasonsList}>
+                                                {matchReasons?.slice(0, 3).map((r, i) => (
+                                                    <span key={i} className={styles.reasonTag}>✓ {r}</span>
+                                                ))}
+                                            </div>
+
+                                            <div className={styles.matchActions}>
+                                                <button
+                                                    onClick={() => handlePitchProperty(property, 'en')}
+                                                    className={styles.pitchBtnEn}
+                                                    title="1-Click English Pitch"
+                                                >
+                                                    <MessageSquare size={14} /> EN Pitch
+                                                </button>
+                                                <button
+                                                    onClick={() => handlePitchProperty(property, 'ar')}
+                                                    className={styles.pitchBtnAr}
+                                                    title="1-Click Arabic Pitch"
+                                                >
+                                                    <MessageSquare size={14} /> AR Pitch
+                                                </button>
+                                                <button
+                                                    onClick={() => handleOpenAiPitch(property)}
+                                                    className={styles.pitchBtnAi}
+                                                    title="Custom AI Dialect Pitch"
+                                                >
+                                                    <Sparkles size={14} /> AI Pitch
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </section>
 
                 <section className={styles.section}>
@@ -365,6 +519,18 @@ const LeadDetails = () => {
                     priority: 'high',
                     dueDate: format(new Date(), 'yyyy-MM-dd')
                 }}
+            />
+
+            <WhatsAppPitchModal
+                isOpen={pitchModalOpen}
+                onClose={() => {
+                    setPitchModalOpen(false);
+                    setPitchSelectedProperty(null);
+                }}
+                lead={lead}
+                initialProperty={pitchSelectedProperty}
+                matchedProperties={matchedProperties}
+                assignedProperties={interestedProperties}
             />
         </div>
     );

@@ -254,3 +254,76 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+.countryTabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+    overflow-x: auto;
+}
+
+.countryTab {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    color: #6b7280;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.countryTab:hover {
+    color: #111827;
+    background-color: #f3f4f6;
+}
+
+.countryTabActive {
+    color: #2563eb;
+    background-color: #eff6ff;
+}
+
+.branchPills {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+}
+
+.branchLabel {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-right: 0.25rem;
+}
+
+.branchPill {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.branchPill:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.branchPillActive {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}

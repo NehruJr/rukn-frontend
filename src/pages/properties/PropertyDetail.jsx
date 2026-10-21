@@ -1,17 +1,22 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
 import { tourService } from '@/services/tourService';
+import { leadService } from '@/services/leadService';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
 import AssignAgentsModal from '@/components/AssignAgentsModal';
 import TourViewer from '@/components/tour/TourViewer';
 import TourEditor from '@/components/tour/TourEditor';
+import PaymentPlanCalculator from '@/components/PaymentPlanCalculator';
+import PropertyOfferModal from '@/components/PropertyOfferModal';
+import { getWhatsAppPitchUrl } from '@/utils/whatsappPitch';
 import {
     MapPin, Bed, Bath, Maximize, Edit2, Trash2, ArrowLeft,
-    Calendar, User, Mail, Phone, CheckCircle, Share2, UserPlus,
-    Compass, Sparkles, X, ExternalLink, Copy
+    Calendar, Mail, Phone, CheckCircle, Share2, UserPlus,
+    Compass, Sparkles, X, ExternalLink, Copy, Eye, Users,
+    MessageSquare, Shield, Building, Globe, Printer
 } from 'lucide-react';
 import styles from './PropertyDetail.module.css';
 
@@ -25,14 +30,18 @@ const PropertyDetail = () => {
     const [tour, setTour] = useState(null);
     const [loading, setLoading] = useState(true);
     const [loadingTour, setLoadingTour] = useState(false);
+    const [matchedLeads, setMatchedLeads] = useState([]);
+    const [loadingMatches, setLoadingMatches] = useState(false);
     const [activeImage, setActiveImage] = useState(0);
     const [assignModalOpen, setAssignModalOpen] = useState(false);
     const [tourViewerOpen, setTourViewerOpen] = useState(false);
     const [tourEditorOpen, setTourEditorOpen] = useState(false);
+    const [offerModalOpen, setOfferModalOpen] = useState(false);
 
     useEffect(() => {
         fetchProperty();
         fetchTour();
+        fetchMatchedLeads();
     }, [id]);
 
     const fetchTour = async () => {
@@ -41,10 +50,21 @@ const PropertyDetail = () => {
             const res = await tourService.getTourByProperty(id);
             setTour(res?.data ?? res);
         } catch (err) {
-            // Tour not found for this property yet
             setTour(null);
         } finally {
             setLoadingTour(false);
+        }
+    };
+
+    const fetchMatchedLeads = async () => {
+        try {
+            setLoadingMatches(true);
+            const res = await propertyService.getMatchedLeads(id);
+            setMatchedLeads(res?.data || []);
+        } catch (err) {
+            console.error('Error fetching matched leads:', err);
+        } finally {
+            setLoadingMatches(false);
         }
     };
 
@@ -102,6 +122,27 @@ const PropertyDetail = () => {
         }
     };
 
+    const handleSendWhatsAppPitch = async (lead, language = 'en') => {
+        const url = getWhatsAppPitchUrl({
+            property,
+            lead,
+            language,
+            tourShareToken: tour?.shareToken
+        });
+        window.open(url, '_blank');
+
+        try {
+            await leadService.addActivity(lead._id, {
+                type: 'whatsapp',
+                title: `WhatsApp Pitch (${language.toUpperCase()}) - ${property.title}`,
+                description: `Shared listing "${property.title}" (${property.currency} ${Number(property.price).toLocaleString()}) via WhatsApp.`
+            });
+            addToast({ type: 'success', message: `WhatsApp opened & activity logged for ${lead.firstName}` });
+        } catch (err) {
+            console.error('Failed to log WhatsApp activity:', err);
+        }
+    };
+
     if (loading) return <div className={styles.loading}>{t('dashboard_extra.loading_property_details')}</div>;
     if (!property) return null;
 
@@ -115,7 +156,8 @@ const PropertyDetail = () => {
     return (
         <div className={styles.container}>
             <button onClick={() => navigate('/properties')} className={styles.backButton}>
-                <ArrowLeft size={20} />{t('dashboard_extra.back_to_properties')}</button>
+                <ArrowLeft size={20} />{t('dashboard_extra.back_to_properties')}
+            </button>
 
             <div className={styles.header}>
                 <div>
@@ -126,11 +168,30 @@ const PropertyDetail = () => {
                         <span className={styles.typeBadge}>
                             {property.propertyType} • {property.transactionType}
                         </span>
+                        {property.listingCategory === 'primary_offplan' && (
+                            <span className={styles.offplanBadge}>Off-Plan</span>
+                        )}
+                        {(property.country || property.branch) && (
+                            <span className={styles.branchHeaderBadge}>
+                                <Globe size={13} />
+                                {property.branch ? `${property.country || ''} • ${property.branch}` : property.country}
+                            </span>
+                        )}
                     </div>
                     <h1 className={styles.title}>{property.title}</h1>
+                    {property.developer?.name && (
+                        <div className={styles.developerHeading}>
+                            <Building size={16} />
+                            <span>
+                                {property.developer.projectName
+                                    ? `${property.developer.projectName} by ${property.developer.name}`
+                                    : property.developer.name}
+                            </span>
+                        </div>
+                    )}
                     <div className={styles.location}>
                         <MapPin size={20} />
-                        <span>{property.location?.address}, {property.location?.city}</span>
+                        <span>{[property.location?.address, property.location?.area, property.location?.city].filter(Boolean).join(', ')}</span>
                     </div>
                 </div>
                 <div className={styles.headerActions}>
@@ -142,6 +203,14 @@ const PropertyDetail = () => {
                         }).format(property.price)}
                     </div>
                     <div className={styles.actionButtons}>
+                        <button
+                            type="button"
+                            onClick={() => setOfferModalOpen(true)}
+                            className={styles.iconButton}
+                            title="Print / Save Branded PDF Offer"
+                        >
+                            <Printer size={20} />
+                        </button>
                         {canAssignAgents && (
                             <button
                                 onClick={() => setAssignModalOpen(true)}
@@ -223,12 +292,21 @@ const PropertyDetail = () => {
                                 >
                                     <Copy size={16} />
                                 </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setOfferModalOpen(true)}
+                                    className={styles.tourBtnSecondary}
+                                    title="Generate 1-Page A4 PDF Offer with QR Code"
+                                >
+                                    <Printer size={16} />
+                                    <span>PDF Offer</span>
+                                </button>
                             </>
                         )}
                         {canEdit && (
                             <button
                                 onClick={() => setTourEditorOpen(true)}
-                                className={styles.tourBtnSecondary}
+                                className={styles.tourBtnEditor}
                             >
                                 <Sparkles size={16} />
                                 <span>{tour ? 'Edit 360° Tour' : 'Create 360° Tour'}</span>
@@ -238,6 +316,7 @@ const PropertyDetail = () => {
                 </div>
             )}
 
+            {/* Image Gallery */}
             <div className={styles.gallery}>
                 <div className={styles.mainImage}>
                     <img src={images[activeImage]?.url} alt={property.title} />
@@ -263,33 +342,83 @@ const PropertyDetail = () => {
                             <div className={styles.featureItem}>
                                 <Bed size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features?.bedrooms || 'N/A'}</span>
+                                    <span className={styles.featureValue}>{property.features?.bedrooms ?? 'N/A'}</span>
                                     <span className={styles.featureLabel}>{t('dashboard_extra.bedrooms')}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
                                 <Bath size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features?.bathrooms || 'N/A'}</span>
+                                    <span className={styles.featureValue}>{property.features?.bathrooms ?? 'N/A'}</span>
                                     <span className={styles.featureLabel}>{t('dashboard_extra.bathrooms')}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
                                 <Maximize size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features?.area?.value || 'N/A'}</span>
+                                    <span className={styles.featureValue}>{property.features?.area?.value ?? 'N/A'}</span>
                                     <span className={styles.featureLabel}>{property.features?.area?.unit || 'sqm'}</span>
                                 </div>
                             </div>
                             <div className={styles.featureItem}>
                                 <Calendar size={24} />
                                 <div>
-                                    <span className={styles.featureValue}>{property.features?.yearBuilt || 'N/A'}</span>
+                                    <span className={styles.featureValue}>{property.features?.yearBuilt ?? 'N/A'}</span>
                                     <span className={styles.featureLabel}>{t('dashboard_extra.year_built')}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    {/* Developer & Project Specifications Section */}
+                    {property.developer?.name && (
+                        <div className={styles.section}>
+                            <h2>Developer & Project Specifications</h2>
+                            <div className={styles.developerGrid}>
+                                <div className={styles.devSpecItem}>
+                                    <span className={styles.devSpecLabel}>Developer</span>
+                                    <span className={styles.devSpecValue}>{property.developer.name}</span>
+                                </div>
+                                {property.developer.projectName && (
+                                    <div className={styles.devSpecItem}>
+                                        <span className={styles.devSpecLabel}>Project / Compound</span>
+                                        <span className={styles.devSpecValue}>{property.developer.projectName}</span>
+                                    </div>
+                                )}
+                                {property.developer.deliveryDate && (
+                                    <div className={styles.devSpecItem}>
+                                        <span className={styles.devSpecLabel}>Delivery Date</span>
+                                        <span className={styles.devSpecValue}>
+                                            {new Date(property.developer.deliveryDate).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                )}
+                                {property.developer.finishingType && (
+                                    <div className={styles.devSpecItem}>
+                                        <span className={styles.devSpecLabel}>Finishing</span>
+                                        <span className={styles.devSpecValue}>
+                                            {property.developer.finishingType.replace(/_/g, ' ')}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Off-Plan Payment Plan & Installment Calculator */}
+                    {(property.listingCategory === 'primary_offplan' || property.transactionType === 'sale' || property.paymentPlan?.installmentYears > 0) && (
+                        <div className={styles.section} style={{ padding: 0, background: 'transparent', border: 'none' }}>
+                            <PaymentPlanCalculator
+                                price={property.price}
+                                currency={property.currency || 'EGP'}
+                                paymentPlan={property.paymentPlan}
+                                deliveryDate={property.developer?.deliveryDate}
+                                developerName={property.developer?.name}
+                                projectName={property.developer?.projectName}
+                                title="Payment Plan & Installment Calculator"
+                            />
+                        </div>
+                    )}
 
                     <div className={styles.section}>
                         <h2>{t('dashboard_extra.description')}</h2>
@@ -309,9 +438,111 @@ const PropertyDetail = () => {
                             </div>
                         </div>
                     )}
+
+                    {/* Matched Buyers Section */}
+                    <div className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2>
+                                <Users size={22} color="#2563eb" />
+                                <span>Matched Buyers ({matchedLeads.length})</span>
+                            </h2>
+                            <span className={styles.subtitle}>AI-ranked active buyers seeking properties like this</span>
+                        </div>
+
+                        {loadingMatches ? (
+                            <p className={styles.loadingText}>Scoring active buyers...</p>
+                        ) : matchedLeads.length === 0 ? (
+                            <p className={styles.emptyText}>No active buyers currently match this property's specs.</p>
+                        ) : (
+                            <div className={styles.matchedBuyersList}>
+                                {matchedLeads.map(({ lead, matchScore, matchReasons }) => (
+                                    <div key={lead._id} className={styles.matchedBuyerCard}>
+                                        <div className={styles.buyerHeader}>
+                                            <div>
+                                                <Link to={`/leads/${lead._id}`} className={styles.buyerName}>
+                                                    {lead.firstName} {lead.lastName}
+                                                    <ExternalLink size={14} />
+                                                </Link>
+                                                <div className={styles.buyerBadges}>
+                                                    <span className={`${styles.priorityBadge} ${styles[lead.priority]}`}>
+                                                        {lead.priority}
+                                                    </span>
+                                                    <span className={styles.scoreBadge}>
+                                                        {matchScore}% Match
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className={styles.pitchButtons}>
+                                                <button
+                                                    onClick={() => handleSendWhatsAppPitch(lead, 'en')}
+                                                    className={styles.pitchBtnEn}
+                                                    title="Send English WhatsApp Pitch"
+                                                >
+                                                    <MessageSquare size={14} /> EN Pitch
+                                                </button>
+                                                <button
+                                                    onClick={() => handleSendWhatsAppPitch(lead, 'ar')}
+                                                    className={styles.pitchBtnAr}
+                                                    title="Send Arabic WhatsApp Pitch"
+                                                >
+                                                    <MessageSquare size={14} /> AR Pitch
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.scoreBarTrack}>
+                                            <div
+                                                className={styles.scoreBarFill}
+                                                style={{ width: `${matchScore}%` }}
+                                            />
+                                        </div>
+
+                                        <div className={styles.reasonsList}>
+                                            {matchReasons?.map((reason, idx) => (
+                                                <span key={idx} className={styles.reasonTag}>✓ {reason}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className={styles.sidebar}>
+                    {/* Owner Details Card (Masked vs Unmasked) */}
+                    <div className={styles.detailsCard}>
+                        <h3>Owner Details</h3>
+                        {property.owner?.isMasked ? (
+                            <div className={styles.maskedOwnerBox}>
+                                <div className={styles.maskedHeader}>
+                                    <Shield size={18} className={styles.shieldIcon} />
+                                    <span className={styles.maskedBadge}>Protected Owner - Blind Inventory</span>
+                                </div>
+                                <p className={styles.maskedTitle}>{property.owner.name || 'Protected Owner'}</p>
+                                <p className={styles.maskedNotice}>
+                                    Direct seller contact (phone & email) is protected under agency blind inventory policy. Contact your agency manager or listing agent for direct owner inquiries.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className={styles.ownerUnmaskedBox}>
+                                <p className={styles.ownerName}>{property.owner?.name || 'Private Seller'}</p>
+                                {property.owner?.phone && (
+                                    <a href={`tel:${property.owner.phone}`} className={styles.contactLink}>
+                                        <Phone size={16} />
+                                        {property.owner.phone}
+                                    </a>
+                                )}
+                                {property.owner?.email && (
+                                    <a href={`mailto:${property.owner.email}`} className={styles.contactLink}>
+                                        <Mail size={16} />
+                                        {property.owner.email}
+                                    </a>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
                     {canAssignAgents && (property.assignedAgents?.length > 0) && (
                         <div className={styles.detailsCard}>
                             <h3>{t('dashboard_extra.assigned_agents')}</h3>
@@ -360,6 +591,18 @@ const PropertyDetail = () => {
                         <div className={styles.detailRow}>
                             <span>{t('dashboard_extra.type')}</span>
                             <span className={styles.detailValue}>{property.propertyType}</span>
+                        </div>
+                        <div className={styles.detailRow}>
+                            <span>Category</span>
+                            <span className={styles.detailValue}>{property.listingCategory?.replace(/_/g, ' ') || 'Resale'}</span>
+                        </div>
+                        <div className={styles.detailRow}>
+                            <span>Country</span>
+                            <span className={styles.detailValue}>{property.country || 'Egypt'}</span>
+                        </div>
+                        <div className={styles.detailRow}>
+                            <span>Branch</span>
+                            <span className={styles.detailValue}>{property.branch || 'Main Branch'}</span>
                         </div>
                         <div className={styles.detailRow}>
                             <span>{t('dashboard_extra.status')}</span>
@@ -443,6 +686,14 @@ const PropertyDetail = () => {
                     </div>
                 </div>
             )}
+
+            {/* Branded PDF Offer Brochure Modal */}
+            <PropertyOfferModal
+                isOpen={offerModalOpen}
+                onClose={() => setOfferModalOpen(false)}
+                property={property}
+                tour={tour}
+            />
         </div>
     );
 };

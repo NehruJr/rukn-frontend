@@ -1,4 +1,4 @@
-import { MapPin, Bed, Bath, Maximize, Edit2, Trash2 } from 'lucide-react';
+import { MapPin, Bed, Bath, Maximize, Edit2, Trash2, Building, Globe } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import styles from './PropertyCard.module.css';
 
@@ -13,8 +13,12 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
         media,
         status,
         propertyType,
-        transactionType
-    } = property;
+        transactionType,
+        country,
+        branch,
+        developer,
+        listingCategory
+    } = property || {};
 
     const primaryImage = media?.images?.find(img => img.isPrimary)?.url || media?.images?.[0]?.url || '/placeholder-property.jpg';
 
@@ -23,11 +27,11 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
             style: 'currency',
             currency: currency || 'EGP',
             maximumFractionDigits: 0
-        }).format(value);
+        }).format(value || 0);
     };
 
-    const canEdit = user?.role === 'admin' || (user?._id === property.listedBy?._id && user?.permissions?.includes('properties.edit'));
-    const canDelete = user?.role === 'admin' || (user?._id === property.listedBy?._id && user?.permissions?.includes('properties.delete'));
+    const canEdit = user?.role === 'admin' || (user?._id === property?.listedBy?._id && user?.permissions?.includes('properties.edit'));
+    const canDelete = user?.role === 'admin' || (user?._id === property?.listedBy?._id && user?.permissions?.includes('properties.delete'));
 
     return (
         <div className={styles.card} onClick={onClick}>
@@ -40,7 +44,16 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
                     <span className={styles.typeBadge}>
                         {propertyType} • {transactionType}
                     </span>
+                    {listingCategory === 'primary_offplan' && (
+                        <span className={styles.categoryBadge}>Off-Plan</span>
+                    )}
                 </div>
+                {(country || branch) && (
+                    <div className={styles.locationBadge}>
+                        <Globe size={12} />
+                        <span>{branch ? `${country || ''} • ${branch}` : country}</span>
+                    </div>
+                )}
                 <div className={styles.priceTag}>
                     {formatPrice(price)}
                 </div>
@@ -48,23 +61,29 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
 
             <div className={styles.content}>
                 <h3 className={styles.title}>{title}</h3>
+                {developer?.name && (
+                    <div className={styles.developerSub}>
+                        <Building size={14} />
+                        <span>{developer.projectName ? `${developer.projectName} by ${developer.name}` : developer.name}</span>
+                    </div>
+                )}
                 <div className={styles.location}>
                     <MapPin size={16} />
-                    <span>{location.area}, {location.city}</span>
+                    <span>{[location?.area, location?.city].filter(Boolean).join(', ') || 'Prime Location'}</span>
                 </div>
 
                 <div className={styles.features}>
                     <div className={styles.feature}>
                         <Bed size={18} />
-                        <span>{features.bedrooms} Beds</span>
+                        <span>{features?.bedrooms ?? 'N/A'} Beds</span>
                     </div>
                     <div className={styles.feature}>
                         <Bath size={18} />
-                        <span>{features.bathrooms} Baths</span>
+                        <span>{features?.bathrooms ?? 'N/A'} Baths</span>
                     </div>
                     <div className={styles.feature}>
                         <Maximize size={18} />
-                        <span>{features.area.value} {features.area.unit}</span>
+                        <span>{features?.area?.value ?? 'N/A'} {features?.area?.unit || 'sqm'}</span>
                     </div>
                 </div>
 

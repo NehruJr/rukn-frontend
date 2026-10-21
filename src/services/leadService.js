@@ -13,6 +13,12 @@ export const leadService = {
     return response.data;
   },
 
+  // Get auto-matched properties for a lead
+  getLeadMatches: async (leadId, params = {}) => {
+    const response = await api.get(`/leads/${leadId}/matches`, { params });
+    return response.data;
+  },
+
   // Create lead
   createLead: async (data) => {
     const response = await api.post('/leads', data);

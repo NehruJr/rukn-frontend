@@ -3,9 +3,13 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
 import { tourService } from '@/services/tourService';
-import { ArrowLeft, Save, Upload, X, Compass, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Save, Compass, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import MediaUploader from '@/components/media/MediaUploader';
 import TourEditor from '@/components/tour/TourEditor';
+import { COUNTRIES, getMarketPreset, getCountryBranches, getDeveloperSuggestions } from '@/utils/marketPresets';
+import { PROPERTY_TYPES, LISTING_CATEGORIES, FINISHING_TYPES, INSTALLMENT_FREQUENCIES } from '@/utils/constants';
+import AICopyModal from '@/components/AICopyModal';
+import { useUIStore } from '@/store/uiStore';
 import styles from './AddEditProperty.module.css';
 
 const AddEditProperty = () => {
@@ -16,23 +20,41 @@ const AddEditProperty = () => {
     const [loading, setLoading] = useState(false);
     const [tour, setTour] = useState(null);
     const [showTourStudio, setShowTourStudio] = useState(false);
+    const [aiCopyModalOpen, setAiCopyModalOpen] = useState(false);
+    const addToast = useUIStore((s) => s.addToast);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
         propertyType: 'apartment',
         transactionType: 'sale',
+        listingCategory: 'resale',
+        country: 'Egypt',
+        branch: 'Main Branch',
+        developer: {
+            name: '',
+            projectName: '',
+            deliveryDate: '',
+            finishingType: 'fully_finished'
+        },
+        paymentPlan: {
+            downPaymentPercent: 10,
+            installmentYears: 7,
+            installmentFrequency: 'quarterly',
+            handoverPaymentPercent: 10,
+            maintenancePercent: 8
+        },
         price: '',
         currency: 'EGP',
         location: {
             address: '',
             city: '',
             area: '',
-            country: 'UAE'
+            country: 'Egypt'
         },
         features: {
             bedrooms: '',
             bathrooms: '',
-            area: { value: '', unit: 'sqft' },
+            area: { value: '', unit: 'sqm' },
             furnished: 'unfurnished',
             yearBuilt: '',
             amenities: []
@@ -42,9 +64,6 @@ const AddEditProperty = () => {
             images: []
         }
     });
-
-    const [newImages, setNewImages] = useState([]);
-    const [imageUrls, setImageUrls] = useState([]);
 
     useEffect(() => {
         if (isEditMode) {
@@ -60,18 +79,42 @@ const AddEditProperty = () => {
 
             setFormData({
                 ...property,
+                country: property.country || property.location?.country || 'Egypt',
+                branch: property.branch || 'Main Branch',
+                listingCategory: property.listingCategory || 'resale',
+                developer: {
+                    name: property.developer?.name || '',
+                    projectName: property.developer?.projectName || '',
+                    deliveryDate: property.developer?.deliveryDate ? property.developer.deliveryDate.substring(0, 10) : '',
+                    finishingType: property.developer?.finishingType || 'fully_finished'
+                },
+                location: {
+                    address: property.location?.address || '',
+                    city: property.location?.city || '',
+                    area: property.location?.area || '',
+                    country: property.country || property.location?.country || 'Egypt'
+                },
+                paymentPlan: {
+                    downPaymentPercent: property.paymentPlan?.downPaymentPercent ?? 10,
+                    installmentYears: property.paymentPlan?.installmentYears ?? 7,
+                    installmentFrequency: property.paymentPlan?.installmentFrequency || 'quarterly',
+                    handoverPaymentPercent: property.paymentPlan?.handoverPaymentPercent ?? 10,
+                    maintenancePercent: property.paymentPlan?.maintenancePercent ?? 8
+                },
                 features: {
                     ...property.features,
-                    amenities: property.features.amenities || []
+                    amenities: property.features?.amenities || [],
+                    area: {
+                        value: property.features?.area?.value ?? '',
+                        unit: property.features?.area?.unit || 'sqm'
+                    }
                 }
             });
-            setImageUrls(property.media?.images || []);
 
             try {
                 const tourRes = await tourService.getTourByProperty(id);
                 setTour(tourRes?.data ?? tourRes);
             } catch (tErr) {
-                // Tour does not exist yet
                 setTour(null);
             }
         } catch (err) {
@@ -81,6 +124,30 @@ const AddEditProperty = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCountryChange = (e) => {
+        const selectedCountry = e.target.value;
+        const preset = getMarketPreset(selectedCountry);
+        const branches = preset?.branches || [];
+
+        setFormData(prev => ({
+            ...prev,
+            country: selectedCountry,
+            branch: branches[0] || 'Main Branch',
+            currency: preset.currency || 'EGP',
+            location: {
+                ...prev.location,
+                country: selectedCountry
+            },
+            features: {
+                ...prev.features,
+                area: {
+                    ...prev.features.area,
+                    unit: preset.areaUnit || 'sqm'
+                }
+            }
+        }));
     };
 
     const handleChange = (e) => {
@@ -114,6 +181,15 @@ const AddEditProperty = () => {
         }
     };
 
+    const handleApplyAiCopy = ({ language, title, description }) => {
+        setFormData(prev => ({
+            ...prev,
+            title: title || prev.title,
+            description: description || prev.description
+        }));
+        addToast({ type: 'success', message: `${language === 'ar' ? 'Arabic' : 'English'} AI copy applied to property!` });
+    };
+
     const handleAmenityChange = (e) => {
         const amenity = e.target.value;
         if (e.target.checked) {
@@ -135,44 +211,29 @@ const AddEditProperty = () => {
         }
     };
 
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        setNewImages(prev => [...prev, ...files]);
-
-        // Create preview URLs
-        const newUrls = files.map(file => ({
-            url: URL.createObjectURL(file),
-            file
-        }));
-        setImageUrls(prev => [...prev, ...newUrls]);
-    };
-
-    const removeImage = (index) => {
-        setImageUrls(prev => prev.filter((_, i) => i !== index));
-        // Also remove from newImages if it's a new image
-        // This logic is simplified; in a real app you'd track IDs
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            // In a real app, you would upload images to a storage service (S3, Cloudinary)
-            // and get URLs back. Here we'll simulate it or just send data.
-            // For now, we'll just save the form data.
-
             const dataToSave = {
                 ...formData,
                 price: Number(formData.price),
+                paymentPlan: {
+                    downPaymentPercent: Number(formData.paymentPlan?.downPaymentPercent || 0),
+                    installmentYears: Number(formData.paymentPlan?.installmentYears || 0),
+                    installmentFrequency: formData.paymentPlan?.installmentFrequency || 'quarterly',
+                    handoverPaymentPercent: Number(formData.paymentPlan?.handoverPaymentPercent || 0),
+                    maintenancePercent: Number(formData.paymentPlan?.maintenancePercent || 0)
+                },
                 features: {
                     ...formData.features,
-                    bedrooms: Number(formData.features.bedrooms),
-                    bathrooms: Number(formData.features.bathrooms),
-                    yearBuilt: Number(formData.features.yearBuilt),
+                    bedrooms: formData.features?.bedrooms ? Number(formData.features.bedrooms) : undefined,
+                    bathrooms: formData.features?.bathrooms ? Number(formData.features.bathrooms) : undefined,
+                    yearBuilt: formData.features?.yearBuilt ? Number(formData.features.yearBuilt) : undefined,
                     area: {
-                        ...formData.features.area,
-                        value: Number(formData.features.area.value)
+                        ...formData.features?.area,
+                        value: Number(formData.features?.area?.value || 0)
                     }
                 }
             };
@@ -200,6 +261,9 @@ const AddEditProperty = () => {
 
     if (loading && isEditMode && !formData.title) return <div className={styles.loading}>Loading...</div>;
 
+    const availableBranches = getCountryBranches(formData.country);
+    const availableDevelopers = getDeveloperSuggestions(formData.country);
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
@@ -210,8 +274,234 @@ const AddEditProperty = () => {
             </div>
 
             <form onSubmit={handleSubmit} className={styles.form}>
+                {/* Regional Market & Branch */}
                 <div className={styles.section}>
-                    <h2>{t('dashboard_extra.basic_information')}</h2>
+                    <h2>Regional Market & Branch</h2>
+                    <div className={styles.grid}>
+                        <div className={styles.formGroup}>
+                            <label>Country / Market</label>
+                            <select name="country" value={formData.country} onChange={handleCountryChange} required>
+                                {COUNTRIES.map(c => (
+                                    <option key={c.value} value={c.value}>{c.label} ({c.currency})</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Branch</label>
+                            <input
+                                type="text"
+                                name="branch"
+                                list="branch-options"
+                                value={formData.branch}
+                                onChange={handleChange}
+                                placeholder="e.g. New Cairo, Dubai, Riyadh"
+                                required
+                            />
+                            <datalist id="branch-options">
+                                {availableBranches.map(b => (
+                                    <option key={b} value={b} />
+                                ))}
+                            </datalist>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Listing Category</label>
+                            <select name="listingCategory" value={formData.listingCategory} onChange={handleChange}>
+                                {LISTING_CATEGORIES.map(c => (
+                                    <option key={c.value} value={c.value}>{c.label}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Developer & Project Specifications */}
+                <div className={styles.section}>
+                    <h2>Developer & Project Specifications</h2>
+                    <div className={styles.grid}>
+                        <div className={styles.formGroup}>
+                            <label>Developer Name</label>
+                            <input
+                                type="text"
+                                name="developer.name"
+                                list="developer-list"
+                                value={formData.developer?.name || ''}
+                                onChange={handleChange}
+                                placeholder="e.g. Emaar, SODIC, ROSHN"
+                            />
+                            <datalist id="developer-list">
+                                {availableDevelopers.map(dev => (
+                                    <option key={dev} value={dev} />
+                                ))}
+                            </datalist>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Project / Compound Name</label>
+                            <input
+                                type="text"
+                                name="developer.projectName"
+                                value={formData.developer?.projectName || ''}
+                                onChange={handleChange}
+                                placeholder="e.g. Mivida, Downtown, Sedra"
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Delivery Date</label>
+                            <input
+                                type="date"
+                                name="developer.deliveryDate"
+                                value={formData.developer?.deliveryDate ? formData.developer.deliveryDate.substring(0, 10) : ''}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Finishing Type</label>
+                            <select
+                                name="developer.finishingType"
+                                value={formData.developer?.finishingType || 'fully_finished'}
+                                onChange={handleChange}
+                            >
+                                {FINISHING_TYPES.map(f => (
+                                    <option key={f.value} value={f.value}>{f.label}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Off-Plan Payment Plan & Financing Terms */}
+                {(formData.listingCategory === 'primary_offplan' || formData.transactionType === 'sale') && (
+                    <div className={styles.section}>
+                        <h2>Off-Plan Payment Plan Terms</h2>
+                        <div className={styles.grid}>
+                            <div className={styles.formGroup}>
+                                <label>Down Payment (%)</label>
+                                <input
+                                    type="number"
+                                    name="paymentPlan.downPaymentPercent"
+                                    min="0"
+                                    max="100"
+                                    value={formData.paymentPlan?.downPaymentPercent ?? ''}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 10"
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Installment Duration (Years)</label>
+                                <input
+                                    type="number"
+                                    name="paymentPlan.installmentYears"
+                                    min="1"
+                                    max="20"
+                                    value={formData.paymentPlan?.installmentYears ?? ''}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 7"
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Installment Frequency</label>
+                                <select
+                                    name="paymentPlan.installmentFrequency"
+                                    value={formData.paymentPlan?.installmentFrequency || 'quarterly'}
+                                    onChange={handleChange}
+                                >
+                                    {INSTALLMENT_FREQUENCIES.map(f => (
+                                        <option key={f.value} value={f.value}>{f.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Handover Milestone (%)</label>
+                                <input
+                                    type="number"
+                                    name="paymentPlan.handoverPaymentPercent"
+                                    min="0"
+                                    max="100"
+                                    value={formData.paymentPlan?.handoverPaymentPercent ?? ''}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 10"
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Maintenance Escrow (%)</label>
+                                <input
+                                    type="number"
+                                    name="paymentPlan.maintenancePercent"
+                                    min="0"
+                                    max="20"
+                                    value={formData.paymentPlan?.maintenancePercent ?? ''}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 8"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Real-time Calculation Summary Card */}
+                        {Number(formData.price) > 0 && (
+                            <div style={{
+                                marginTop: '1rem',
+                                padding: '1rem',
+                                background: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '8px',
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                                gap: '1rem'
+                            }}>
+                                <div>
+                                    <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Down Payment Amount</span>
+                                    <strong style={{ color: '#2563eb', fontSize: '1rem' }}>
+                                        {formData.currency} {Math.round(Number(formData.price) * ((Number(formData.paymentPlan?.downPaymentPercent) || 0) / 100)).toLocaleString()}
+                                    </strong>
+                                </div>
+                                <div>
+                                    <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>
+                                        Estimated {formData.paymentPlan?.installmentFrequency || 'Quarterly'} Payment
+                                    </span>
+                                    <strong style={{ color: '#059669', fontSize: '1rem' }}>
+                                        {(() => {
+                                            const p = Number(formData.price) || 0;
+                                            const dp = p * ((Number(formData.paymentPlan?.downPaymentPercent) || 0) / 100);
+                                            const ho = p * ((Number(formData.paymentPlan?.handoverPaymentPercent) || 0) / 100);
+                                            const financed = Math.max(0, p - dp - ho);
+                                            const yrs = Number(formData.paymentPlan?.installmentYears) || 0;
+                                            const mult = { monthly: 12, quarterly: 4, semi_annual: 2, annual: 1 }[formData.paymentPlan?.installmentFrequency] || 4;
+                                            const total = yrs * mult;
+                                            const periodic = total > 0 ? Math.round(financed / total) : 0;
+                                            return `${formData.currency} ${periodic.toLocaleString()}`;
+                                        })()}
+                                    </strong>
+                                </div>
+                                <div>
+                                    <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Total Installments</span>
+                                    <strong style={{ color: '#0f172a', fontSize: '1rem' }}>
+                                        {(Number(formData.paymentPlan?.installmentYears) || 0) * ({ monthly: 12, quarterly: 4, semi_annual: 2, annual: 1 }[formData.paymentPlan?.installmentFrequency] || 4)} payments
+                                    </strong>
+                                </div>
+                                <div>
+                                    <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Maintenance Deposit</span>
+                                    <strong style={{ color: '#475569', fontSize: '1rem' }}>
+                                        {formData.currency} {Math.round(Number(formData.price) * ((Number(formData.paymentPlan?.maintenancePercent) || 0) / 100)).toLocaleString()}
+                                    </strong>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Basic Information */}
+                <div className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <h2>{t('dashboard_extra.basic_information')}</h2>
+                        <button
+                            type="button"
+                            className={styles.aiCopyButton}
+                            onClick={() => setAiCopyModalOpen(true)}
+                            title="Generate bilingual listing copy with AI"
+                        >
+                            <Sparkles size={16} />
+                            <span>AI Listing Copy</span>
+                        </button>
+                    </div>
                     <div className={styles.grid}>
                         <div className={styles.formGroup}>
                             <label>{t('dashboard_extra.title')}</label>
@@ -226,11 +516,9 @@ const AddEditProperty = () => {
                         <div className={styles.formGroup}>
                             <label>{t('dashboard_extra.type')}</label>
                             <select name="propertyType" value={formData.propertyType} onChange={handleChange}>
-                                <option value="apartment">{t('dashboard_extra.apartment')}</option>
-                                <option value="villa">{t('dashboard_extra.villa')}</option>
-                                <option value="townhouse">{t('dashboard_extra.townhouse')}</option>
-                                <option value="office">{t('dashboard_extra.office')}</option>
-                                <option value="land">{t('dashboard_extra.land')}</option>
+                                {PROPERTY_TYPES.map(type => (
+                                    <option key={type.value} value={type.value}>{type.label}</option>
+                                ))}
                             </select>
                         </div>
                         <div className={styles.formGroup}>
@@ -241,7 +529,7 @@ const AddEditProperty = () => {
                             </select>
                         </div>
                         <div className={styles.formGroup}>
-                            <label>{t('dashboard_extra.price')}</label>
+                            <label>{t('dashboard_extra.price')} ({formData.currency})</label>
                             <input
                                 type="number"
                                 name="price"
@@ -263,6 +551,7 @@ const AddEditProperty = () => {
                     </div>
                 </div>
 
+                {/* Location */}
                 <div className={styles.section}>
                     <h2>{t('dashboard_extra.location')}</h2>
                     <div className={styles.grid}>
@@ -298,6 +587,7 @@ const AddEditProperty = () => {
                     </div>
                 </div>
 
+                {/* Features */}
                 <div className={styles.section}>
                     <h2>{t('dashboard_extra.features')}</h2>
                     <div className={styles.grid}>
@@ -320,7 +610,7 @@ const AddEditProperty = () => {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Area (sqft)</label>
+                            <label>Area ({formData.features?.area?.unit || 'sqm'})</label>
                             <input
                                 type="number"
                                 name="features.area.value"
@@ -358,6 +648,7 @@ const AddEditProperty = () => {
                     </div>
                 </div>
 
+                {/* Images */}
                 <div className={styles.section}>
                     <h2>{t('dashboard_extra.images')}</h2>
                     <MediaUploader
@@ -375,6 +666,7 @@ const AddEditProperty = () => {
                     />
                 </div>
 
+                {/* 360 Virtual Walkthrough */}
                 <div className={styles.section}>
                     <h2>360° Virtual Walkthrough</h2>
                     <div className={styles.tourSection}>
@@ -439,6 +731,13 @@ const AddEditProperty = () => {
                     </button>
                 </div>
             </form>
+
+            <AICopyModal
+                isOpen={aiCopyModalOpen}
+                onClose={() => setAiCopyModalOpen(false)}
+                propertyData={formData}
+                onApplyCopy={handleApplyAiCopy}
+            />
         </div>
     );
 };

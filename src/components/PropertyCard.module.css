@@ -173,3 +173,40 @@
     background-color: #fee2e2;
     color: #ef4444;
 }
+
+.categoryBadge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #8b5cf6;
+    color: white;
+    backdrop-filter: blur(4px);
+}
+
+.locationBadge {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: rgba(17, 24, 39, 0.75);
+    color: #f3f4f6;
+    backdrop-filter: blur(4px);
+}
+
+.developerSub {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #4f46e5;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
