@@ -22,14 +22,21 @@ const AddEditProperty = () => {
     const [showTourStudio, setShowTourStudio] = useState(false);
     const [aiCopyModalOpen, setAiCopyModalOpen] = useState(false);
     const addToast = useUIStore((s) => s.addToast);
+    const selectedCountry = useUIStore((s) => s.selectedCountry);
+    const selectedBranch = useUIStore((s) => s.selectedBranch);
+
+    const initialCountry = selectedCountry || 'Egypt';
+    const initialPreset = getMarketPreset(initialCountry);
+    const initialBranches = getCountryBranches(initialCountry);
+
     const [formData, setFormData] = useState({
         title: '',
         description: '',
         propertyType: 'apartment',
         transactionType: 'sale',
         listingCategory: 'resale',
-        country: 'Egypt',
-        branch: 'Main Branch',
+        country: initialCountry,
+        branch: selectedBranch || initialBranches[0] || 'Main Branch',
         developer: {
             name: '',
             projectName: '',
@@ -44,17 +51,17 @@ const AddEditProperty = () => {
             maintenancePercent: 8
         },
         price: '',
-        currency: 'EGP',
+        currency: initialPreset.currency || 'EGP',
         location: {
             address: '',
             city: '',
             area: '',
-            country: 'Egypt'
+            country: initialCountry
         },
         features: {
             bedrooms: '',
             bathrooms: '',
-            area: { value: '', unit: 'sqm' },
+            area: { value: '', unit: initialPreset.areaUnit || 'sqm' },
             furnished: 'unfurnished',
             yearBuilt: '',
             amenities: []
@@ -64,6 +71,31 @@ const AddEditProperty = () => {
             images: []
         }
     });
+
+    // Keep new property form synced when user switches active country in header/dashboard
+    useEffect(() => {
+        if (!isEditMode && selectedCountry) {
+            const preset = getMarketPreset(selectedCountry);
+            const branches = getCountryBranches(selectedCountry);
+            setFormData((prev) => ({
+                ...prev,
+                country: selectedCountry,
+                branch: selectedBranch || branches[0] || 'Main Branch',
+                currency: preset.currency || 'EGP',
+                location: {
+                    ...prev.location,
+                    country: selectedCountry
+                },
+                features: {
+                    ...prev.features,
+                    area: {
+                        ...prev.features.area,
+                        unit: preset.areaUnit || 'sqm'
+                    }
+                }
+            }));
+        }
+    }, [selectedCountry, selectedBranch, isEditMode]);
 
     useEffect(() => {
         if (isEditMode) {

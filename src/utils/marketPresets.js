@@ -157,10 +157,28 @@ export const MARKET_PRESETS = {
 };
 
 export const COUNTRIES = [
-  { value: 'Egypt', label: 'Egypt', code: '+20', currency: 'EGP', unit: 'sqm' },
-  { value: 'UAE', label: 'UAE (United Arab Emirates)', code: '+971', currency: 'AED', unit: 'sqft' },
-  { value: 'Saudi Arabia', label: 'Saudi Arabia', code: '+966', currency: 'SAR', unit: 'sqm' }
+  { value: 'Egypt', label: 'Egypt', shortLabel: 'Egypt', flag: '🇪🇬', code: '+20', currency: 'EGP', unit: 'sqm', vatRate: 14 },
+  { value: 'UAE', label: 'UAE (United Arab Emirates)', shortLabel: 'UAE', flag: '🇦🇪', code: '+971', currency: 'AED', unit: 'sqft', vatRate: 5 },
+  { value: 'Saudi Arabia', label: 'Saudi Arabia', shortLabel: 'Saudi Arabia', flag: '🇸🇦', code: '+966', currency: 'SAR', unit: 'sqm', vatRate: 15 }
 ];
+
+export const LEAD_SOURCE_LABELS = {
+  facebook: 'Facebook',
+  olx: 'OLX / Dubizzle Egypt',
+  property_finder: 'Property Finder',
+  bayut: 'Bayut',
+  dubizzle: 'Dubizzle',
+  aqar: 'Aqar (عقار)',
+  website: 'Website',
+  referral: 'Referral',
+  call: 'Phone Call',
+  whatsapp: 'WhatsApp',
+  instagram: 'Instagram',
+  tiktok: 'TikTok',
+  cold_call: 'Cold Call',
+  walk_in: 'Walk-in',
+  other: 'Other'
+};
 
 export const getMarketPreset = (marketOrCountry = '') => {
   const norm = String(marketOrCountry || '').toLowerCase().trim();
@@ -183,10 +201,40 @@ export const getDeveloperSuggestions = (country) => {
   return preset?.developerSuggestions || [];
 };
 
+export const getLeadSourceOptions = (country) => {
+  const preset = getMarketPreset(country || 'Egypt');
+  const sources = preset?.leadSources || MARKET_PRESETS.egypt.leadSources;
+  return sources.map((value) => ({
+    value,
+    label: LEAD_SOURCE_LABELS[value] || value
+  }));
+};
+
+export const getCountryCurrency = (country) => {
+  if (!country) return 'EGP';
+  return getMarketPreset(country)?.currency || 'EGP';
+};
+
+export const formatCountryCurrency = (value = 0, countryOrCurrency = 'EGP') => {
+  const num = Number(value) || 0;
+  let currency = 'EGP';
+  const upper = String(countryOrCurrency || '').toUpperCase().trim();
+  if (['EGP', 'AED', 'SAR', 'USD', 'EUR', 'GBP'].includes(upper)) {
+    currency = upper;
+  } else if (countryOrCurrency) {
+    currency = getCountryCurrency(countryOrCurrency);
+  }
+  return `${currency} ${num.toLocaleString()}`;
+};
+
 export default {
   MARKET_PRESETS,
   COUNTRIES,
+  LEAD_SOURCE_LABELS,
   getMarketPreset,
   getCountryBranches,
-  getDeveloperSuggestions
+  getDeveloperSuggestions,
+  getLeadSourceOptions,
+  getCountryCurrency,
+  formatCountryCurrency
 };

@@ -2,6 +2,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DEAL_STAGES, TRANSACTION_TYPES } from '@/utils/constants';
+import { COUNTRIES, getMarketPreset, getCountryBranches } from '@/utils/marketPresets';
+import { useUIStore } from '@/store/uiStore';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import leadService from '@/services/leadService';
@@ -9,28 +11,39 @@ import styles from './DealForm.module.css';
 
 const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     const { t } = useLanguage();
+    const selectedCountry = useUIStore((s) => s.selectedCountry);
+    const selectedBranch = useUIStore((s) => s.selectedBranch);
 
-    const [formData, setFormData] = useState({
-        title: '',
-        lead: '',
-        property: '',
-        transactionType: 'sale',
-        dealValue: '',
-        currency: 'EGP',
-        stage: 'negotiation',
-        probability: 50,
-        expectedCloseDate: '',
-        commission: {
-            percentage: '',
-            amount: ''
-        },
-        notes: ''
-    });
+    const buildDefaultState = () => {
+        const defaultCountry = selectedCountry || 'Egypt';
+        const preset = getMarketPreset(defaultCountry);
+        const branches = getCountryBranches(defaultCountry);
+        return {
+            title: '',
+            lead: '',
+            property: '',
+            country: defaultCountry,
+            branch: selectedBranch || branches[0] || 'Main Branch',
+            transactionType: 'sale',
+            dealValue: '',
+            currency: preset?.currency || 'EGP',
+            stage: 'negotiation',
+            probability: 50,
+            expectedCloseDate: '',
+            commission: {
+                percentage: '',
+                amount: ''
+            },
+            notes: ''
+        };
+    };
+
+    const [formData, setFormData] = useState(buildDefaultState);
 
     // Fetch leads when modal is open (agents get their assigned leads from backend)
     const { data: leadsResponse } = useQuery({
-        queryKey: ['leads-for-deal'],
-        queryFn: () => leadService.getLeads({ limit: 200 }),
+        queryKey: ['leads-for-deal', formData.country],
+        queryFn: () => leadService.getLeads({ limit: 200, country: formData.country || undefined }),
         enabled: !!isOpen
     });
     const leads = leadsResponse?.data || [];
@@ -53,27 +66,21 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
 
     useEffect(() => {
         if (initialData) {
+            const initCountry = initialData.country || initialData.property?.country || initialData.lead?.country || selectedCountry || 'Egypt';
+            const preset = getMarketPreset(initCountry);
+            const branches = getCountryBranches(initCountry);
             setFormData({
                 ...initialData,
+                country: initCountry,
+                branch: initialData.branch || branches[0] || 'Main Branch',
+                currency: initialData.currency || preset?.currency || 'EGP',
                 lead: initialData.lead?._id || initialData.lead || '',
                 property: initialData.property?._id || initialData.property || ''
             });
         } else if (isOpen) {
-            setFormData({
-                title: '',
-                lead: '',
-                property: '',
-                transactionType: 'sale',
-                dealValue: '',
-                currency: 'EGP',
-                stage: 'negotiation',
-                probability: 50,
-                expectedCloseDate: '',
-                commission: { percentage: '', amount: '' },
-                notes: ''
-            });
+            setFormData(buildDefaultState());
         }
-    }, [initialData, isOpen]);
+    }, [initialData, isOpen, selectedCountry, selectedBranch]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -82,19 +89,7 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     };
 
     const resetForm = () => {
-        setFormData({
-            title: '',
-            lead: '',
-            property: '',
-            transactionType: 'sale',
-            dealValue: '',
-            currency: 'EGP',
-            stage: 'negotiation',
-            probability: 50,
-            expectedCloseDate: '',
-            commission: { percentage: '', amount: '' },
-            notes: ''
-        });
+        setFormData(buildDefaultState());
     };
 
     if (!isOpen) return null;
@@ -117,6 +112,33 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                 placeholder="Enter deal title"
                                 required
                             />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label>Country / Market</label>
+                            <select
+                                value={formData.country || 'Egypt'}
+                                onChange={(e) => {
+                                    const nextCountry = e.target.value;
+                                    const preset = getMarketPreset(nextCountry);
+                                    const branches = getCountryBranches(nextCountry);
+                                    setFormData({
+                                        ...formData,
+                                        country: nextCountry,
+                                        branch: branches[0] || 'Main Branch',
+                                        currency: preset?.currency || 'EGP',
+                                        lead: '',
+                                        property: ''
+                                    });
+                                }}
+                                className={styles.select}
+                            >
+                                {COUNTRIES.map((c) => (
+                                    <option key={c.value} value={c.value}>
+                                        {c.flag} {c.label} ({c.currency})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className={styles.formGroup}>
@@ -207,10 +229,11 @@ const DealForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                 className={styles.select}
                             >
                                 <option value="EGP">EGP</option>
+                                <option value="AED">AED</option>
+                                <option value="SAR">SAR</option>
                                 <option value="USD">USD</option>
                                 <option value="EUR">EUR</option>
                                 <option value="GBP">GBP</option>
-                                <option value="AED">AED</option>
                             </select>
                         </div>
 

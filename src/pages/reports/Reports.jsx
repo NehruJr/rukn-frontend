@@ -2,61 +2,85 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { reportService } from '@/services/reportService';
+import { useUIStore } from '@/store/uiStore';
+import { COUNTRIES, getCountryCurrency } from '@/utils/marketPresets';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Users, DollarSign, Target } from 'lucide-react';
+import { TrendingUp, Users, DollarSign, Target, Building2 } from 'lucide-react';
 import styles from './Reports.module.css';
 
 const Reports = () => {
     const { t } = useLanguage();
+    const { selectedCountry, selectedBranch, setSelectedCountry } = useUIStore();
     const [activeTab, setActiveTab] = useState('overview');
     const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
 
     const { data: dashboardData } = useQuery({
-        queryKey: ['dashboard-stats', dateRange],
-        queryFn: () => reportService.getDashboardStats(dateRange.startDate, dateRange.endDate)
+        queryKey: ['dashboard-stats', dateRange, selectedCountry, selectedBranch],
+        queryFn: () => reportService.getDashboardStats(dateRange.startDate, dateRange.endDate, selectedCountry, selectedBranch)
     });
 
     const { data: leadData } = useQuery({
-        queryKey: ['lead-analytics', dateRange],
-        queryFn: () => reportService.getLeadAnalytics(dateRange.startDate, dateRange.endDate),
+        queryKey: ['lead-analytics', dateRange, selectedCountry, selectedBranch],
+        queryFn: () => reportService.getLeadAnalytics(dateRange.startDate, dateRange.endDate, selectedCountry, selectedBranch),
         enabled: activeTab === 'leads'
     });
 
     const { data: dealData } = useQuery({
-        queryKey: ['deal-analytics', dateRange],
-        queryFn: () => reportService.getDealAnalytics(dateRange.startDate, dateRange.endDate),
+        queryKey: ['deal-analytics', dateRange, selectedCountry, selectedBranch],
+        queryFn: () => reportService.getDealAnalytics(dateRange.startDate, dateRange.endDate, selectedCountry, selectedBranch),
         enabled: activeTab === 'deals'
     });
 
     const { data: agentData } = useQuery({
-        queryKey: ['agent-performance', dateRange],
-        queryFn: () => reportService.getAgentPerformance(dateRange.startDate, dateRange.endDate),
+        queryKey: ['agent-performance', dateRange, selectedCountry, selectedBranch],
+        queryFn: () => reportService.getAgentPerformance(dateRange.startDate, dateRange.endDate, selectedCountry, selectedBranch),
         enabled: activeTab === 'agents'
     });
 
     const { data: funnelData } = useQuery({
-        queryKey: ['conversion-funnel', dateRange],
-        queryFn: () => reportService.getConversionFunnel(dateRange.startDate, dateRange.endDate),
+        queryKey: ['conversion-funnel', dateRange, selectedCountry, selectedBranch],
+        queryFn: () => reportService.getConversionFunnel(dateRange.startDate, dateRange.endDate, selectedCountry, selectedBranch),
         enabled: activeTab === 'overview'
     });
 
     const { data: revenueData } = useQuery({
-        queryKey: ['revenue-reports', dateRange],
-        queryFn: () => reportService.getRevenueReports(dateRange.startDate, dateRange.endDate),
+        queryKey: ['revenue-reports', dateRange, selectedCountry, selectedBranch],
+        queryFn: () => reportService.getRevenueReports(dateRange.startDate, dateRange.endDate, selectedCountry, selectedBranch),
         enabled: activeTab === 'revenue'
     });
 
     const stats = dashboardData?.data || {};
+    const activeCurrency = stats.currency || (selectedCountry ? getCountryCurrency(selectedCountry) : 'EGP');
     const COLORS = ['#b4562d', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1>Reports &amp; Analytics</h1>
-                    <p>{t('dashboard_extra.insights_and_performance_metrics')}</p>
+                    <h1>
+                        Reports &amp; Analytics
+                        {selectedCountry ? ` — ${selectedCountry}` : ''}
+                    </h1>
+                    <p>
+                        {selectedCountry
+                            ? `Performance metrics and analytics for ${selectedCountry} (${activeCurrency})`
+                            : t('dashboard_extra.insights_and_performance_metrics')}
+                    </p>
                 </div>
                 <div className={styles.dateFilter}>
+                    <select
+                        value={selectedCountry}
+                        onChange={(e) => setSelectedCountry(e.target.value)}
+                        className={styles.dateInput}
+                        aria-label="Filter reports by country"
+                    >
+                        <option value="">🌍 All Countries</option>
+                        {COUNTRIES.map((c) => (
+                            <option key={c.value} value={c.value}>
+                                {c.flag} {c.shortLabel} ({c.currency})
+                            </option>
+                        ))}
+                    </select>
                     <input
                         type="date"
                         value={dateRange.startDate}
@@ -96,6 +120,13 @@ const Reports = () => {
                             color="#3B82F6"
                         />
                         <MetricCard
+                            icon={<Building2 size={24} />}
+                            label="Active Properties"
+                            value={stats.properties?.active || 0}
+                            subValue={`${stats.properties?.total || 0} total listed`}
+                            color="#059669"
+                        />
+                        <MetricCard
                             icon={<Target size={24} />}
                             label="Active Deals"
                             value={stats.deals?.active || 0}
@@ -105,8 +136,8 @@ const Reports = () => {
                         <MetricCard
                             icon={<DollarSign size={24} />}
                             label="Total Revenue"
-                            value={`$${(stats.revenue?.actual || 0).toLocaleString()}`}
-                            subValue={`$${(stats.revenue?.expected || 0).toLocaleString()} expected`}
+                            value={`${activeCurrency} ${(stats.revenue?.actual || 0).toLocaleString()}`}
+                            subValue={`${activeCurrency} ${(stats.revenue?.expected || 0).toLocaleString()} expected`}
                             color="#F59E0B"
                         />
                         <MetricCard
@@ -239,7 +270,7 @@ const Reports = () => {
                                         <td>{agent.conversionRate}%</td>
                                         <td>{agent.dealsTotal}</td>
                                         <td>{agent.dealsWon}</td>
-                                        <td>${agent.revenue.toLocaleString()}</td>
+                                        <td>{activeCurrency} {agent.revenue.toLocaleString()}</td>
                                     </tr>
                                 ))}
                             </tbody>
