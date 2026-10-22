@@ -100,11 +100,22 @@ const PropertyDetail = () => {
     const handleShare = async () => {
         try {
             const res = await propertyService.getShareLink(id);
-            const path = res?.data?.shareUrl ?? `/share/${res?.data?.shareToken}`;
+            const shareToken = res?.data?.shareToken || property?.shareToken || id;
+            if (res?.data?.shareToken) {
+                setProperty(prev => prev ? { ...prev, shareToken: res.data.shareToken } : prev);
+            }
+            const path = res?.data?.shareUrl ?? `/share/${shareToken}`;
             const url = path.startsWith('http') ? path : `${window.location.origin}${path}`;
             await navigator.clipboard.writeText(url);
             addToast({ type: 'success', message: 'Link copied!' });
         } catch (err) {
+            const fallbackToken = property?.shareToken || property?._id || id;
+            if (fallbackToken) {
+                const url = `${window.location.origin}/share/${fallbackToken}`;
+                await navigator.clipboard.writeText(url);
+                addToast({ type: 'success', message: 'Link copied!' });
+                return;
+            }
             console.error('Error generating share link:', err);
             addToast({ type: 'error', message: err?.response?.data?.message || 'Failed to generate share link' });
         }
