@@ -47,9 +47,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Do not attempt refresh on auth endpoints to avoid infinite loop
-    const isAuthEndpoint = originalRequest?.url?.includes('/auth/login') ||
-                           originalRequest?.url?.includes('/auth/refresh') ||
-                           originalRequest?.url?.includes('/auth/register');
+    const isAuthEndpoint = originalRequest?.url?.includes('/auth/');
 
     // Handle 401 Unauthorized
     if (error.response?.status === 401 && !originalRequest?._retry && !isAuthEndpoint) {

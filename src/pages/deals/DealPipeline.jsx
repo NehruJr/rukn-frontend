@@ -4,17 +4,23 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable, useDroppable } from '@dnd-kit/core';
 import { dealService } from '@/services/dealService';
+import { useUIStore } from '@/store/uiStore';
 import { DEAL_STAGES } from '@/utils/constants';
+import { getCountryCurrency } from '@/utils/marketPresets';
 import styles from './DealPipeline.module.css';
 
 const DealPipeline = () => {
     const { t, dealStage } = useLanguage();
+    const { selectedCountry, selectedBranch } = useUIStore();
     const [activeId, setActiveId] = useState(null);
     const queryClient = useQueryClient();
 
     const { data, isLoading } = useQuery({
-        queryKey: ['deal-pipeline'],
-        queryFn: () => dealService.getPipeline()
+        queryKey: ['deal-pipeline', selectedCountry, selectedBranch],
+        queryFn: () => dealService.getPipeline({
+            country: selectedCountry || undefined,
+            branch: selectedBranch || undefined
+        })
     });
 
     const updateStageMutation = useMutation({
@@ -43,12 +49,14 @@ const DealPipeline = () => {
         setActiveId(null);
     };
 
-    const formatCurrency = (value) => {
+    const activeCurrency = selectedCountry ? getCountryCurrency(selectedCountry) : 'EGP';
+
+    const formatCurrency = (value, currency) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'EGP',
+            currency: currency || activeCurrency,
             minimumFractionDigits: 0
-        }).format(value);
+        }).format(value || 0);
     };
 
     const allDeals = Object.values(pipeline).flat();
@@ -59,7 +67,11 @@ const DealPipeline = () => {
             <div className={styles.header}>
                 <div>
                     <h1>{t('dashboard_extra.deal_pipeline')}</h1>
-                    <p>{t('dashboard_extra.drag_and_drop_deals_to_update_their_stag')}</p>
+                    <p>
+                        {selectedCountry
+                            ? `Deal Pipeline for ${selectedCountry}${selectedBranch ? ` • ${selectedBranch}` : ''}`
+                            : t('dashboard_extra.drag_and_drop_deals_to_update_their_stag')}
+                    </p>
                 </div>
                 <Link to="/deals" className={styles.listViewLink}>{t('dashboard_extra.list_view')}</Link>
             </div>

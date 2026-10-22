@@ -11,6 +11,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 // Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 // Main Pages
 import Dashboard from './pages/dashboard/Dashboard';
@@ -86,6 +88,10 @@ function App() {
                 {/* Public Routes */}
                 <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
                 <Route path="/register" element={isAuthenticated ? <Navigate to="/" replace /> : <Register />} />
+                <Route path="/forgot-password" element={isAuthenticated ? <Navigate to="/" replace /> : <ForgotPassword />} />
+                <Route path="/forgotpassword" element={isAuthenticated ? <Navigate to="/" replace /> : <ForgotPassword />} />
+                <Route path="/reset-password/:token" element={isAuthenticated ? <Navigate to="/" replace /> : <ResetPassword />} />
+                <Route path="/resetpassword/:token" element={isAuthenticated ? <Navigate to="/" replace /> : <ResetPassword />} />
                 <Route path="/share/:token" element={<PublicProperty />} />
                 <Route path="/tour/:token" element={<PublicTour />} />
 

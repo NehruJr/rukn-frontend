@@ -134,6 +134,66 @@
     text-align: center;
 }
 
+.successNotice {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.devNotice {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #eff6ff;
+    border: 1px dashed #93c5fd;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: #1e40af;
+    text-align: center;
+}
+
+.devLinkBtn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background-color: #2563eb;
+    color: white !important;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+}
+
+.devLinkBtn:hover {
+    background-color: #1d4ed8;
+    text-decoration: none;
+}
+
+.backLinkContainer {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.backLink:hover {
+    color: var(--color-primary-600);
+}
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;

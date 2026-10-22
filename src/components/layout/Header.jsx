@@ -1,16 +1,17 @@
-import { Bell, Search, LogOut, Menu } from 'lucide-react';
+import { Bell, Search, LogOut, Menu, Globe } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { authService } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useUIStore } from '@/store/uiStore';
+import { COUNTRIES } from '@/utils/marketPresets';
 import styles from './Header.module.css';
 
 const Header = () => {
     const { user } = useAuthStore();
     const navigate = useNavigate();
     const { t } = useLanguage();
-    const { toggleSidebar } = useUIStore();
+    const { toggleSidebar, selectedCountry, setSelectedCountry } = useUIStore();
 
     const handleLogout = async () => {
         await authService.logout();
@@ -39,6 +40,24 @@ const Header = () => {
             </div>
 
             <div className={styles.actions}>
+                {/* Global Country Market Selector */}
+                <div className={styles.countrySelectorWrapper} title="Select Active Country Market">
+                    <Globe size={16} className={styles.countryIcon} />
+                    <select
+                        value={selectedCountry}
+                        onChange={(e) => setSelectedCountry(e.target.value)}
+                        className={styles.countrySelect}
+                        aria-label="Select country market"
+                    >
+                        <option value="">🌍 All Countries</option>
+                        {COUNTRIES.map((c) => (
+                            <option key={c.value} value={c.value}>
+                                {c.flag} {c.shortLabel} ({c.currency})
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
                 <button type="button" className={styles.iconButton}>
                     <Bell size={20} />
                     <span className={styles.badge}>3</span>

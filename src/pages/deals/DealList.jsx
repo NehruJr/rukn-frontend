@@ -1,9 +1,11 @@
 import { useLanguage } from "@/hooks/useLanguage";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { dealService } from '@/services/dealService';
+import { useUIStore } from '@/store/uiStore';
 import { DEAL_STAGES, DEAL_STATUSES } from '@/utils/constants';
+import { COUNTRIES, getCountryCurrency } from '@/utils/marketPresets';
 import { formatTimeAgo } from '@/utils/formatters';
 import { Plus, Filter, Search } from 'lucide-react';
 import Button from '@/components/ui/Button';
@@ -14,8 +16,11 @@ import styles from './DealList.module.css';
 const DealList = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const { selectedCountry, selectedBranch, setSelectedCountry } = useUIStore();
     const [filters, setFilters] = useState({
         search: '',
+        country: selectedCountry || '',
+        branch: selectedBranch || '',
         status: '',
         stage: '',
         page: 1,
@@ -24,9 +29,24 @@ const DealList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const queryClient = useQueryClient();
 
+    useEffect(() => {
+        setFilters((prev) => ({
+            ...prev,
+            country: selectedCountry || '',
+            branch: selectedBranch || '',
+            page: 1
+        }));
+    }, [selectedCountry, selectedBranch]);
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['deals', filters],
-        queryFn: () => dealService.getDeals(filters)
+        queryFn: () => {
+            const clean = { ...filters };
+            Object.keys(clean).forEach((k) => {
+                if (clean[k] === '' || clean[k] == null) delete clean[k];
+            });
+            return dealService.getDeals(clean);
+        }
     });
 
     const deals = data?.data || [];
@@ -53,12 +73,13 @@ const DealList = () => {
         return DEAL_STATUSES.find(s => s.value === status)?.color || '#6B7280';
     };
 
-    const formatCurrency = (value, currency = 'EGP') => {
+    const formatCurrency = (value, currency) => {
+        const curr = currency || (filters.country ? getCountryCurrency(filters.country) : 'EGP');
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: currency,
+            currency: curr,
             minimumFractionDigits: 0
-        }).format(value);
+        }).format(value || 0);
     };
 
     return (
@@ -66,11 +87,17 @@ const DealList = () => {
             <div className={styles.header}>
                 <div>
                     <h1>{t('dashboard_extra.deals')}</h1>
-                    <p>{t('dashboard_extra.manage_and_track_all_your_deals')}</p>
+                    <p>
+                        {filters.country
+                            ? `Deals in ${filters.country}${filters.branch ? ` • ${filters.branch}` : ''}`
+                            : t('dashboard_extra.manage_and_track_all_your_deals')}
+                    </p>
                 </div>
                 <div className={styles.headerActions}>
                     <Button variant="outline" onClick={() => navigate('/deals/pipeline')}>{t('dashboard_extra.pipeline_view')}</Button>
-                    <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>{t('dashboard_extra.add_deal')}</Button>
+                    <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>
+                        {filters.country ? `${t('dashboard_extra.add_deal')} (${filters.country})` : t('dashboard_extra.add_deal')}
+                    </Button>
                 </div>
             </div>
 
@@ -84,6 +111,23 @@ const DealList = () => {
                 />
 
                 <div className={styles.filters}>
+                    <select
+                        value={filters.country}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setSelectedCountry(val);
+                            setFilters({ ...filters, country: val, branch: '', page: 1 });
+                        }}
+                        className={styles.select}
+                    >
+                        <option value="">🌍 All Countries</option>
+                        {COUNTRIES.map((c) => (
+                            <option key={c.value} value={c.value}>
+                                {c.flag} {c.shortLabel} ({c.currency})
+                            </option>
+                        ))}
+                    </select>
+
                     <select
                         value={filters.status}
                         onChange={(e) => setFilters({ ...filters, status: e.target.value })}

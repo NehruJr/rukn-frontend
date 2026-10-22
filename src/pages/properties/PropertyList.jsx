@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { propertyService } from '@/services/propertyService';
 import { useAuthStore } from '@/store/authStore';
+import { useUIStore } from '@/store/uiStore';
 import PropertyCard from '@/components/PropertyCard';
 import { Plus, Search, Filter, X, Globe, Building2 } from 'lucide-react';
 import { COUNTRIES, getCountryBranches, getDeveloperSuggestions } from '@/utils/marketPresets';
@@ -13,12 +14,13 @@ const PropertyList = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const { hasPermission } = useAuthStore();
+    const { selectedCountry, selectedBranch, setSelectedCountry, setSelectedBranch } = useUIStore();
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
         search: '',
-        country: '',
-        branch: '',
+        country: selectedCountry || '',
+        branch: selectedBranch || '',
         developer: '',
         listingCategory: '',
         propertyType: '',
@@ -33,6 +35,20 @@ const PropertyList = () => {
         pages: 1,
         total: 0
     });
+
+    useEffect(() => {
+        setFilters(prev => {
+            if (prev.country === (selectedCountry || '') && prev.branch === (selectedBranch || '')) {
+                return prev;
+            }
+            return {
+                ...prev,
+                country: selectedCountry || '',
+                branch: selectedBranch || ''
+            };
+        });
+        setPagination(prev => ({ ...prev, page: 1 }));
+    }, [selectedCountry, selectedBranch]);
 
     useEffect(() => {
         fetchProperties();
@@ -73,23 +89,29 @@ const PropertyList = () => {
     };
 
     const handleCountryTabClick = (countryValue) => {
+        const nextCountry = filters.country === countryValue ? '' : countryValue;
+        setSelectedCountry(nextCountry);
         setFilters(prev => ({
             ...prev,
-            country: prev.country === countryValue ? '' : countryValue,
+            country: nextCountry,
             branch: ''
         }));
         setPagination(prev => ({ ...prev, page: 1 }));
     };
 
     const handleBranchClick = (branchName) => {
+        const nextBranch = filters.branch === branchName ? '' : branchName;
+        setSelectedBranch(nextBranch);
         setFilters(prev => ({
             ...prev,
-            branch: prev.branch === branchName ? '' : branchName
+            branch: nextBranch
         }));
         setPagination(prev => ({ ...prev, page: 1 }));
     };
 
     const clearFilters = () => {
+        setSelectedCountry('');
+        setSelectedBranch('');
         setFilters({
             search: '',
             country: '',

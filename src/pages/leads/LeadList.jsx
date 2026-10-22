@@ -1,32 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Link } from 'react-router-dom';
 import { leadService } from '@/services/leadService';
+import { useUIStore } from '@/store/uiStore';
 import LeadForm from '@/components/LeadForm';
-import { Plus, Filter, Search } from 'lucide-react';
+import { Plus, Filter, Search, Globe } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { formatTimeAgo } from '@/utils/formatters';
 import { LEAD_STATUSES, LEAD_PRIORITIES } from '@/utils/constants';
+import { COUNTRIES, LEAD_SOURCE_LABELS, getCountryBranches } from '@/utils/marketPresets';
 import styles from './LeadList.module.css';
 
 const LeadList = () => {
     const { t, leadStatus, leadPriority, leadSource } = useLanguage();
+    const { selectedCountry, selectedBranch, setSelectedCountry, setSelectedBranch } = useUIStore();
     const [filters, setFilters] = useState({
         search: '',
+        country: selectedCountry || '',
+        branch: selectedBranch || '',
         status: '',
         priority: '',
         page: 1,
         limit: 20
     });
 
+    useEffect(() => {
+        setFilters((prev) => ({
+            ...prev,
+            country: selectedCountry || '',
+            branch: selectedBranch || '',
+            page: 1
+        }));
+    }, [selectedCountry, selectedBranch]);
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['leads', filters],
-        queryFn: () => leadService.getLeads(filters)
+        queryFn: () => {
+            const clean = { ...filters };
+            Object.keys(clean).forEach((k) => {
+                if (clean[k] === '' || clean[k] == null) delete clean[k];
+            });
+            return leadService.getLeads(clean);
+        }
     });
 
     const leads = data?.data || [];
+    const availableBranches = filters.country ? getCountryBranches(filters.country) : [];
 
     const getPriorityColor = (priority) => {
         return LEAD_PRIORITIES.find(p => p.value === priority)?.color || '#6B7280';
@@ -49,10 +70,14 @@ const LeadList = () => {
             <div className={styles.header}>
                 <div>
                     <h1>{t('leads.title')}</h1>
-                    <p>{t('leads.pipeline')}</p>
+                    <p>
+                        {filters.country
+                            ? `Leads in ${filters.country}${filters.branch ? ` • ${filters.branch}` : ''}`
+                            : t('leads.pipeline')}
+                    </p>
                 </div>
                 <Button variant="primary" leftIcon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>
-                    {t('leads.addLead')}
+                    {filters.country ? `${t('leads.addLead')} (${filters.country})` : t('leads.addLead')}
                 </Button>
             </div>
 
@@ -66,6 +91,42 @@ const LeadList = () => {
                 />
 
                 <div className={styles.filters}>
+                    <select
+                        value={filters.country}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setSelectedCountry(val);
+                            setFilters({ ...filters, country: val, branch: '', page: 1 });
+                        }}
+                        className={styles.select}
+                    >
+                        <option value="">🌍 All Countries</option>
+                        {COUNTRIES.map((c) => (
+                            <option key={c.value} value={c.value}>
+                                {c.flag} {c.shortLabel}
+                            </option>
+                        ))}
+                    </select>
+
+                    {availableBranches.length > 0 && (
+                        <select
+                            value={filters.branch}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setSelectedBranch(val);
+                                setFilters({ ...filters, branch: val, page: 1 });
+                            }}
+                            className={styles.select}
+                        >
+                            <option value="">All Branches</option>
+                            {availableBranches.map((b) => (
+                                <option key={b} value={b}>
+                                    {b}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+
                     <select
                         value={filters.status}
                         onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -144,7 +205,14 @@ const LeadList = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={styles.source}>{lead.source}</span>
+                                        <span className={styles.source}>
+                                            {LEAD_SOURCE_LABELS[lead.source] || lead.source}
+                                        </span>
+                                        {lead.country && (
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                                                {lead.country}{lead.branch ? ` • ${lead.branch}` : ''}
+                                            </div>
+                                        )}
                                     </td>
                                     <td>
                                         <span

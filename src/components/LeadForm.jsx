@@ -4,46 +4,80 @@ import { X, Save } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { LEAD_STATUSES, LEAD_PRIORITIES } from '@/utils/constants';
+import {
+    COUNTRIES,
+    getMarketPreset,
+    getCountryBranches,
+    getLeadSourceOptions
+} from '@/utils/marketPresets';
+import { useUIStore } from '@/store/uiStore';
 import styles from './LeadForm.module.css';
 
 const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add Lead' }) => {
     const { t } = useLanguage();
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        source: 'website',
-        status: 'new',
-        priority: 'warm',
-        transactionType: 'sale',
-        budget: { min: '', max: '' },
-        notes: ''
-    });
+    const selectedCountry = useUIStore((s) => s.selectedCountry);
+    const selectedBranch = useUIStore((s) => s.selectedBranch);
+
+    const buildDefaultState = () => {
+        const defaultCountry = selectedCountry || 'Egypt';
+        const preset = getMarketPreset(defaultCountry);
+        const branches = getCountryBranches(defaultCountry);
+        return {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            country: defaultCountry,
+            branch: selectedBranch || branches[0] || 'Main Branch',
+            source: preset?.leadSources?.[0] || 'website',
+            status: 'new',
+            priority: 'warm',
+            transactionType: 'sale',
+            budget: { min: '', max: '', currency: preset?.currency || 'EGP' },
+            notes: ''
+        };
+    };
+
+    const [formData, setFormData] = useState(buildDefaultState);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (initialData) {
+            const initCountry = initialData.country || selectedCountry || 'Egypt';
+            const preset = getMarketPreset(initCountry);
+            const branches = getCountryBranches(initCountry);
             setFormData({
                 ...initialData,
-                budget: initialData.budget || { min: '', max: '' }
+                country: initCountry,
+                branch: initialData.branch || branches[0] || 'Main Branch',
+                budget: {
+                    min: initialData.budget?.min ?? '',
+                    max: initialData.budget?.max ?? '',
+                    currency: initialData.budget?.currency || preset?.currency || 'EGP'
+                }
             });
         } else {
-            setFormData({
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                source: 'website',
-                status: 'new',
-                priority: 'warm',
-                transactionType: 'sale',
-                budget: { min: '', max: '' },
-                notes: ''
-            });
+            setFormData(buildDefaultState());
         }
-    }, [initialData, isOpen]);
+    }, [initialData, isOpen, selectedCountry, selectedBranch]);
+
+    const handleCountryChange = (e) => {
+        const nextCountry = e.target.value;
+        const preset = getMarketPreset(nextCountry);
+        const branches = getCountryBranches(nextCountry);
+        const allowedSources = preset?.leadSources || ['website'];
+        setFormData((prev) => ({
+            ...prev,
+            country: nextCountry,
+            branch: branches[0] || 'Main Branch',
+            source: allowedSources.includes(prev.source) ? prev.source : allowedSources[0],
+            budget: {
+                ...prev.budget,
+                currency: preset?.currency || 'EGP'
+            }
+        }));
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -97,6 +131,11 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
 
     if (!isOpen) return null;
 
+    const currentPreset = getMarketPreset(formData.country || 'Egypt');
+    const availableBranches = getCountryBranches(formData.country || 'Egypt');
+    const sourceOptions = getLeadSourceOptions(formData.country || 'Egypt');
+    const activeCurrency = formData.budget?.currency || currentPreset?.currency || 'EGP';
+
     return (
         <div className={styles.overlay}>
             <div className={styles.modal}>
@@ -109,6 +148,42 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     {errors.submit && <div className={styles.errorBanner}>{errors.submit}</div>}
+
+                    <div className={styles.section}>
+                        <h3>Country &amp; Regional Market</h3>
+                        <div className={styles.row}>
+                            <div className={styles.formGroup}>
+                                <label>Country / Market</label>
+                                <select
+                                    name="country"
+                                    value={formData.country || 'Egypt'}
+                                    onChange={handleCountryChange}
+                                    className={styles.select}
+                                >
+                                    {COUNTRIES.map((c) => (
+                                        <option key={c.value} value={c.value}>
+                                            {c.flag} {c.label} ({c.currency})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Branch</label>
+                                <select
+                                    name="branch"
+                                    value={formData.branch || ''}
+                                    onChange={handleChange}
+                                    className={styles.select}
+                                >
+                                    {availableBranches.map((b) => (
+                                        <option key={b} value={b}>
+                                            {b}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <div className={styles.section}>
                         <h3>{t('dashboard_extra.basic_information')}</h3>
@@ -143,10 +218,11 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                                 fullWidth
                             />
                             <Input
-                                label={t('dashboard_extra.phone')}
+                                label={`${t('dashboard_extra.phone')} (${currentPreset?.phonePrefix || '+20'})`}
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
+                                placeholder={`${currentPreset?.phonePrefix || '+20'} 100 000 0000`}
                                 error={errors.phone}
                                 required
                                 fullWidth
@@ -165,13 +241,11 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                                     onChange={handleChange}
                                     className={styles.select}
                                 >
-                                    <option value="website">{t('dashboard_extra.website')}</option>
-                                    <option value="facebook">Facebook</option>
-                                    <option value="olx">OLX</option>
-                                    <option value="referral">Referral</option>
-                                    <option value="call">Call</option>
-                                    <option value="walk_in">Walk-in</option>
-                                    <option value="other">Other</option>
+                                    {sourceOptions.map((src) => (
+                                        <option key={src.value} value={src.value}>
+                                            {src.label}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className={styles.formGroup}>
@@ -225,7 +299,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                         <h3>Requirements (Optional)</h3>
                         <div className={styles.row}>
                             <Input
-                                label="Min Budget"
+                                label={`Min Budget (${activeCurrency})`}
                                 name="budget.min"
                                 type="number"
                                 value={formData.budget.min}
@@ -233,7 +307,7 @@ const LeadForm = ({ isOpen, onClose, onSubmit, initialData = null, title = 'Add 
                                 fullWidth
                             />
                             <Input
-                                label="Max Budget"
+                                label={`Max Budget (${activeCurrency})`}
                                 name="budget.max"
                                 type="number"
                                 value={formData.budget.max}

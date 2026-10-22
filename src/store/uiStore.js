@@ -15,6 +15,12 @@ export const useUIStore = create(
       toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
       setTheme: (theme) => set({ theme }),
 
+      // Active Country & Branch Market Scope ('' = All Countries)
+      selectedCountry: '',
+      selectedBranch: '',
+      setSelectedCountry: (country) => set({ selectedCountry: country || '', selectedBranch: '' }),
+      setSelectedBranch: (branch) => set({ selectedBranch: branch || '' }),
+
       // Modals
       modals: {},
       openModal: (modalId, data = null) =>
@@ -66,9 +72,17 @@ export const useUIStore = create(
     }),
     {
       name: 'ui-store',
+      partialize: (state) => ({
+        sidebarOpen: state.sidebarOpen,
+        theme: state.theme,
+        selectedCountry: state.selectedCountry,
+        selectedBranch: state.selectedBranch
+      }),
       partialPersist: (state) => ({
         sidebarOpen: state.sidebarOpen,
-        theme: state.theme
+        theme: state.theme,
+        selectedCountry: state.selectedCountry,
+        selectedBranch: state.selectedBranch
       })
     }
   )
