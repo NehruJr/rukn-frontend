@@ -36,6 +36,18 @@ import Settings from './pages/settings/Settings';
 // Layout
 import MainLayout from './components/layout/MainLayout';
 
+// Platform Super-Admin Components & Pages
+import PlatformProtectedRoute from './components/platform/PlatformProtectedRoute';
+import PlatformLayout from './components/platform/PlatformLayout';
+import PlatformLogin from './pages/platform/PlatformLogin';
+import PlatformDashboard from './pages/platform/PlatformDashboard';
+import PlatformStaff from './pages/platform/PlatformStaff';
+import OrganizationsList from './pages/platform/OrganizationsList';
+import OrganizationDetail from './pages/platform/OrganizationDetail';
+import PlansManagement from './pages/platform/PlansManagement';
+import CostCalculator from './pages/platform/CostCalculator';
+import AIAnalytics from './pages/platform/AIAnalytics';
+
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
     const { isAuthenticated } = useAuthStore();
@@ -141,6 +153,26 @@ function App() {
 
                     {/* Settings */}
                     <Route path="settings" element={<Settings />} />
+                </Route>
+
+                {/* Platform Super-Admin Plane */}
+                <Route path="/platform/login" element={<PlatformLogin />} />
+                <Route
+                    path="/platform"
+                    element={
+                        <PlatformProtectedRoute>
+                            <PlatformLayout />
+                        </PlatformProtectedRoute>
+                    }
+                >
+                    <Route index element={<Navigate to="dashboard" replace />} />
+                    <Route path="dashboard" element={<PlatformDashboard />} />
+                    <Route path="organizations" element={<OrganizationsList />} />
+                    <Route path="organizations/:id" element={<OrganizationDetail />} />
+                    <Route path="plans" element={<PlansManagement />} />
+                    <Route path="calculator" element={<CostCalculator />} />
+                    <Route path="ai-analytics" element={<AIAnalytics />} />
+                    <Route path="staff" element={<PlatformStaff />} />
                 </Route>
 
                 {/* 404 */}

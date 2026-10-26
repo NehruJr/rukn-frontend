@@ -30,12 +30,19 @@ const Header = () => {
                 <Menu size={22} />
             </button>
 
-            <div className={styles.searchContainer}>
+            <div
+                className={styles.searchContainer}
+                onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+                role="button"
+                tabIndex={0}
+                aria-label={t('layout.searchPlaceholder')}
+            >
                 <Search size={18} className={styles.searchIcon} />
                 <input
                     type="text"
-                    placeholder={t('layout.searchPlaceholder')}
+                    placeholder={`${t('layout.searchPlaceholder')} (⌘K)`}
                     className={styles.searchInput}
+                    readOnly
                 />
             </div>
 
@@ -49,7 +56,7 @@ const Header = () => {
                         className={styles.countrySelect}
                         aria-label="Select country market"
                     >
-                        <option value="">🌍 All Countries</option>
+                        <option value="">🌍 {t('dashboard.allCountries')}</option>
                         {COUNTRIES.map((c) => (
                             <option key={c.value} value={c.value}>
                                 {c.flag} {c.shortLabel} ({c.currency})

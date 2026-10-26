@@ -1,0 +1,275 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.titleIcon {
+  color: #d97448;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #f7f8f8;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #8a9195;
+  margin: 0.25rem 0 0 0;
+}
+
+.presetsBar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.presetBtn {
+  background: #232a2d;
+  border: 1px solid #2c3438;
+  color: #f7f8f8;
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.presetBtn:hover {
+  border-color: #d97448;
+  color: #d97448;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #232a2d;
+  border: 1px solid #2c3438;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #f7f8f8;
+  margin: 0 0 1.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.unitBenchmark {
+  font-size: 0.75rem;
+  color: #8a9195;
+}
+
+.inputRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.slider {
+  flex: 1;
+  accent-color: #d97448;
+  height: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.numInput {
+  width: 110px;
+  background: #1c2124;
+  border: 1px solid #2c3438;
+  border-radius: 6px;
+  color: #f7f8f8;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.numInput:focus {
+  outline: none;
+  border-color: #d97448;
+}
+
+.freeCard {
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.freeIcon {
+  color: #34d399;
+}
+
+.freeTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #34d399;
+  margin: 0;
+}
+
+.freeDesc {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0.15rem 0 0 0;
+}
+
+.breakdownTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.breakdownTable td {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #2c3438;
+  font-size: 0.875rem;
+}
+
+.breakdownTable td:last-child {
+  text-align: right;
+  font-weight: 600;
+  color: #f7f8f8;
+}
+
+.totalRow td {
+  border-top: 2px solid #2c3438;
+  border-bottom: none;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #d97448 !important;
+  padding-top: 0.85rem;
+}
+
+.pricingResultBox {
+  background: #1c2124;
+  border: 1px solid #2c3438;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.priceHeading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8a9195;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.priceDisplay {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #f7f8f8;
+}
+
+.priceSub {
+  font-size: 0.8125rem;
+  color: #8a9195;
+  margin-top: 0.25rem;
+}
+
+.metricPills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.metricPill {
+  background: #232a2d;
+  border: 1px solid #2c3438;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.metricPillLabel {
+  font-size: 0.75rem;
+  color: #8a9195;
+}
+
+.metricPillVal {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #34d399;
+  margin-top: 0.25rem;
+}
+
+.currencyBar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.currencyBtn {
+  background: #1c2124;
+  border: 1px solid #2c3438;
+  color: #8a9195;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.currencyBtn.active {
+  background: #d97448;
+  border-color: #d97448;
+  color: #ffffff;
+}

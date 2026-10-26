@@ -1,0 +1,133 @@
+.attentionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.categoryBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.categoryHeader h4 {
+  font-size: var(--font-size-xs);
+  margin: 0;
+  color: inherit;
+}
+
+.flameIcon {
+  color: var(--color-danger-500);
+}
+
+.clockIcon {
+  color: var(--color-warning-500);
+}
+
+.userIcon {
+  color: var(--color-info-500);
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.alertCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  transition: all var(--transition-fast);
+}
+
+.alertCard:hover {
+  background-color: var(--color-surface-card);
+  border-color: var(--color-primary-400);
+}
+
+.alertMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.alertTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alertTitle:hover {
+  color: var(--color-primary-600);
+}
+
+.alertMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.alertActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.callButton {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-success-50);
+  color: var(--color-success-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.callButton:hover {
+  background-color: var(--color-success-500);
+  color: #ffffff;
+}
+
+.actionArrow {
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.alertCard:hover .actionArrow {
+  color: var(--color-primary-600);
+  transform: translateX(2px);
+}
+
+[dir="rtl"] .alertCard:hover .actionArrow {
+  transform: translateX(-2px);
+}

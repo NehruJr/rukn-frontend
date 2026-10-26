@@ -1,0 +1,83 @@
+.funnelList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.stageRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.stageRow:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.stageLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+}
+
+.stageName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.colorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.stageCounts {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.pctText {
+  color: var(--color-text-tertiary);
+  margin-inline-start: 4px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.pipelineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+
+.pipelineLink:hover {
+  color: var(--color-primary-700);
+}
+
+[dir="rtl"] .arrowIcon {
+  transform: scaleX(-1);
+}

@@ -1,0 +1,135 @@
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+  text-align: start;
+}
+
+.table th {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-semibold);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.row:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.agentCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rankBadge {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-600);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: 11px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.agentDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.agentName {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.agentEmail {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.statMetric {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-text-primary);
+}
+
+.metricIcon {
+  color: var(--color-text-tertiary);
+}
+
+.revenueMetric {
+  color: var(--color-success-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tasksCount {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.tasksHigh {
+  background-color: var(--color-warning-50);
+  color: var(--color-warning-700);
+}
+
+.teamLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+
+.teamLink:hover {
+  color: var(--color-primary-700);
+}
+
+[dir="rtl"] .arrowIcon {
+  transform: scaleX(-1);
+}

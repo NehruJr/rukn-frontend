@@ -21,6 +21,10 @@ export const useUIStore = create(
       setSelectedCountry: (country) => set({ selectedCountry: country || '', selectedBranch: '' }),
       setSelectedBranch: (branch) => set({ selectedBranch: branch || '' }),
 
+      // Dashboard Time Scope
+      dashboardPeriod: '30d',
+      setDashboardPeriod: (dashboardPeriod) => set({ dashboardPeriod: dashboardPeriod || '30d' }),
+
       // Modals
       modals: {},
       openModal: (modalId, data = null) =>
@@ -76,13 +80,15 @@ export const useUIStore = create(
         sidebarOpen: state.sidebarOpen,
         theme: state.theme,
         selectedCountry: state.selectedCountry,
-        selectedBranch: state.selectedBranch
+        selectedBranch: state.selectedBranch,
+        dashboardPeriod: state.dashboardPeriod
       }),
       partialPersist: (state) => ({
         sidebarOpen: state.sidebarOpen,
         theme: state.theme,
         selectedCountry: state.selectedCountry,
-        selectedBranch: state.selectedBranch
+        selectedBranch: state.selectedBranch,
+        dashboardPeriod: state.dashboardPeriod
       })
     }
   )
