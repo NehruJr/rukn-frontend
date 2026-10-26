@@ -1,0 +1,187 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #1a1f22;
+  color: #f7f8f8;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1030;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: 260px;
+  transition: margin-left 200ms ease;
+}
+
+.mainExpanded {
+  margin-left: 72px;
+}
+
+@media (max-width: 1024px) {
+  .main,
+  .mainExpanded {
+    margin-left: 0;
+  }
+}
+
+.topbar {
+  height: 64px;
+  background-color: #232a2d;
+  border-bottom: 1px solid #2c3438;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menuToggle {
+  background: transparent;
+  border: none;
+  color: #b0b5b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.menuToggle:hover {
+  background: #2c3438;
+  color: #f7f8f8;
+}
+
+.consoleBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #d97448;
+  background: rgba(217, 116, 72, 0.12);
+  border: 1px solid rgba(217, 116, 72, 0.25);
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b4562d, #d97448);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2c3438;
+}
+
+.profileMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #f7f8f8;
+}
+
+.roleBadge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.roleOwner {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.roleAdmin {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.roleSupport {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid #4a5155;
+  color: #b0b5b8;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.content {
+  flex: 1;
+  padding: 1.75rem 2rem;
+  background-color: #1a1f22;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+  .name {
+    display: none;
+  }
+}
