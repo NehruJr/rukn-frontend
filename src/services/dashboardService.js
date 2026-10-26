@@ -25,7 +25,25 @@ export const dashboardService = {
     return response.data;
   },
 
-  // Get today's tasks
+  // Get unified agenda (overdue + today tasks, viewings, follow-ups)
+  getAgenda: async (params = {}) => {
+    const response = await api.get('/dashboard/agenda', { params: cleanParams(params) });
+    return response.data;
+  },
+
+  // Get items needing attention (hot uncontacted, stale deals, unassigned)
+  getAttention: async (params = {}) => {
+    const response = await api.get('/dashboard/attention', { params: cleanParams(params) });
+    return response.data;
+  },
+
+  // Get team performance leaderboard (managers and admins)
+  getTeamLeaderboard: async (params = {}) => {
+    const response = await api.get('/dashboard/team', { params: cleanParams(params) });
+    return response.data;
+  },
+
+  // Get today's tasks (legacy compatibility)
   getTodaysTasks: async (params = {}) => {
     const response = await api.get('/dashboard/tasks', { params: cleanParams(params) });
     return response.data;
