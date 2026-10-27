@@ -24,6 +24,7 @@ import PropertyList from './pages/properties/PropertyList';
 import PropertyDetail from './pages/properties/PropertyDetail';
 import AddEditProperty from './pages/properties/AddEditProperty';
 import PublicProperty from './pages/properties/PublicProperty';
+import PublicCatalog from './pages/catalog/PublicCatalog';
 import PublicTour from './pages/tour/PublicTour';
 import DealList from './pages/deals/DealList';
 import DealPipeline from './pages/deals/DealPipeline';
@@ -107,6 +108,7 @@ function App() {
                 <Route path="/reset-password/:token" element={isAuthenticated ? <Navigate to="/" replace /> : <ResetPassword />} />
                 <Route path="/resetpassword/:token" element={isAuthenticated ? <Navigate to="/" replace /> : <ResetPassword />} />
                 <Route path="/share/:token" element={<PublicProperty />} />
+                <Route path="/catalog/:slug" element={<PublicCatalog />} />
                 <Route path="/tour/:token" element={<PublicTour />} />
 
                 {/* Protected Routes */}

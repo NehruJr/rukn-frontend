@@ -15,7 +15,7 @@ import { getWhatsAppPitchUrl } from '@/utils/whatsappPitch';
 import {
     MapPin, Bed, Bath, Maximize, Edit2, Trash2, ArrowLeft,
     Calendar, Mail, Phone, CheckCircle, Share2, UserPlus,
-    Compass, Sparkles, X, ExternalLink, Copy, Eye, Users,
+    Compass, Sparkles, X, ExternalLink, Copy, Eye, EyeOff, Users,
     MessageSquare, Shield, Building, Globe, Printer
 } from 'lucide-react';
 import styles from './PropertyDetail.module.css';
@@ -133,6 +133,20 @@ const PropertyDetail = () => {
         }
     };
 
+    const handleToggleCatalog = async () => {
+        try {
+            const nextState = property.showInCatalog === false;
+            const res = await propertyService.toggleCatalogVisibility(id, nextState);
+            setProperty((prev) => (prev ? { ...prev, showInCatalog: res?.data?.showInCatalog ?? nextState } : prev));
+            addToast({
+                type: 'success',
+                message: nextState ? 'Property shown in Public Catalog' : 'Property hidden from Public Catalog'
+            });
+        } catch (err) {
+            addToast({ type: 'error', message: err?.response?.data?.message || 'Failed to update catalog visibility' });
+        }
+    };
+
     const handleSendWhatsAppPitch = async (lead, language = 'en') => {
         const url = getWhatsAppPitchUrl({
             property,
@@ -229,6 +243,17 @@ const PropertyDetail = () => {
                                 title="Assign Agents"
                             >
                                 <UserPlus size={20} />
+                            </button>
+                        )}
+                        {canEdit && (
+                            <button
+                                type="button"
+                                onClick={handleToggleCatalog}
+                                className={styles.iconButton}
+                                title={property.showInCatalog === false ? 'Show in Public Catalog' : 'Hide from Public Catalog'}
+                                style={{ color: property.showInCatalog === false ? '#64748b' : '#16a34a' }}
+                            >
+                                {property.showInCatalog === false ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         )}
                         <button

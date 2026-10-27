@@ -1,8 +1,8 @@
-import { MapPin, Bed, Bath, Maximize, Edit2, Trash2, Building, Globe } from 'lucide-react';
+import { MapPin, Bed, Bath, Maximize, Edit2, Trash2, Building, Globe, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import styles from './PropertyCard.module.css';
 
-const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
+const PropertyCard = ({ property, onEdit, onDelete, onToggleCatalog, onClick }) => {
     const { user } = useAuthStore();
     const {
         title,
@@ -17,7 +17,8 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
         country,
         branch,
         developer,
-        listingCategory
+        listingCategory,
+        showInCatalog
     } = property || {};
 
     const primaryImage = media?.images?.find(img => img.isPrimary)?.url || media?.images?.[0]?.url || '/placeholder-property.jpg';
@@ -46,6 +47,11 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
                     </span>
                     {listingCategory === 'primary_offplan' && (
                         <span className={styles.categoryBadge}>Off-Plan</span>
+                    )}
+                    {showInCatalog === false && (
+                        <span className={styles.typeBadge} style={{ background: 'rgba(100,116,139,0.85)' }}>
+                            Hidden from Catalog
+                        </span>
                     )}
                 </div>
                 {(country || branch) && (
@@ -89,6 +95,16 @@ const PropertyCard = ({ property, onEdit, onDelete, onClick }) => {
 
                 {(canEdit || canDelete) && (
                     <div className={styles.actions} onClick={e => e.stopPropagation()}>
+                        {canEdit && onToggleCatalog && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onToggleCatalog(property); }}
+                                className={styles.actionButton}
+                                title={showInCatalog === false ? 'Show in Public Catalog' : 'Hide from Public Catalog'}
+                                style={{ color: showInCatalog === false ? '#64748b' : '#16a34a' }}
+                            >
+                                {showInCatalog === false ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                        )}
                         {canEdit && (
                             <button
                                 onClick={(e) => { e.stopPropagation(); onEdit(property); }}

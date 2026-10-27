@@ -14,10 +14,14 @@ import {
     Check,
     X,
     ArrowUpRight,
-    RotateCcw
+    RotateCcw,
+    Copy,
+    ExternalLink,
+    QrCode
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { QRCodeSVG } from '@/utils/qrCode';
 import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/store/uiStore';
 import { getSettings, updateSettings } from '@/services/settingsService';
@@ -148,15 +152,20 @@ const Settings = () => {
 // Agency Settings Tab
 const AgencySettings = ({ settings, subscriptionData, onOpenUpgrade, onUpdate, isSaving }) => {
     const { t } = useLanguage();
+    const addToast = useUIStore((s) => s.addToast);
     const isBrandingUnlocked = Boolean(subscriptionData?.features?.customBranding);
 
     const [formData, setFormData] = useState({
         agencyName: settings.agencyName || '',
+        agencyTagline: settings.agencyTagline || '',
         agencyEmail: settings.agencyEmail || '',
         agencyPhone: settings.agencyPhone || '',
+        agencyWhatsapp: settings.agencyWhatsapp || '',
         agencyAddress: settings.agencyAddress || '',
         agencyWebsite: settings.agencyWebsite || '',
         agencyLogo: settings.agencyLogo || '',
+        catalogEnabled: settings.catalogEnabled !== false,
+        catalogSlug: settings.catalogSlug || '',
         primaryColor: settings.primaryColor || '#b4562d',
         secondaryColor: settings.secondaryColor || '#2c3438'
     });
@@ -164,11 +173,15 @@ const AgencySettings = ({ settings, subscriptionData, onOpenUpgrade, onUpdate, i
     useEffect(() => {
         setFormData({
             agencyName: settings.agencyName || '',
+            agencyTagline: settings.agencyTagline || '',
             agencyEmail: settings.agencyEmail || '',
             agencyPhone: settings.agencyPhone || '',
+            agencyWhatsapp: settings.agencyWhatsapp || '',
             agencyAddress: settings.agencyAddress || '',
             agencyWebsite: settings.agencyWebsite || '',
             agencyLogo: settings.agencyLogo || '',
+            catalogEnabled: settings.catalogEnabled !== false,
+            catalogSlug: settings.catalogSlug || '',
             primaryColor: settings.primaryColor || '#b4562d',
             secondaryColor: settings.secondaryColor || '#2c3438'
         });
@@ -281,6 +294,109 @@ const AgencySettings = ({ settings, subscriptionData, onOpenUpgrade, onUpdate, i
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* Public Property Catalog Section */}
+            <div className={styles.section}>
+                <h3>Public Property Catalog</h3>
+                <p className={styles.sectionDescription}>
+                    Share your agency&apos;s active properties with the public audience via a branded catalog page and QR code.
+                </p>
+
+                <div className={styles.formGrid}>
+                    <div className={styles.formGroupFull}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
+                            <input
+                                type="checkbox"
+                                checked={formData.catalogEnabled}
+                                onChange={(e) => setFormData({ ...formData, catalogEnabled: e.target.checked })}
+                                style={{ width: '18px', height: '18px' }}
+                            />
+                            <span>Enable Public Property Catalog</span>
+                        </label>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label>Catalog URL Slug</label>
+                        <Input
+                            value={formData.catalogSlug}
+                            onChange={(e) => setFormData({ ...formData, catalogSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, '-') })}
+                            placeholder="your-agency-name"
+                        />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label>Catalog Tagline / Subtitle</label>
+                        <Input
+                            value={formData.agencyTagline}
+                            onChange={(e) => setFormData({ ...formData, agencyTagline: e.target.value })}
+                            placeholder="Premier Real Estate & Off-Plan Investments"
+                        />
+                    </div>
+                </div>
+
+                {formData.catalogSlug && (
+                    <div style={{
+                        marginTop: '1rem',
+                        padding: '1rem',
+                        background: 'var(--color-bg-secondary, #f8fafc)',
+                        border: '1px solid var(--color-border, #e2e8f0)',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1.25rem',
+                        flexWrap: 'wrap'
+                    }}>
+                        <div style={{ background: '#ffffff', padding: '0.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                            <QRCodeSVG
+                                value={`${window.location.origin}/catalog/${formData.catalogSlug}`}
+                                size={96}
+                                title="Public Catalog QR Code"
+                            />
+                        </div>
+                        <div style={{ flex: 1, minWidth: '220px' }}>
+                            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#64748b', marginBottom: '0.35rem' }}>
+                                Shareable Public Catalog URL
+                            </div>
+                            <div style={{
+                                fontFamily: 'monospace',
+                                fontSize: '0.85rem',
+                                padding: '0.5rem 0.75rem',
+                                background: '#ffffff',
+                                border: '1px solid #cbd5e1',
+                                borderRadius: '8px',
+                                color: '#0f172a',
+                                wordBreak: 'break-all',
+                                marginBottom: '0.65rem'
+                            }}>
+                                {`${window.location.origin}/catalog/${formData.catalogSlug}`}
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    leftIcon={<Copy size={14} />}
+                                    onClick={async () => {
+                                        await navigator.clipboard.writeText(`${window.location.origin}/catalog/${formData.catalogSlug}`);
+                                        addToast({ type: 'success', message: 'Catalog link copied!' });
+                                    }}
+                                >
+                                    Copy Link
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    leftIcon={<ExternalLink size={14} />}
+                                    onClick={() => window.open(`/catalog/${formData.catalogSlug}`, '_blank')}
+                                >
+                                    Open Public Catalog
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Branding Section */}

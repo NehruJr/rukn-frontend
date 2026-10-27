@@ -55,6 +55,12 @@ export const propertyService = {
     return response.data;
   },
 
+  // Toggle or set property visibility in the agency's public catalog
+  toggleCatalogVisibility: async (id, showInCatalog) => {
+    const response = await api.patch(`/properties/${id}/catalog-visibility`, { showInCatalog });
+    return response.data;
+  },
+
   // Get property by share token (public, no auth required)
   getPublicProperty: async (token) => {
     const response = await api.get(`/properties/public/${token}`);

@@ -67,6 +67,7 @@ const AddEditProperty = () => {
             amenities: []
         },
         status: 'active',
+        showInCatalog: true,
         media: {
             images: []
         }
@@ -111,6 +112,7 @@ const AddEditProperty = () => {
 
             setFormData({
                 ...property,
+                showInCatalog: property.showInCatalog !== false,
                 country: property.country || property.location?.country || 'Egypt',
                 branch: property.branch || 'Main Branch',
                 listingCategory: property.listingCategory || 'resale',
@@ -579,6 +581,18 @@ const AddEditProperty = () => {
                             onChange={handleChange}
                             rows={4}
                             required
+                        />
+                    </div>
+                    <div style={{ marginTop: '0.85rem', padding: '0.85rem 1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                        <div>
+                            <strong style={{ display: 'block', fontSize: '0.92rem', color: '#0f172a' }}>Show in Public Agency Catalog</strong>
+                            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>When active, this property will be displayed on your agency&apos;s public catalog page.</span>
+                        </div>
+                        <input
+                            type="checkbox"
+                            checked={formData.showInCatalog !== false}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, showInCatalog: e.target.checked }))}
+                            style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                         />
                     </div>
                 </div>
