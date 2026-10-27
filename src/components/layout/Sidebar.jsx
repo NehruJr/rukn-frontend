@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useUIStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useBranding } from '@/hooks/useBranding';
 import {
     Home, Users, Building2, FileText, Calendar,
     BarChart3, Settings, Menu, X, Sun, Moon
@@ -12,6 +13,7 @@ const Sidebar = () => {
     const { sidebarOpen, toggleSidebar, theme, toggleTheme } = useUIStore();
     const { user, hasPermission } = useAuthStore();
     const { t, userRole } = useLanguage();
+    const { agencyName, agencyLogo } = useBranding();
 
     const navItems = [
         { nameKey: 'layout.navDashboard', path: '/', icon: Home, permission: null },
@@ -37,8 +39,16 @@ const Sidebar = () => {
             <div className={styles.header}>
                 {sidebarOpen && (
                     <div className={styles.logoContainer}>
-                        <img src="/ruknlogo.png" alt={t('layout.logoAlt')} className={styles.logoImage} />
-                        <h1 className={styles.logoText}>Rukn</h1>
+                        <img
+                            src={agencyLogo || "/ruknlogo.png"}
+                            alt={agencyName || t('layout.logoAlt')}
+                            className={styles.logoImage}
+                            onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = "/ruknlogo.png";
+                            }}
+                        />
+                        <h1 className={styles.logoText}>{agencyName || 'Rukn'}</h1>
                     </div>
                 )}
                 <button type="button" onClick={toggleSidebar} className={styles.toggleBtn}>

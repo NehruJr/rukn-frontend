@@ -1,0 +1,190 @@
+.widget {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.planInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.planIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(180, 86, 45, 0.12), rgba(224, 112, 62, 0.18));
+  color: var(--color-primary-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.planTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.planTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.planName {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  text-transform: capitalize;
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.statusActive {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.statusTrial {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.statusGrace {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.statusExpired {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.daysPill {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.daysWarning {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.daysDanger {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.upgradeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--color-primary-500);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.upgradeBtn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.metersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.meterCard {
+  background: var(--color-bg-secondary);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.meterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+.meterLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.meterNumbers {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.progressTrack {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 300ms ease;
+}
+
+.fillNormal {
+  background: var(--color-primary-500);
+}
+
+.fillWarning {
+  background: #f59e0b;
+}
+
+.fillDanger {
+  background: #ef4444;
+}
+
+.freeTag {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}

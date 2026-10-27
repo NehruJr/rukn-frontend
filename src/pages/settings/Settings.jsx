@@ -1,23 +1,45 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Building2, Users, Bell, Settings as SettingsIcon, Save } from 'lucide-react';
+import {
+    Building2,
+    Users,
+    Bell,
+    Settings as SettingsIcon,
+    Save,
+    CreditCard,
+    Lock,
+    Sparkles,
+    Compass,
+    Check,
+    X,
+    ArrowUpRight,
+    RotateCcw
+} from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/store/uiStore';
 import { getSettings, updateSettings } from '@/services/settingsService';
+import { getMySubscription } from '@/services/subscriptionService';
+import PlanComparisonModal from '@/components/subscription/PlanComparisonModal';
 import styles from './Settings.module.css';
 
 const Settings = () => {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('agency');
+    const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
     const queryClient = useQueryClient();
     const addToast = useUIStore((s) => s.addToast);
 
     const { data: settingsData, isLoading } = useQuery({
         queryKey: ['settings'],
         queryFn: getSettings
+    });
+
+    const { data: subResponse } = useQuery({
+        queryKey: ['mySubscription'],
+        queryFn: getMySubscription
     });
 
     const updateSettingsMutation = useMutation({
@@ -39,9 +61,11 @@ const Settings = () => {
     });
 
     const settings = settingsData?.data || {};
+    const subscriptionData = subResponse?.data || null;
 
     const tabs = [
         { id: 'agency', label: t('settings.tabAgencyInfo'), icon: <Building2 size={18} /> },
+        { id: 'subscription', label: t('settings.tabSubscription'), icon: <CreditCard size={18} /> },
         { id: 'users', label: t('settings.tabUserMgmt'), icon: <Users size={18} /> },
         { id: 'notifications', label: t('settings.tabNotifications'), icon: <Bell size={18} /> },
         { id: 'system', label: t('settings.tabSystem'), icon: <SettingsIcon size={18} /> }
@@ -76,8 +100,17 @@ const Settings = () => {
                     {!isLoading && activeTab === 'agency' && (
                         <AgencySettings
                             settings={settings}
+                            subscriptionData={subscriptionData}
+                            onOpenUpgrade={() => setIsPlanModalOpen(true)}
                             onUpdate={(data) => updateSettingsMutation.mutate(data)}
                             isSaving={updateSettingsMutation.isPending}
+                        />
+                    )}
+
+                    {!isLoading && activeTab === 'subscription' && (
+                        <SubscriptionSettings
+                            subscriptionData={subscriptionData}
+                            onOpenUpgrade={() => setIsPlanModalOpen(true)}
                         />
                     )}
 
@@ -102,13 +135,21 @@ const Settings = () => {
                     )}
                 </div>
             </div>
+
+            <PlanComparisonModal
+                isOpen={isPlanModalOpen}
+                onClose={() => setIsPlanModalOpen(false)}
+                currentPlanCode={subscriptionData?.plan?.code || subscriptionData?.subscription?.plan}
+            />
         </div>
     );
 };
 
 // Agency Settings Tab
-const AgencySettings = ({ settings, onUpdate, isSaving }) => {
+const AgencySettings = ({ settings, subscriptionData, onOpenUpgrade, onUpdate, isSaving }) => {
     const { t } = useLanguage();
+    const isBrandingUnlocked = Boolean(subscriptionData?.features?.customBranding);
+
     const [formData, setFormData] = useState({
         agencyName: settings.agencyName || '',
         agencyEmail: settings.agencyEmail || '',
@@ -133,13 +174,58 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
         });
     }, [settings]);
 
+    const handleResetDefaults = () => {
+        setFormData((prev) => ({
+            ...prev,
+            primaryColor: '#b4562d',
+            secondaryColor: '#2c3438'
+        }));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onUpdate({ ...settings, ...formData });
+        const payload = { ...settings, ...formData };
+        // If custom branding is not unlocked by subscription tier, do not send branding fields to avoid 403
+        if (!isBrandingUnlocked) {
+            delete payload.primaryColor;
+            delete payload.secondaryColor;
+            delete payload.customBranding;
+        }
+        onUpdate(payload);
     };
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
+            {/* Branding Gating Banner */}
+            {!isBrandingUnlocked ? (
+                <div className={styles.brandingLockAlert}>
+                    <div className={styles.brandingLockContent}>
+                        <Lock size={20} className={styles.brandingLockIcon} />
+                        <div>
+                            <div className={styles.brandingLockTitle}>
+                                {t('subscription.brandingLockedTitle')}
+                            </div>
+                            <div className={styles.brandingLockText}>
+                                {t('subscription.brandingLockedDesc')}
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        className={styles.upgradeButtonSmall}
+                        onClick={onOpenUpgrade}
+                    >
+                        <Sparkles size={14} />
+                        <span>{t('subscription.upgradePlan')}</span>
+                    </button>
+                </div>
+            ) : (
+                <div className={styles.brandingUnlockedBadge}>
+                    <Sparkles size={16} />
+                    <span>{t('subscription.brandingUnlockedBadge')} (Enterprise)</span>
+                </div>
+            )}
+
             <div className={styles.section}>
                 <h3>{t('dashboard_extra.agency_information')}</h3>
                 <div className={styles.formGrid}>
@@ -197,49 +283,281 @@ const AgencySettings = ({ settings, onUpdate, isSaving }) => {
                 </div>
             </div>
 
+            {/* Branding Section */}
             <div className={styles.section}>
                 <h3>{t('dashboard_extra.branding')}</h3>
+                <p className={styles.sectionDescription}>
+                    {isBrandingUnlocked
+                        ? t('subscription.brandingUnlockedBadge')
+                        : t('subscription.brandingLockedDesc')}
+                </p>
+
                 <div className={styles.formGrid}>
-                    <div className={styles.formGroup}>
-                        <label>{t('dashboard_extra.primary_color')}</label>
+                    {/* Agency Logo (Whitelabel) */}
+                    <div className={`${styles.formGroupFull} ${!isBrandingUnlocked ? styles.lockedField : ''}`}>
+                        <label>
+                            {t('dashboard_extra.logo') || 'Agency Logo URL'}
+                            {!isBrandingUnlocked && (
+                                <span className={styles.lockedFieldBadge}>
+                                    <Lock size={12} /> Enterprise Only
+                                </span>
+                            )}
+                        </label>
+                        <Input
+                            value={formData.agencyLogo}
+                            onChange={(e) => setFormData({ ...formData, agencyLogo: e.target.value })}
+                            placeholder="https://example.com/logo.png"
+                            disabled={!isBrandingUnlocked}
+                        />
+                    </div>
+
+                    {/* Primary Brand Color */}
+                    <div className={`${styles.formGroup} ${!isBrandingUnlocked ? styles.lockedField : ''}`}>
+                        <label>
+                            {t('subscription.primaryColorLabel')}
+                            {!isBrandingUnlocked && (
+                                <span className={styles.lockedFieldBadge}>
+                                    <Lock size={12} /> Enterprise
+                                </span>
+                            )}
+                        </label>
                         <div className={styles.colorInput}>
                             <input
                                 type="color"
                                 value={formData.primaryColor}
                                 onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
+                                disabled={!isBrandingUnlocked}
                             />
                             <Input
                                 value={formData.primaryColor}
                                 onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
                                 placeholder="#b4562d"
+                                disabled={!isBrandingUnlocked}
                             />
                         </div>
                     </div>
 
-                    <div className={styles.formGroup}>
-                        <label>{t('dashboard_extra.secondary_color')}</label>
+                    {/* Secondary Brand Color */}
+                    <div className={`${styles.formGroup} ${!isBrandingUnlocked ? styles.lockedField : ''}`}>
+                        <label>
+                            {t('subscription.secondaryColorLabel')}
+                            {!isBrandingUnlocked && (
+                                <span className={styles.lockedFieldBadge}>
+                                    <Lock size={12} /> Enterprise
+                                </span>
+                            )}
+                        </label>
                         <div className={styles.colorInput}>
                             <input
                                 type="color"
                                 value={formData.secondaryColor}
                                 onChange={(e) => setFormData({ ...formData, secondaryColor: e.target.value })}
+                                disabled={!isBrandingUnlocked}
                             />
                             <Input
                                 value={formData.secondaryColor}
                                 onChange={(e) => setFormData({ ...formData, secondaryColor: e.target.value })}
                                 placeholder="#2c3438"
+                                disabled={!isBrandingUnlocked}
                             />
                         </div>
                     </div>
                 </div>
+
+                {/* Live Preview & Theme Reset when Branding is Unlocked */}
+                {isBrandingUnlocked && (
+                    <div className={styles.colorPreviewBox}>
+                        <div className={styles.colorPreviewHeader}>
+                            {t('subscription.brandingLivePreview')}
+                        </div>
+                        <div className={styles.colorPreviewSwatches}>
+                            <div
+                                className={styles.colorSwatchSample}
+                                style={{ background: formData.primaryColor }}
+                            >
+                                <span>{formData.primaryColor} (Primary Button)</span>
+                            </div>
+                            <div
+                                className={styles.colorSwatchSample}
+                                style={{ background: formData.secondaryColor }}
+                            >
+                                <span>{formData.secondaryColor} (Text / Nav)</span>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleResetDefaults}
+                                leftIcon={<RotateCcw size={14} />}
+                            >
+                                {t('subscription.restoreDefaults')}
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className={styles.formActions}>
                 <Button type="submit" variant="primary" leftIcon={<Save size={18} />} disabled={isSaving}>
-                    {isSaving ? 'Saving...' : 'Save Changes'}
+                    {isSaving ? t('settings.saving') : t('settings.saveChanges')}
                 </Button>
             </div>
         </form>
+    );
+};
+
+// Subscription Settings Tab
+const SubscriptionSettings = ({ subscriptionData, onOpenUpgrade }) => {
+    const { t, language } = useLanguage();
+    if (!subscriptionData) return null;
+
+    const { subscription, plan, usage, state, features } = subscriptionData;
+
+    const getPlanDisplayName = () => {
+        if (plan?.name) {
+            if (typeof plan.name === 'object') {
+                return (language === 'ar' ? plan.name.ar : plan.name.en) || plan.name.en;
+            }
+            return plan.name;
+        }
+        return subscription?.plan || 'Standard';
+    };
+
+    const quotaList = [
+        {
+            id: 'users',
+            label: t('subscription.usersQuota'),
+            current: usage?.users?.current ?? 0,
+            limit: usage?.users?.limit,
+            isUnlimited: usage?.users?.isUnlimited,
+            percentage: usage?.users?.percentage ?? 0
+        },
+        {
+            id: 'properties',
+            label: t('subscription.propertiesQuota'),
+            current: usage?.properties?.current ?? 0,
+            limit: usage?.properties?.limit,
+            isUnlimited: usage?.properties?.isUnlimited,
+            percentage: usage?.properties?.percentage ?? 0
+        },
+        {
+            id: 'leads',
+            label: t('subscription.leadsQuota'),
+            current: usage?.leads?.current ?? 0,
+            limit: usage?.leads?.limit,
+            isUnlimited: usage?.leads?.isUnlimited,
+            percentage: usage?.leads?.percentage ?? 0
+        },
+        {
+            id: 'ai',
+            label: t('subscription.aiQuota'),
+            current: usage?.aiRequests?.current ?? 0,
+            limit: usage?.aiRequests?.limit,
+            isUnlimited: usage?.aiRequests?.isUnlimited,
+            percentage: usage?.aiRequests?.percentage ?? 0
+        },
+        {
+            id: 'tours',
+            label: t('subscription.virtualToursQuota'),
+            current: usage?.virtualTours?.current ?? 0,
+            limit: -1,
+            isUnlimited: true,
+            isFree: true
+        }
+    ];
+
+    const featureRows = [
+        { label: t('subscription.aiCoPilot'), enabled: Boolean(features?.aiCoPilot) },
+        { label: t('subscription.advancedReports'), enabled: Boolean(features?.advancedReports) },
+        { label: t('subscription.publicShareLinks'), enabled: Boolean(features?.publicShareLinks) },
+        { label: t('subscription.customBranding'), enabled: Boolean(features?.customBranding) },
+        { label: `${t('subscription.virtualToursQuota')} (360°)`, enabled: true, freeHighlight: true }
+    ];
+
+    return (
+        <div className={styles.section}>
+            <h3>{t('subscription.mySubscription')}</h3>
+            <p className={styles.sectionDescription}>{t('subscription.manageSubscription')}</p>
+
+            <div className={styles.subOverviewGrid}>
+                <div className={styles.subCard}>
+                    <div>
+                        <div className={styles.subCardHeader}>
+                            <span className={styles.subCardTitle}>{t('subscription.activePlan')}</span>
+                            <span className={`${styles.statusBadge} ${state?.isExpired ? styles.statusGrace : styles.statusActive}`}>
+                                {state?.status}
+                            </span>
+                        </div>
+                        <div className={styles.subCardValue}>{getPlanDisplayName()}</div>
+                    </div>
+                    <div style={{ marginTop: '1.25rem' }}>
+                        <Button variant="primary" size="sm" onClick={onOpenUpgrade} leftIcon={<ArrowUpRight size={16} />}>
+                            {t('subscription.upgradePlan')}
+                        </Button>
+                    </div>
+                </div>
+
+                <div className={styles.subCard}>
+                    <div>
+                        <div className={styles.subCardHeader}>
+                            <span className={styles.subCardTitle}>{t('subscription.daysRemaining')}</span>
+                            <CreditCard size={18} color="var(--color-primary-500)" />
+                        </div>
+                        <div className={styles.subCardValue}>
+                            {state?.daysRemaining !== null ? `${state.daysRemaining} ${t('subscription.daysRemainingSuffix')}` : '—'}
+                        </div>
+                    </div>
+                    <div style={{ marginTop: '1.25rem', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+                        {subscription?.billingCycle ? `${subscription.billingCycle.toUpperCase()} Billing` : 'Active'}
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.section} style={{ marginTop: '1.5rem' }}>
+                <h4>{t('subscription.usageQuotas')}</h4>
+                <div className={styles.subQuotaList}>
+                    {quotaList.map((item) => (
+                        <div key={item.id} className={styles.subQuotaItem}>
+                            <div className={styles.subQuotaLabelRow}>
+                                <span>{item.label}</span>
+                                <span>
+                                    {item.isFree ? (
+                                        <strong style={{ color: '#059669' }}>{t('subscription.freeAndUnlimited')}</strong>
+                                    ) : (
+                                        `${item.current} / ${item.isUnlimited ? '∞' : item.limit}`
+                                    )}
+                                </span>
+                            </div>
+                            {!item.isFree && (
+                                <div className={styles.subProgressTrack}>
+                                    <div
+                                        className={styles.subProgressFill}
+                                        style={{
+                                            width: `${item.percentage}%`,
+                                            background: item.percentage > 85 ? '#ef4444' : 'var(--color-primary-500)'
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className={styles.section} style={{ marginTop: '2rem' }}>
+                <h4>{t('subscription.manageSubscription')}</h4>
+                <div className={styles.formGrid} style={{ marginTop: '0.75rem' }}>
+                    {featureRows.map((feat, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+                            {feat.enabled ? <Check size={18} color="#10b981" /> : <X size={18} color="#9ca3af" />}
+                            <span style={{ fontWeight: feat.freeHighlight ? 700 : 500, color: feat.freeHighlight ? '#059669' : 'inherit' }}>
+                                {feat.label}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
     );
 };
 

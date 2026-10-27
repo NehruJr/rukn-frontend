@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore';
 import { useUIStore } from './store/uiStore';
 import { useEffect } from 'react';
 import { getSettings } from './services/settingsService';
+import { useBranding } from './hooks/useBranding';
 import ToastContainer from './components/ui/ToastContainer';
 import GlobalSearch from './components/GlobalSearch';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -73,6 +74,7 @@ const RoleRoute = ({ children, roles }) => {
 function App() {
     const { isAuthenticated } = useAuthStore();
     const { theme } = useUIStore();
+    useBranding();
 
     const { data: settingsData } = useQuery({
         queryKey: ['settings'],

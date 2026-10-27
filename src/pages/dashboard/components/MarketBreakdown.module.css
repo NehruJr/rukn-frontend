@@ -140,6 +140,12 @@
   color: var(--color-text-primary);
 }
 
+.countryTag {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
 .breakdownMeta {
   color: var(--color-text-secondary);
 }

@@ -24,5 +24,10 @@ export const platformPlanService = {
   deletePlan: async (id) => {
     const res = await platformApi.delete(`/plans/${id}`);
     return res.data;
+  },
+
+  seedStandardPlans: async () => {
+    const res = await platformApi.post('/plans/seed');
+    return res.data;
   }
 };

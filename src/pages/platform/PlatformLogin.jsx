@@ -18,8 +18,8 @@ const PlatformLogin = () => {
   }
 
   const handlePreFillOwner = () => {
-    setEmail('Roshdy.Nehru@outlook.com');
-    setPassword('SuperAdmin@2026!');
+    setEmail('');
+    setPassword('');
     setLocalError('');
   };
 
@@ -59,22 +59,6 @@ const PlatformLogin = () => {
           </p>
         </div>
 
-        {/* Bootstrap Hint Card */}
-        <div className={styles.hintCard}>
-          <div className={styles.hintHeader}>
-            <span className={styles.hintTag}>Bootstrap Account</span>
-            <button
-              type="button"
-              onClick={handlePreFillOwner}
-              className={styles.preFillBtn}
-            >
-              Fill Credentials
-            </button>
-          </div>
-          <p className={styles.hintText}>
-            Owner: <code>Roshdy.Nehru@outlook.com</code>
-          </p>
-        </div>
 
         {displayError && (
           <div className={styles.errorBox}>

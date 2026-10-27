@@ -24,6 +24,7 @@ import PipelineFunnel from './components/PipelineFunnel';
 import RecentLeadsPanel from './components/RecentLeadsPanel';
 import TeamLeaderboard from './components/TeamLeaderboard';
 import MarketBreakdown from './components/MarketBreakdown';
+import SubscriptionWidget from '@/components/subscription/SubscriptionWidget';
 
 import styles from './Dashboard.module.css';
 
@@ -45,7 +46,10 @@ const Dashboard = () => {
   const countryAnalytics = statsData?.countryAnalytics || {};
 
   const activePreset = selectedCountry ? getMarketPreset(selectedCountry) : null;
-  const activeCurrency = statsData?.currency || activePreset?.currency || 'EGP';
+  const isMultiCurrency = statsData?.isMultiCurrency || (!selectedCountry && statsData?.currencies?.length > 1);
+  const activeCurrency = isMultiCurrency
+    ? t('dashboard.multiCurrency')
+    : (statsData?.currency || activePreset?.currency || 'EGP');
   const isManagerOrAdmin = user?.role === 'admin' || user?.role === 'manager';
 
   const handleRefresh = async () => {
@@ -114,6 +118,7 @@ const Dashboard = () => {
         : `${stats?.activeProperties?.total || 0} total listed`,
       change: stats?.activeProperties?.change || '0%',
       trend: stats?.activeProperties?.trend || 'flat',
+      byCurrency: stats?.activeProperties?.portfolioByCurrency || [],
       icon: Building2,
       color: 'var(--color-success-600)',
       href: '/properties?status=active'
@@ -132,10 +137,12 @@ const Dashboard = () => {
     {
       id: 'revenue',
       title: t('dashboard.statRevenue'),
-      value: stats?.revenue?.periodFormatted || stats?.revenue?.formatted || `${activeCurrency} 0`,
+      value: stats?.revenue?.periodFormatted || stats?.revenue?.formatted || (isMultiCurrency ? t('dashboard.multiCurrency') : `${activeCurrency} 0`),
       subText: stats?.openPipeline?.formatted
         ? `${t('dashboard.openPipeline')}: ${stats.openPipeline.formatted}`
-        : `${t('dashboard.currency')}: ${activeCurrency}`,
+        : (isMultiCurrency
+            ? `${t('dashboard.currenciesList')}: ${statsData?.currencies?.join(', ') || stats?.revenue?.byCurrency?.map((b) => b.currency).join(', ') || 'EGP'}`
+            : `${t('dashboard.currency')}: ${activeCurrency}`),
       change: stats?.revenue?.change || '0%',
       trend: stats?.revenue?.trend || 'flat',
       byCurrency: stats?.revenue?.byCurrency || [],
@@ -207,6 +214,9 @@ const Dashboard = () => {
         lastUpdated={dataUpdatedAt}
       />
 
+      {/* Subscription & Quota Overview */}
+      <SubscriptionWidget />
+
       {/* Primary KPI Strip */}
       <section className={styles.kpiGrid} aria-label="Key Performance Indicators">
         {kpis.map((kpi) => (
@@ -238,6 +248,7 @@ const Dashboard = () => {
         analytics={countryAnalytics}
         selectedCountry={selectedCountry}
         activeCurrency={activeCurrency}
+        isMultiCurrency={isMultiCurrency}
       />
 
       {/* Quick Add Lead Modal */}
