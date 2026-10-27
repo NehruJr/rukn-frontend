@@ -341,7 +341,20 @@ export const messages = {
       primaryColorLabel: 'Primary Theme Color',
       secondaryColorLabel: 'Secondary Text & Nav Color',
       restoreDefaults: 'Restore Default Theme',
-      saveBranding: 'Save Branding Settings'
+      saveBranding: 'Save Branding Settings',
+      renewsOn: 'Renews on {date}',
+      expiresOn: 'Expires on {date}',
+      billingCycle: 'Billing Cycle',
+      monthlyBilling: 'Monthly Billing',
+      yearlyBilling: 'Annual Billing',
+      viewDetails: 'View Details',
+      hideDetails: 'Hide Details',
+      renewNow: 'Renew Now',
+      nearQuotaLimit: '{resource} quota is at {percent}%',
+      activeFeatures: 'Active Features',
+      highUsageWarning: 'High Usage Warning',
+      highUsageNotice: 'Some resource quotas are approaching capacity ({percent}%). Upgrade your plan to prevent operational disruptions.',
+      viewSettings: 'Manage in Settings'
     },
     publicProp: {
       invalidLink: 'Invalid link',
@@ -870,7 +883,20 @@ export const messages = {
       primaryColorLabel: 'لون الواجهة الأساسي',
       secondaryColorLabel: 'لون النصوص والقوائم الثانوي',
       restoreDefaults: 'استعادة المظهر الافتراضي',
-      saveBranding: 'حفظ إعدادات العلامة التجارية'
+      saveBranding: 'حفظ إعدادات العلامة التجارية',
+      renewsOn: 'التجديد في {date}',
+      expiresOn: 'ينتهي في {date}',
+      billingCycle: 'دورة الفوترة',
+      monthlyBilling: 'فوترة شهرية',
+      yearlyBilling: 'فوترة سنوية',
+      viewDetails: 'عرض التفاصيل',
+      hideDetails: 'إخفاء التفاصيل',
+      renewNow: 'تجديد الآن',
+      nearQuotaLimit: 'استهلاك {resource} وصل إلى {percent}%',
+      activeFeatures: 'المزايا المفعلة',
+      highUsageWarning: 'تحذير استهلاك مرتفع',
+      highUsageNotice: 'بعض الموارد تقترب من الحد الأقصى للمساحة المسموحة ({percent}%). يرجى ترقية الباقة لضمان استمرار العمل دون توقف.',
+      viewSettings: 'إدارة في الإعدادات'
     },
     publicProp: {
       invalidLink: 'رابط غير صالح',

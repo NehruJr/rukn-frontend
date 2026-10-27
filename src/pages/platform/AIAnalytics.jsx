@@ -161,11 +161,11 @@ const AIAnalytics = () => {
               {toolsBreakdown.map((t) => (
                 <tr key={t.tool}>
                   <td style={{ fontWeight: 700, color: '#f7f8f8', textTransform: 'capitalize' }}>
-                    {t.tool?.replace(/-/g, ' ')}
+                    {t.tool?.replace(/[-_]/g, ' ')}
                   </td>
-                  <td>{t.count?.toLocaleString()}</td>
-                  <td>{t.promptTokens?.toLocaleString()}</td>
-                  <td>{t.completionTokens?.toLocaleString()}</td>
+                  <td>{(t.count ?? t.requests ?? 0).toLocaleString()}</td>
+                  <td>{(t.promptTokens ?? 0).toLocaleString()}</td>
+                  <td>{(t.completionTokens ?? 0).toLocaleString()}</td>
                   <td>{Math.round(t.avgDurationMs || 0)} ms</td>
                   <td style={{ textAlign: 'right', fontWeight: 700, color: '#34d399' }}>
                     ${Number(t.costUSD || 0).toFixed(4)}
@@ -202,8 +202,8 @@ const AIAnalytics = () => {
                   <td style={{ fontWeight: 700, color: '#f7f8f8' }}>
                     {o.organizationName || o.name || 'Agency'}
                   </td>
-                  <td>{o.requestsCount?.toLocaleString() || o.count?.toLocaleString()}</td>
-                  <td>{o.totalTokens?.toLocaleString()}</td>
+                  <td>{(o.requestsCount ?? o.requests ?? o.count ?? 0).toLocaleString()}</td>
+                  <td>{(o.totalTokens ?? o.tokens ?? 0).toLocaleString()}</td>
                   <td style={{ textAlign: 'right', fontWeight: 700, color: '#34d399' }}>
                     ${Number(o.totalCostUSD || o.costUSD || 0).toFixed(4)}
                   </td>

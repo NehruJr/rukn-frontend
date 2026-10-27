@@ -20,12 +20,27 @@ import styles from './OrganizationsList.module.css';
 
 const COUNTRY_NAMES = {
   EG: 'Egypt 🇪🇬',
+  eg: 'Egypt 🇪🇬',
+  egypt: 'Egypt 🇪🇬',
   AE: 'UAE 🇦🇪',
+  ae: 'UAE 🇦🇪',
+  uae: 'UAE 🇦🇪',
   SA: 'Saudi Arabia 🇸🇦',
+  sa: 'Saudi Arabia 🇸🇦',
+  saudi: 'Saudi Arabia 🇸🇦',
+  saudi_arabia: 'Saudi Arabia 🇸🇦',
   QA: 'Qatar 🇶🇦',
-  KW: 'Kuabb 🇰🇼',
+  qa: 'Qatar 🇶🇦',
+  qatar: 'Qatar 🇶🇦',
+  KW: 'Kuwait 🇰🇼',
+  kw: 'Kuwait 🇰🇼',
+  kuwait: 'Kuwait 🇰🇼',
   BH: 'Bahrain 🇧🇭',
-  OM: 'Oman 🇴🇲'
+  bh: 'Bahrain 🇧🇭',
+  bahrain: 'Bahrain 🇧🇭',
+  OM: 'Oman 🇴🇲',
+  om: 'Oman 🇴🇲',
+  oman: 'Oman 🇴🇲'
 };
 
 const OrganizationsList = () => {
@@ -100,7 +115,13 @@ const OrganizationsList = () => {
     setModalError('');
 
     try {
-      await platformOrgService.createOrganization(createForm);
+      await platformOrgService.createOrganization({
+        ...createForm,
+        ownerFirstName: createForm.adminFirstName,
+        ownerLastName: createForm.adminLastName,
+        ownerEmail: createForm.adminEmail,
+        ownerPassword: createForm.adminPassword
+      });
       setShowCreateModal(false);
       setCreateForm(initialForm);
       await fetchData();
