@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Users, Layers, BarChart3, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { LEAD_SOURCE_LABELS, formatCountryCurrency } from '@/utils/marketPresets';
+import { LEAD_SOURCE_LABELS, formatCountryCurrency, getCountryCurrency } from '@/utils/marketPresets';
 import styles from './MarketBreakdown.module.css';
 
-const MarketBreakdown = ({ analytics = {}, selectedCountry, activeCurrency = 'EGP' }) => {
+const MarketBreakdown = ({ analytics = {}, selectedCountry, activeCurrency = 'EGP', isMultiCurrency = false }) => {
   const { t, leadSource } = useLanguage();
   const [activeTab, setActiveTab] = useState('branches');
 
@@ -91,13 +91,19 @@ const MarketBreakdown = ({ analytics = {}, selectedCountry, activeCurrency = 'EG
               <div className={styles.breakdownList}>
                 {propertiesByBranch.map((item) => {
                   const pct = Math.round((item.count / maxBranchCount) * 100);
+                  const branchCurrency = item.currency || (item.country ? getCountryCurrency(item.country) : activeCurrency);
                   return (
                     <div key={item.branch} className={styles.breakdownItem}>
                       <div className={styles.breakdownTop}>
-                        <span className={styles.breakdownName}>{item.branch}</span>
+                        <span className={styles.breakdownName}>
+                          {item.branch}
+                          {item.country && !selectedCountry && (
+                            <span className={styles.countryTag}> ({item.country})</span>
+                          )}
+                        </span>
                         <span className={styles.breakdownMeta}>
                           <strong>{item.count}</strong> props ({item.activeCount} active) •{' '}
-                          {formatCountryCurrency(item.totalValue, activeCurrency)}
+                          {item.formattedTotal || formatCountryCurrency(item.totalValue, branchCurrency)}
                         </span>
                       </div>
                       <div
@@ -178,7 +184,9 @@ const MarketBreakdown = ({ analytics = {}, selectedCountry, activeCurrency = 'EG
                     </span>
                     <strong className={styles.categoryCount}>{cat.count}</strong>
                     <span className={styles.categoryValue}>
-                      {formatCountryCurrency(cat.totalValue, activeCurrency)}
+                      {cat.formatted || (cat.byCurrency && cat.byCurrency.length > 0
+                        ? cat.byCurrency.map((b) => b.formatted).join(' • ')
+                        : formatCountryCurrency(cat.totalValue, cat.currency || activeCurrency))}
                     </span>
                   </div>
                 ))}

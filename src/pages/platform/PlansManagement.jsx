@@ -13,7 +13,8 @@ import {
   Sparkles,
   Users,
   Building,
-  UserCheck
+  UserCheck,
+  RefreshCw
 } from 'lucide-react';
 import styles from './PlansManagement.module.css';
 
@@ -41,6 +42,7 @@ const PlansManagement = () => {
   const [editingPlan, setEditingPlan] = useState(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [modalError, setModalError] = useState('');
+  const [seeding, setSeeding] = useState(false);
 
   // Form State
   const initialForm = {
@@ -207,6 +209,21 @@ const PlansManagement = () => {
     }
   };
 
+  const handleSeedPlans = async () => {
+    if (!window.confirm('Restore / seed the standard plans (Starter, Professional, Enterprise)? Existing plans with the same code will be preserved or refreshed.')) {
+      return;
+    }
+    try {
+      setSeeding(true);
+      await platformPlanService.seedStandardPlans();
+      await fetchPlans();
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || 'Failed to seed standard plans');
+    } finally {
+      setSeeding(false);
+    }
+  };
+
   const getPlanPrice = (plan) => {
     const cyclePrices = plan.pricing?.[billingCycle] || plan.pricing?.monthly || {};
     return cyclePrices[selectedCurrency] ?? cyclePrices.USD ?? 0;
@@ -265,10 +282,23 @@ const PlansManagement = () => {
           </div>
 
           {canManagePlans && (
-            <button type="button" className={styles.addBtn} onClick={handleOpenCreate}>
-              <Plus size={16} />
-              Create Custom Plan
-            </button>
+            <>
+              <button
+                type="button"
+                className={styles.seedBtn}
+                onClick={handleSeedPlans}
+                disabled={seeding}
+                title="Restore default Starter, Professional, and Enterprise plans"
+              >
+                <RefreshCw size={15} className={seeding ? 'animate-spin' : ''} />
+                {seeding ? 'Restoring...' : 'Restore Standard Plans'}
+              </button>
+
+              <button type="button" className={styles.addBtn} onClick={handleOpenCreate}>
+                <Plus size={16} />
+                Create Custom Plan
+              </button>
+            </>
           )}
         </div>
       </div>

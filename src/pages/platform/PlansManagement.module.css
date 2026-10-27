@@ -87,6 +87,31 @@
   transform: translateY(-1px);
 }
 
+.seedBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(44, 52, 56, 0.08);
+  border: 1px solid rgba(44, 52, 56, 0.2);
+  border-radius: 8px;
+  color: inherit;
+  padding: 0.65rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.seedBtn:hover:not(:disabled) {
+  background: rgba(44, 52, 56, 0.15);
+  transform: translateY(-1px);
+}
+
+.seedBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .toursNoticeBanner {
   display: flex;
   align-items: center;
